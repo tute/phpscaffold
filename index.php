@@ -83,14 +83,15 @@ if (isset($_POST['scaffold_info'])) {
 <div class="container">
 <? if ($message != '') echo "<div class=message>$message</div>"; ?>
 
-<div <? if ($show_form) echo 'style=display:none'; ?> id=new_table>
+<div <? if ($show_form) echo 'style=display:none'; ?> id="new_table">
 <form action="" method="post">
-Welcome to <span class="style1">phpscaffold.com</span>, where you can quickly generate your CRUD scaffold pages for PHP and MySQL.
+
+<p>Welcome to <span class="style1">phpscaffold.com</span>, where you can quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
 
 <p>Enter an SQL table dump below to generate your pages. <a
 href="javascript:showHint('sql_hint');">[Hint]</a></p>
 
-<div id=sql_hint style="display:none; ">
+<div id="sql_hint" style="display:none">
   <div style="background: #FFFFDD;padding: 5px; margin: 10px 0;">
   Paste your phpMyAdmin export SQL queries for the table your which to generate list, edit, new, and delete pages in the box below. A sample text maybe:
   <pre style="color:#888">
@@ -113,7 +114,7 @@ CREATE TABLE `users` (
 </div>
 
 </div>
-    <textarea name="sql" id="sql" cols="80" rows="10"><? if (isset($_REQUEST['sql'])) echo stripslashes($_REQUEST['sql']); else echo '' ?></textarea>
+  <p><textarea name="sql" id="sql" cols="80" rows="10"><? if (isset($_REQUEST['sql'])) echo stripslashes($_REQUEST['sql']); else echo '' ?></textarea></p>
 
   <p>Include File Name. You create this file. <a href="javascript:showHint('include_hint');">[Example]</a><br /> 
     <input name="include" type="text" id="include" value="<? if (isset($_REQUEST['include'])) echo stripslashes($_REQUEST['include']); else echo 'config.php' ?>" />
@@ -135,62 +136,61 @@ if (! mysql_select_db('foo') ) {
 </pre>
 </div>
 
-  <p>Primary Key Name<br /> 
-    <input name="id_key" type="text" id="id_key" value="<? if (isset($_REQUEST['id_key'])) echo stripslashes($_REQUEST['id_key']); else echo 'id' ?>" />
-    </p>
-  <p>
-    File Name of List<br /> 
-    <input type="text" name="list_page" value="<? if (isset($_REQUEST['list_page'])) echo stripslashes($_REQUEST['list_page']); else echo 'list.php' ?>" id="list_page" />
-    </p>
-  <p>File Name of New<br /> 
-    <input type="text" name="new_page" value="<? if (isset($_REQUEST['new_page'])) echo stripslashes($_REQUEST['new_page']); else echo 'new.php' ?>" id="new_page" />
-    </p>
-  <p>File Name of Edit<br />
-    <input type="text" name="edit_page" value="<? if (isset($_REQUEST['edit_page'])) echo stripslashes($_REQUEST['edit_page']); else echo 'edit.php' ?>" id="edit_page" />
-</p>
-  <p>File Name of Delete<br />
-    <input type="text" name="delete_page" value="<? if (isset($_REQUEST['delete_page'])) echo stripslashes($_REQUEST['delete_page']); else echo 'delete.php' ?>" id="delete_page" />
-  </p> 
-    <input name="scaffold_info" type="hidden" value="1" />
-    <input  type="submit" value="Make My Pages" />
+  <? $val = (isset($_REQUEST['id_key']) ? stripslashes($_REQUEST['id_key']) : 'id'); ?>
+  <p>Primary Key Name <input name="id_key" type="text" id="id_key" value="<?= $val ?>" /></p>
+
+  <? $val = (isset($_REQUEST['list_page']) ? stripslashes($_REQUEST['list_page']) : 'index'); ?>
+  <p>File Name of List <input type="text" name="list_page" value="<?= $val ?>" id="list_page" /></p>
+
+  <? $val = (isset($_REQUEST['new_page']) ? stripslashes($_REQUEST['new_page']) : 'new.php'); ?>
+  <p>File Name of New <input type="text" name="new_page" value="<?= $val ?>" id="new_page" /></p>
+
+  <? $val = (isset($_REQUEST['edit_page']) ? stripslashes($_REQUEST['edit_page']) : 'edit.php'); ?>
+  <p>File Name of Edit <input type="text" name="edit_page" value="<?= $val ?>" id="edit_page" /></p>
+
+  <? $val = (isset($_REQUEST['delete_page']) ? stripslashes($_REQUEST['delete_page']) : 'delete.php'); ?>
+  <p>File Name of Delete <input type="text" name="delete_page" value="<?= $val ?>" id="delete_page" /></p>
+
+  <p><input name="scaffold_info" type="hidden" value="1" />
+  <input  type="submit" value="Make My Pages" /></p>
 </form>
 </div>
 
 <?
 if ($show_form) {
-		$s = new Scaffold($table);
-		
-		echo "<div class=options><a href=javascript:toggle('list');>Show/Hide</a> | <a href=javascript:selectAll('list');>Select All";
-		if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
-		echo "</a> | <a href=download.php>Download All Files</a></div>";
-		echo "<h2>List</h2>";
-		echo "<textarea rows=30 cols=80 wrap=off class=textarea id=list>";
-		echo $s->listtable();
-		echo "</textarea>";
+	$s = new Scaffold($table);
 
-		echo "<div class=options><a href=javascript:toggle('new');>Show/Hide</a> | <a href=javascript:selectAll('new');>Select All";
-		if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
-		echo "</a> | <a href=download.php>Download All Files</a></div>";
-		echo "<h2>New</h2>";
-		echo "<textarea rows=30 cols=80 wrap=off class=textarea id=new>";
-		echo $s->newrow();
-		echo "</textarea>";
+	echo "<div class=options><a href=javascript:toggle('list');>Show/Hide</a> | <a href=javascript:selectAll('list');>Select All";
+	if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
+	echo "</a> | <a href=download.php>Download All Files</a></div>";
+	echo "<h2>List</h2>";
+	echo "<textarea rows=30 cols=80 wrap=off class=textarea id=list>";
+	echo $s->listtable();
+	echo "</textarea>";
 
-		echo "<div class=options><a href=javascript:toggle('edit');>Show/Hide</a> | <a href=javascript:selectAll('edit');>Select All";
-		if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
-		echo "</a> | <a href=download.php>Download All Files</a></div>";
-		echo "<h2>Edit</h2>";
-		echo "<textarea rows=30 cols=80 wrap=off class=textarea id=edit>";
-		echo $s->editrow();
-		echo "</textarea>";
-		
-		echo "<div class=options><a href=javascript:toggle('delete');>Show/Hide</a> | <a href=javascript:selectAll('delete');>Select All";
-		if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
-		echo "</a> | <a href=download.php>Download All Files</a></div>";
-		echo "<h2>Delete</h2>";
-		echo "<textarea rows=10 cols=80 wrap=off class=textarea id=delete>";
-		echo $s->deleterow();
-		echo "</textarea>";
+	echo "<div class=options><a href=javascript:toggle('new');>Show/Hide</a> | <a href=javascript:selectAll('new');>Select All";
+	if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
+	echo "</a> | <a href=download.php>Download All Files</a></div>";
+	echo "<h2>New</h2>";
+	echo "<textarea rows=30 cols=80 wrap=off class=textarea id=new>";
+	echo $s->newrow();
+	echo "</textarea>";
+
+	echo "<div class=options><a href=javascript:toggle('edit');>Show/Hide</a> | <a href=javascript:selectAll('edit');>Select All";
+	if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
+	echo "</a> | <a href=download.php>Download All Files</a></div>";
+	echo "<h2>Edit</h2>";
+	echo "<textarea rows=30 cols=80 wrap=off class=textarea id=edit>";
+	echo $s->editrow();
+	echo "</textarea>";
+
+	echo "<div class=options><a href=javascript:toggle('delete');>Show/Hide</a> | <a href=javascript:selectAll('delete');>Select All";
+	if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
+	echo "</a> | <a href=download.php>Download All Files</a></div>";
+	echo "<h2>Delete</h2>";
+	echo "<textarea rows=10 cols=80 wrap=off class=textarea id=delete>";
+	echo $s->deleterow();
+	echo "</textarea>";
 }
 ?>
 </div>
