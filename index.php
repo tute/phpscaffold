@@ -51,7 +51,7 @@ if (isset($_POST['scaffold_info'])) {
 	else {
 		$message .= "Cannot find 'CREATE TABLE `table_name` ( '";
 	}
-} 
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -131,7 +131,7 @@ if (!$link) {
 if (! mysql_select_db('foo') ) {
     die ('Can\'t use foo : ' . mysql_error());
 }
- 
+
 </pre>
 </div>
 
@@ -173,6 +173,7 @@ if ($show_form) {
 	echo files_textarea_head('new') . $s->newrow() . "\n</textarea>";
 	echo files_textarea_head('edit') . $s->editrow() . "\n</textarea>";
 	echo files_textarea_head('delete') . $s->deleterow() . "\n</textarea>";
+	echo files_textarea_head('functions') . $s->get_functions() . "\n</textarea>";
 }
 ?>
 </div>

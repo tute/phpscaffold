@@ -21,7 +21,8 @@ class Scaffold {
 
 	function listtable() {
 		$column_array = array();
-		$return_string = "<?\n";
+		$return_string = "<?
+include('func.php');\n";
 
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
@@ -31,7 +32,7 @@ class Scaffold {
 		foreach($this->table AS $key => $value) {
 			if (is_array($value)) {
 				$column = $key;
-				$column_array[] = $key;
+				$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
 				$return_string .= "    <th>". $this->title($column) ."</th>\n";
 			}
 		}
@@ -40,8 +41,16 @@ class Scaffold {
 \$r = mysql_query(\"SELECT * FROM `{$this->table['name']}`\") or trigger_error(mysql_error());
 while(\$row = mysql_fetch_array(\$r)) {\n";
 		$return_string .= "	echo '  <tr>\n";
+		
 		foreach($column_array as $value) {
-			$return_string .= '    <td>\' . nl2br( $row['.$value.']) . \'</td>'."\n";
+			if($value[tipo][blob])
+				$val = 'nl2br($row['.$value[nombre].'])';
+			elseif($value[tipo][datetime])
+				$val = 'humanize($row['.$value[nombre].'])';
+			else
+				$val = '$row['.$value[nombre].']';
+
+			$return_string .= "    <td>' . $val . '</td>\n";
 		}
 		$return_string .= "    <td><a href=\"{$this->table['edit_page']}?{$this->table['id_key']}=' . \$row['{$this->table[id_key]}'] . '\">Edit</a></td>
     <td><a href=\"{$this->table['delete_page']}?{$this->table['id_key']}=' . \$row['{$this->table[id_key]}'] . '\">Delete</a></td>
@@ -56,21 +65,23 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 	}
 
 	function newrow() {
-		$return_string = "<?\n";
+		$return_string = "<?
+include('func.php');\n";
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
 
 		$column_array = array();
 		$text = "<ul>\n";
-		foreach($this->table AS $key => $value) {
+		foreach($this->table as $key => $value) {
 			if (is_array($value)) {
-				$column = $key ;
-				if($column != $this->table['id_key'] ){
+				$column = $key;
+				if($column != $this->table['id_key'] ) {
 					$column_array[] = $key;
-					if($value['blob'] == 1) {
+					if($value['blob']) {
 						$text .= $this->html_chars('  <li>' . $this->title($column) . ': <textarea name="'.$column.'"></textarea></li>' . "\n");
-					}
-					else {
+					} elseif($value['datetime']) {
+						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <?=input_datetime('".strtolower($this->title($column))."', NULL)?>\n");
+					} else {
 						$text .= '  <li>' . $this->title($column) . ': <input type="text" name="'.$column.'" /></li>' . "\n";
 					}
 				}
@@ -91,7 +102,18 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 		$insert .= ') VALUES (';
 
 		$counter = 0;
-		foreach($column_array as $value){
+		foreach($column_array as $value) {
+			// Fix this for saving new datetime records
+			// if($value[tipo][datetime]) {
+			// 	$seg  = $field . '_seg';
+			// 	$min  = $field . '_min';
+			// 	$hour = $field . '_hour';
+			// 	$day  = $field . '_day';
+			// 	$mth  = $field . '_mth';
+			// 	$year = $field . '_year';
+			// 	$val = "'\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]'";
+			// } else
+			// 	$val = "'\$_POST[$field]'";
 			$insert .= "'\$_POST[$value]'" ;
 			if ($counter < count($column_array) - 1 )
 				$insert .= ", ";
@@ -109,7 +131,7 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 $text
 <p><input type='hidden' value='1' name='submitted' />
 <input type='submit' value='Create' /></p>
-</form>\n";
+</form>";
 
 		return $return_string;
 	}
@@ -117,24 +139,27 @@ $text
 
 
 	function editrow() {
-		$return_string = "<?\n";
+		$return_string = "<?
+include('func.php');\n";
 		if ($this->table['include'] != '')
-			$return_string .= "include('{$this->table['include']}');\n";
+			$return_string .= "include('{$this->table['include']}');\n\n";
 
-		$column_array = array();
 		$return_string .= "if (isset(\$_GET['{$this->table['id_key']}']) ) {
 	\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];\n";
+
+		$column_array = array();
 		$text = "<ul>\n";
 		foreach($this->table as $key => $value) {
 			if (is_array($value)) {
 				$column = $key;
-				if($column != $this->table['id_key'] ){
-					$column_array[] = $column; 
-					if($value['blob'] == 1){
-						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <textarea name='$column'><?= stripslashes(\$row[$column]) ?></textarea></li>\n");
-					}
-					else {
-						$text .= "  <li>" . $this->title($column) . ": <input type='text' name='$column' value='<?= stripslashes(\$row[$column]) ?>' /></li>\n";
+				if($column != $this->table['id_key'] ) {
+					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
+					if($value['blob']) {
+						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <textarea name=\"$column\"><?= stripslashes(\$row[$column]) ?></textarea></li>\n");
+					} elseif($value['datetime']) {
+						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <?=input_datetime('".strtolower($this->title($column))."', \$row[$column])?>\n");
+					} else {
+						$text .= '  <li>' . $this->title($column) . ': <input type="text" name="'.$column.'" value="<?= stripslashes($row['.$column.']) ?>" /></li>' . "\n";
 					}
 				}
 			}
@@ -145,8 +170,19 @@ $text
 	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
 		$insert = "UPDATE `{$this->table['name']}` SET ";
 		$counter = 0;
-		foreach($column_array as $value){
-			$insert .= " `$value` =  '{\$_POST['$value']}' " ;
+		foreach($column_array as $value) {
+			$field = $value[nombre];
+			if($value[tipo][datetime]) {
+				$seg  = $field . '_seg';
+				$min  = $field . '_min';
+				$hour = $field . '_hour';
+				$day  = $field . '_day';
+				$mth  = $field . '_mth';
+				$year = $field . '_year';
+				$val = "'\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]'";
+			} else
+				$val = "'\$_POST[$field]'";
+			$insert .= " `$field` =  $val" ;
 			if ($counter < count($column_array) - 1 )
 				$insert .= ", ";
 			$counter++;
@@ -187,6 +223,50 @@ echo (mysql_affected_rows()) ? \"<p>Row deleted.</p>\" : \"<p>Nothing deleted.</
 
 <p><a href=\"{$this->table['list_page']}\">Back To Listing</a></p>";
 
+		return $return_string;
+	}
+
+	function get_functions() {
+		$return_string = "<?
+function input_datetime(\$field, \$value) {
+	\$seg  = \$field . '_seg';
+	\$min  = \$field . '_min';
+	\$hour = \$field . '_hour';
+	\$day  = \$field . '_day';
+	\$mth  = \$field . '_mth';
+	\$year = \$field . '_year';
+
+	\$sel_seg  = (substr(\$value,17,2) ? substr(\$value,17,2) : date(s));
+	\$sel_min  = (substr(\$value,14,2) ? substr(\$value,14,2) : date(i));
+	\$sel_hour = (substr(\$value,11,2) ? substr(\$value,11,2) : date(h));
+	\$sel_day  = (substr(\$value,8,2) ? substr(\$value,8,2) : date(d));
+	\$sel_mth  = (substr(\$value,5,2) ? substr(\$value,5,2) : date(m));
+	\$sel_year = (substr(\$value,0,4) ? substr(\$value,0,4) : date(Y));
+
+	\$ret = select_range(\$hour, \$sel_hour, 0, 23) . ':';
+	\$ret .= select_range(\$min, \$sel_min, 0, 59) . ':';
+	\$ret .= select_range(\$seg, \$sel_seg, 0, 59) . ' @ ';
+	\$ret .= select_range(\$day, \$sel_day, 1, 31) . '/';
+	\$ret .= select_range(\$mth, \$sel_mth, 1, 12) . '/';
+	\$ret .= select_range(\$year, \$sel_year, 2009, 2020);
+
+	return \$ret;
+}
+
+function humanize(\$mysql_datetime) {
+	return date('d/m/Y @ h:i:s', strtotime(\$mysql_datetime));
+}
+
+function select_range(\$name, \$selected, \$start, \$finish) {
+	\$ret = '<select name=\"'.\$name.'\">';
+	for(\$i=\$start; \$i <= \$finish; \$i++) {
+		(\$selected == \$i) ? \$sel = ' selected=\"selected\"' : \$sel = '';
+		\$ret .= \"<option\$sel>\$i</option>\n\";
+	}
+	\$ret .= '</select>';
+	return \$ret;
+}
+?>";
 		return $return_string;
 	}
 
