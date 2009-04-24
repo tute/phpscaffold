@@ -1,22 +1,23 @@
 h1. About phpScaffold
 
 *phpScaffold* quickly generates CRUD scaffold pages for PHP/MySQL. It takes a
-table dump and some file names as input, to cook XHTML pages for editing the
-model.
+table dump and some file names as input from a browser session, and cooks
+XHTML pages for editing the model.
 
 I've started it from the public copy at phpscaffold.com, to be able to use it
 in any new model I need, without having to tweak by hand automatable tasks
-(_id est_, for no more reinventing wheels!)
+(_id est_, for no more reinventing wheels!).
 
 
 h2. To do list
 
-* Standarize all generated (X)HTML.
-* Make it aware of timestamp columns (and other types as well).
-* Generate a file "partials.php", to hold the HTML for header, footer and
-  common forms (for "edit" and "new").
-* Make it aware of presence of many tables, and organize CRUDS in subfolders.
+ * Standarize all generated (X)HTML.
+ * Make it aware of timestamp columns (and other types as well).
+ * Generate a file "partials.php", to hold the HTML for header, footer and
+   common forms (for "edit" and "new").
+ * Make it aware of presence of many tables, and organize CRUDS in subfolders.
+
 
 h2. FIXMEs!
 
-* "Download all" option doesn't work.
+ * "Download all" option doesn't work.
