@@ -68,10 +68,10 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 				if($column != $this->table['id_key'] ){
 					$column_array[] = $key;
 					if($value['blob'] == 1) {
-						$text .= $this->html_chars('  <li>' . $this->title($column) . ': <textarea name="'.$column.'"></textarea>' . "\n");
+						$text .= $this->html_chars('  <li>' . $this->title($column) . ': <textarea name="'.$column.'"></textarea></li>' . "\n");
 					}
 					else {
-						$text .= '  <li>' . $this->title($column) . ': <input type="text" name="'.$column.'" />' . "\n";
+						$text .= '  <li>' . $this->title($column) . ': <input type="text" name="'.$column.'" /></li>' . "\n";
 					}
 				}
 			}
@@ -105,7 +105,7 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 	echo '<p><a href=\"{$this->table['list_page']}\">Back To Listing</a></p>';
 }
 ?>\n\n";
-		$return_string .= '<form action="" method="POST">' . "
+		$return_string .= '<form action="" method="post">' . "
 $text
 <p><input type='hidden' value='1' name='submitted' />
 <input type='submit' value='Create' /></p>
@@ -131,10 +131,10 @@ $text
 				if($column != $this->table['id_key'] ){
 					$column_array[] = $column; 
 					if($value['blob'] == 1){
-						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <textarea name='$column'><?= stripslashes(\$row['$column']) ?></textarea></li>\n");
+						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <textarea name='$column'><?= stripslashes(\$row[$column]) ?></textarea></li>\n");
 					}
 					else {
-						$text .= "  <li>" . $this->title($column) . ": <input type='text' name='$column' value='<?= stripslashes(\$row['$column']) ?>' /></li>\n";
+						$text .= "  <li>" . $this->title($column) . ": <input type='text' name='$column' value='<?= stripslashes(\$row[$column]) ?>' /></li>\n";
 					}
 				}
 			}
@@ -160,15 +160,15 @@ $text
 }
 
 \$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
-?>
+?>\n\n";
 
-<form action='' method='POST'>
-$text
-<p><input type='hidden' value='1' name='submitted' />
-  <input type='submit' value='Edit' /></p>
+$return_string .= '<form action="" method="post">
+'.$text.'
+<p><input type="hidden" value="1" name="submitted" />
+  <input type="submit" value="Edit" /></p>
 </form>
 
-<? } ?>\n";
+<? } ?>';
 
 		return $return_string;
 	}

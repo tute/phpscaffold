@@ -83,7 +83,7 @@ if (isset($_POST['scaffold_info'])) {
 <div class="container">
 <? if ($message != '') echo "<div class=message>$message</div>"; ?>
 
-<div <? if ($show_form) echo 'style=display:none'; ?> id="new_table">
+<div <? if ($show_form) echo 'style="display:none"'; ?> id="new_table">
 <form action="" method="post">
 
 <p>Welcome to <span class="style1">phpscaffold.com</span>, where you can quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
@@ -117,8 +117,7 @@ CREATE TABLE `users` (
   <p><textarea name="sql" id="sql" cols="80" rows="10"><? if (isset($_REQUEST['sql'])) echo stripslashes($_REQUEST['sql']); else echo '' ?></textarea></p>
 
   <p>Include File Name. You create this file. <a href="javascript:showHint('include_hint');">[Example]</a><br /> 
-    <input name="include" type="text" id="include" value="<? if (isset($_REQUEST['include'])) echo stripslashes($_REQUEST['include']); else echo 'config.php' ?>" />
-    </p>
+    <input name="include" type="text" id="include" value="<? if (isset($_REQUEST['include'])) echo stripslashes($_REQUEST['include']); else echo 'config.php' ?>" /></p>
 
 <div id="include_hint" style="display:none; ">
 <pre style="background: #FFFFDD;padding: 5px; margin: 10px 0; ">
@@ -158,39 +157,22 @@ if (! mysql_select_db('foo') ) {
 
 <?
 if ($show_form) {
+	function files_textarea_head($act) {
+		$r = '<div class="options">
+  <a href="javascript:toggle(\''.$act.'\');">Show/Hide</a> |
+  <a href="javascript:selectAll(\''.$act.'\');\">Select All</a> |
+  <a href="download.php">Download All Files</a>
+</div>
+
+<h2>'.ucwords($act).'</h2>
+<textarea rows="30" cols="80" class="textarea" id="'.$act.'">';
+		return $r;
+	}
 	$s = new Scaffold($table);
-
-	echo "<div class=options><a href=javascript:toggle('list');>Show/Hide</a> | <a href=javascript:selectAll('list');>Select All";
-	if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
-	echo "</a> | <a href=download.php>Download All Files</a></div>";
-	echo "<h2>List</h2>";
-	echo "<textarea rows=30 cols=80 wrap=off class=textarea id=list>";
-	echo $s->listtable();
-	echo "</textarea>";
-
-	echo "<div class=options><a href=javascript:toggle('new');>Show/Hide</a> | <a href=javascript:selectAll('new');>Select All";
-	if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
-	echo "</a> | <a href=download.php>Download All Files</a></div>";
-	echo "<h2>New</h2>";
-	echo "<textarea rows=30 cols=80 wrap=off class=textarea id=new>";
-	echo $s->newrow();
-	echo "</textarea>";
-
-	echo "<div class=options><a href=javascript:toggle('edit');>Show/Hide</a> | <a href=javascript:selectAll('edit');>Select All";
-	if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
-	echo "</a> | <a href=download.php>Download All Files</a></div>";
-	echo "<h2>Edit</h2>";
-	echo "<textarea rows=30 cols=80 wrap=off class=textarea id=edit>";
-	echo $s->editrow();
-	echo "</textarea>";
-
-	echo "<div class=options><a href=javascript:toggle('delete');>Show/Hide</a> | <a href=javascript:selectAll('delete');>Select All";
-	if (stripos($_SERVER['HTTP_USER_AGENT'], 'msie') !== false) echo " &amp; Copy";
-	echo "</a> | <a href=download.php>Download All Files</a></div>";
-	echo "<h2>Delete</h2>";
-	echo "<textarea rows=10 cols=80 wrap=off class=textarea id=delete>";
-	echo $s->deleterow();
-	echo "</textarea>";
+	echo files_textarea_head('list') . $s->listtable() . "\n</textarea>";
+	echo files_textarea_head('new') . $s->newrow() . "\n</textarea>";
+	echo files_textarea_head('edit') . $s->editrow() . "\n</textarea>";
+	echo files_textarea_head('delete') . $s->deleterow() . "\n</textarea>";
 }
 ?>
 </div>
