@@ -1,0 +1,3 @@
+Make it aware of the presence of many tables, and organize them in folders.
+Make it generate standard (X)HTML.
+Make it aware of timestamp columns.

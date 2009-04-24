@@ -1,17 +1,10 @@
-<? 
-
-include("scaffold.php");
-
+<?
+include('scaffold.php');
 
 $show_form = 0;
 $message = '';
 
-
-
-
-
 if (isset($_POST['scaffold_info'])) {
-
 	$data = trim($_POST['sql']);
 	$data_lines = explode("\n", $data);
 	
@@ -21,26 +14,22 @@ if (isset($_POST['scaffold_info'])) {
 		if ($value[0] == '-' && $value[1] == '-') unset($data_lines[$key]);
 		elseif (stripos($value, 'insert into')) unset($data_lines[$key]);
 	}
-	
-	
+
 	$table = array();
-	
-	
+
 	// store into cookie
 	foreach($_POST AS $key => $value) {
 		$date = time() + 999999;
 		if ($key == 'sql') $date = time() + 600;
 		setcookie($key, $value, $date, '/');
 	}
-	
+
 	$table['list_page'] = stripslashes($_POST['list_page']);
 	$table['edit_page'] = stripslashes($_POST['edit_page']);
 	$table['new_page'] = stripslashes($_POST['new_page']);
 	$table['delete_page'] = stripslashes($_POST['delete_page']);
 	$table['include'] = stripslashes($_POST['include']);
 
-
-	
 	$table['id_key'] = trim($_POST['id_key']);
 	if ($table['id_key'] == '') $table['id_key'] = 'id';
 	
@@ -56,48 +45,40 @@ if (isset($_POST['scaffold_info'])) {
 				eval( "\$table['$col'] = array('blob' => $blob, 'datetime' => $datetime );");
 			}
 		}
-		
-		
-		
+
 		$show_form = 1;
-		
-		
-		//print_r($table);
-	
 	}
 	else {
 		$message .= "Cannot find 'CREATE TABLE `table_name` ( '";
 	}
-	
 } 
-
-
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
 <script type="text/javascript" src="js/prototype.js"></script>
 <script type="text/javascript" src="js/scriptaculous.js"></script>
 <script type="text/javascript" src="js/s.js"></script>
 
-
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>PHP MySQL CRUD Scaffold</title>
+
 <meta name="Keywords" content="php, mysql, crud, scaffold" />
 <meta name="Description" content="Fast PHP CRUD Scaffold Maker" />
+
 <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
-<body>
-<h1 onclick="location.href = 'http://www.phpscaffold.com' " style="cursor:hand; cursor:pointer;">php<span class=color>Scaffold</span></h1>
 
+<body>
+<h1>php<span class="color">Scaffold</span></h1>
 
 <div class="submenu">
 <? if ($show_form) { ?>
 <a href="javascript:showNew();">Enter New Table</a> | <a href="javascript:showAll()">Show All</a> | <a href="javascript:hideAll()">Hide All</a>
-<? } else {?>
 <? } ?>
 </div>
-
 
 <div class="container">
 <? if ($message != '') echo "<div class=message>$message</div>"; ?>
@@ -105,18 +86,14 @@ if (isset($_POST['scaffold_info'])) {
 <div <? if ($show_form) echo 'style=display:none'; ?> id=new_table>
 <form action="" method="post">
 Welcome to <span class="style1">phpscaffold.com</span>, where you can quickly generate your CRUD scaffold pages for PHP and MySQL.
-<br />
-<br />
 
-Enter your phpMyAdmin Table Export SQL  Below to generate your pages. <a href="javascript:showHint('sql_hint');">[Hint]</a>
-  
-<br />
-<br />
+<p>Enter an SQL table dump below to generate your pages. <a
+href="javascript:showHint('sql_hint');">[Hint]</a></p>
 
 <div id=sql_hint style="display:none; ">
   <div style="background: #FFFFDD;padding: 5px; margin: 10px 0;">
   Paste your phpMyAdmin export SQL queries for the table your which to generate list, edit, new, and delete pages in the box below. A sample text maybe:
-  <pre style="color: #888; ">
+  <pre style="color:#888">
 -- 
 -- Table structure for table `users`
 -- 
@@ -132,8 +109,7 @@ CREATE TABLE `users` (
   `created_on` datetime NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci AUTO_INCREMENT=5 ;  
-</pre>
-
+  </pre>
 </div>
 
 </div>
@@ -157,8 +133,7 @@ if (! mysql_select_db('foo') ) {
 }
  
 </pre>
-</div>    
-    
+</div>
 
   <p>Primary Key Name<br /> 
     <input name="id_key" type="text" id="id_key" value="<? if (isset($_REQUEST['id_key'])) echo stripslashes($_REQUEST['id_key']); else echo 'id' ?>" />
@@ -178,18 +153,11 @@ if (! mysql_select_db('foo') ) {
   </p> 
     <input name="scaffold_info" type="hidden" value="1" />
     <input  type="submit" value="Make My Pages" />
-          
 </form>
 </div>
 
-
- 
-
 <?
 if ($show_form) {
-
-		
-					
 		$s = new Scaffold($table);
 		
 		echo "<div class=options><a href=javascript:toggle('list');>Show/Hide</a> | <a href=javascript:selectAll('list');>Select All";
@@ -223,30 +191,9 @@ if ($show_form) {
 		echo "<textarea rows=10 cols=80 wrap=off class=textarea id=delete>";
 		echo $s->deleterow();
 		echo "</textarea>";
-											
-			
-			
-			
-
 }
-
 ?>
-
-
-
-
-<br>
-<br>
-If you have any questions, contact me uprz23 &lt; the at sign &gt; gmail.com. Thanks for visiting.
 </div>
-
-
-<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
-</script>
-<script type="text/javascript">
-_uacct = "UA-1244538-5";
-urchinTracker();
-</script>
 
 </body>
 </html>
