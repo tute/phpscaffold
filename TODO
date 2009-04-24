@@ -1,4 +1,0 @@
-Make it generate standard (X)HTML.
-Make it aware of timestamp columns.
-Generate partials.php, to hold header, footer and form.
-Make it aware of presence of many tables; organize them in folders.
