@@ -26,7 +26,7 @@ class Scaffold {
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
 
-		$return_string .= "\necho \"<table>\n";
+		$return_string .= "\necho '<table>\n";
 		$return_string .= "  <tr>\n";
 		foreach($this->table AS $key => $value) {
 			if (is_array($value)) {
@@ -35,198 +35,169 @@ class Scaffold {
 				$return_string .= "    <th>". $this->title($column) ."</th>\n";
 			}
 		}
-		$return_string .= "  </tr>\";\n\n";
+		$return_string .= "  </tr>';
 
-		$return_string .= "\$result = mysql_query(\"SELECT * FROM `{$this->table['name']}`\") or trigger_error(mysql_error());\n";
-
-		$return_string .= "while(\$row = mysql_fetch_array(\$result)) {\n";
+\$r = mysql_query(\"SELECT * FROM `{$this->table['name']}`\") or trigger_error(mysql_error());
+while(\$row = mysql_fetch_array(\$r)) {\n";
 		$return_string .= "	echo '  <tr>\n";
-
 		foreach($column_array as $value) {
 			$return_string .= '    <td>\' . nl2br( $row['.$value.']) . \'</td>'."\n";
 		}
 		$return_string .= "    <td><a href=\"{$this->table['edit_page']}?{$this->table['id_key']}=' . \$row['{$this->table[id_key]}'] . '\">Edit</a></td>
-    <td><a href=\"{$this->table['delete_page']}?{$this->table['id_key']}=' . \$row['{$this->table[id_key]}'] . '\">Delete</a></td>';\n";
-
-			$return_string .= "echo '  </tr>';\n";
-
+    <td><a href=\"{$this->table['delete_page']}?{$this->table['id_key']}=' . \$row['{$this->table[id_key]}'] . '\">Delete</a></td>
+  </tr>';\n";
 		$return_string .= "}\n\n";
-
 		$return_string .= "echo '</table>
-<a href=\"{$this->table['new_page']}\">New entry</a>';
+
+<p><a href=\"{$this->table['new_page']}\">New entry</a></p>';
 ?>";
 
 		return $return_string;
 	}
 
-	function newrow(){
-	
-		$return_string = '';
-		$return_string .= "<?\n";
-		if ($this->table['include'] != '')  $return_string .= "include('{$this->table['include']}');\n";
+	function newrow() {
+		$return_string = "<?\n";
+		if ($this->table['include'] != '')
+			$return_string .= "include('{$this->table['include']}');\n";
 
 		$column_array = array();
-		$text = '';
-		
+		$text = "<ul>\n";
 		foreach($this->table AS $key => $value) {
 			if (is_array($value)) {
 				$column = $key ;
 				if($column != $this->table['id_key'] ){
 					$column_array[] = $key;
-					if($value['blob'] == 1){
-						$text .= $this->html_chars("<p><b>" . $this->title($column) . ":</b><br /><textarea name='$column'></textarea>\n");
+					if($value['blob'] == 1) {
+						$text .= $this->html_chars('  <li>' . $this->title($column) . ': <textarea name="'.$column.'"></textarea>' . "\n");
 					}
 					else {
-						$text .= "<p><b>" . $this->title($column) . ":</b><br /><input type='text' name='$column'/>\n";
+						$text .= '  <li>' . $this->title($column) . ': <input type="text" name="'.$column.'" />' . "\n";
 					}
 				}
 			}
 		}
-		
-						
-		$return_string .= "if (isset(\$_POST['submitted'])) {\n";
-		$return_string .= "foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
+		$text .= '</ul>';
+
+		$return_string .= "\nif (isset(\$_POST['submitted'])) {
+	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
 		$insert = "INSERT INTO `{$this->table['name']}` (";
 		$counter = 0;
 		foreach($column_array as $value){
-			$insert .= " `$value` " ;
-			if ($counter < count($column_array) -1 ) $insert .= ", ";
-			
+			$insert .= "`$value`" ;
+			if ($counter < count($column_array) - 1 )
+				$insert .= ", ";
 			$counter++;
 		}
-		$insert .= " ) VALUES( ";
+		$insert .= ') VALUES (';
 
 		$counter = 0;
 		foreach($column_array as $value){
-			$insert .= " '{\$_POST['$value']}' " ;
-			if ($counter < count($column_array) -1 ) $insert .= ", ";
-			
+			$insert .= "'\$_POST[$value]'" ;
+			if ($counter < count($column_array) - 1 )
+				$insert .= ", ";
 			$counter++;
 		}
-		$insert .= " ) ";
-		
-		
-		$return_string .= "\$sql = \"$insert\";\n";
-		$return_string .= "mysql_query(\$sql) or die(mysql_error());\n";
-		$return_string .= "echo \"Added row.<br />\";\n";
-		$return_string .= "echo \"<a href='{$this->table['list_page']}'>Back To Listing</a>\";\n";
-		$return_string .= "}\n";
-		
-		
-		$return_string .= "?>\n\n";
-		$return_string .= "<form action='' method='POST'>\n";
-		$return_string .= $text;
-		$return_string .= "<p><input type='submit' value='Add Row' /><input type='hidden' value='1' name='submitted' />\n";
-		$return_string .= "</form>\n";
-		
+		$insert .= ")";
+
+		$return_string .= "	\$sql = \"$insert\";
+	mysql_query(\$sql) or die(mysql_error());
+	echo '<p>Added row.</p>';
+	echo '<p><a href=\"{$this->table['list_page']}\">Back To Listing</a></p>';
+}
+?>\n\n";
+		$return_string .= '<form action="" method="POST">' . "
+$text
+<p><input type='hidden' value='1' name='submitted' />
+<input type='submit' value='Create' /></p>
+</form>\n";
+
 		return $return_string;
 	}
 
 
 
-	function editrow(){
-		$return_string = '';
-		$return_string .= "<?\n";
-		if ($this->table['include'] != '')  $return_string .= "include('{$this->table['include']}');\n";
+	function editrow() {
+		$return_string = "<?\n";
+		if ($this->table['include'] != '')
+			$return_string .= "include('{$this->table['include']}');\n";
 
 		$column_array = array();
-		$text = '';
-		
-		$return_string .= "if (isset(\$_GET['{$this->table['id_key']}']) ) {\n";
-		
-			$return_string .= "\${$this->table['id_key']} = (int) \$_GET['{$this->table['id_key']}'];\n";
-			
-			
-			foreach($this->table AS $key => $value) {
-				if (is_array($value)) {
-					$column = $key;
-					if($column != $this->table['id_key'] ){
-						$column_array[] = $column; 
-						if($value['blob'] == 1){
-							$text .= $this->html_chars("<p><b>" . $this->title($column) . ":</b><br /><textarea name='$column'><?= stripslashes(\$row['$column']) ?></textarea>\n");
-						}
-						else {
-							$text .= "<p><b>" . $this->title($column) . ":</b><br /><input type='text' name='$column' value='<?= stripslashes(\$row['$column']) ?>' />\n";
-						}
+		$return_string .= "if (isset(\$_GET['{$this->table['id_key']}']) ) {
+	\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];\n";
+		$text = "<ul>\n";
+		foreach($this->table as $key => $value) {
+			if (is_array($value)) {
+				$column = $key;
+				if($column != $this->table['id_key'] ){
+					$column_array[] = $column; 
+					if($value['blob'] == 1){
+						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <textarea name='$column'><?= stripslashes(\$row['$column']) ?></textarea></li>\n");
+					}
+					else {
+						$text .= "  <li>" . $this->title($column) . ": <input type='text' name='$column' value='<?= stripslashes(\$row['$column']) ?>' /></li>\n";
 					}
 				}
 			}
-			
+		}
+		$text .= '</ul>';
 
-					
-			$return_string .= "if (isset(\$_POST['submitted'])) {\n";
-			$return_string .= "foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
-			$insert = "UPDATE `{$this->table['name']}` SET ";
-			$counter = 0;
-			foreach($column_array as $value){
-				$insert .= " `$value` =  '{\$_POST['$value']}' " ;
-				if ($counter < count($column_array) -1 ) $insert .= ", ";
-				
-				$counter++;
-			}
-			$insert .= "  WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' ";
-	
-	
-			$return_string .= "\$sql = \"$insert\";\n";
-			$return_string .= "mysql_query(\$sql) or die(mysql_error());\n";
-			$return_string .= "echo (mysql_affected_rows()) ? \"Edited row.<br />\" : \"Nothing changed. <br />\";\n";
-			$return_string .= "echo \"<a href='{$this->table['list_page']}'>Back To Listing</a>\";\n";
-			
-			// get the new updated row
-		$return_string .= "}\n";
-		$return_string .= "\$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));\n";
+		$return_string .= "if (isset(\$_POST['submitted'])) {
+	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
+		$insert = "UPDATE `{$this->table['name']}` SET ";
+		$counter = 0;
+		foreach($column_array as $value){
+			$insert .= " `$value` =  '{\$_POST['$value']}' " ;
+			if ($counter < count($column_array) - 1 )
+				$insert .= ", ";
+			$counter++;
+		}
+		$insert .= "  WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' ";
 
-			
-		$return_string .= "?>\n\n";
-		$return_string .= "<form action='' method='POST'>\n";
-		$return_string .= $text;
-		$return_string .= "<p><input type='submit' value='Edit Row' /><input type='hidden' value='1' name='submitted' />\n";
-		$return_string .= "</form>\n";
-		
-		$return_string .= "<? } ?>\n";
-		
+		$return_string .= "	\$sql = \"$insert\";
+	mysql_query(\$sql) or die(mysql_error());
+	echo (mysql_affected_rows()) ? \"Edited row.<br />\" : \"Nothing changed. <br />\";
+	echo \"<p><a href='{$this->table['list_page']}'>Back To Listing</a></p>\";
+}
+
+\$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
+?>
+
+<form action='' method='POST'>
+$text
+<p><input type='hidden' value='1' name='submitted' />
+  <input type='submit' value='Edit' /></p>
+</form>
+
+<? } ?>\n";
+
 		return $return_string;
 	}
 
  
 
-	function deleterow(){
-		$return_string = '';
-		$return_string .= "<?\n";
-		if ($this->table['include'] != '')  $return_string .= "include('{$this->table['include']}');\n";
+	function deleterow() {
+		$return_string = "<?\n";
+		if ($this->table['include'] != '')
+			$return_string .= "include('{$this->table['include']}');\n";
 
-		$return_string .= "\${$this->table['id_key']} = (int) \$_GET['{$this->table['id_key']}'];\n";
-		$return_string .= "mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \") ;\n";
-		$return_string .= "echo (mysql_affected_rows()) ? \"Row deleted.<br /> \" : \"Nothing deleted.<br /> \";\n" ;
-		$return_string .= "?>\n\n";
-		$return_string .= "<a href='{$this->table['list_page']}'>Back To Listing</a>";
-		
+		$return_string .= "\n\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];
+mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}'\");
+echo (mysql_affected_rows()) ? \"<p>Row deleted.</p>\" : \"<p>Nothing deleted.</p>\";
+?>
+
+<p><a href=\"{$this->table['list_page']}\">Back To Listing</a></p>";
+
 		return $return_string;
 	}
-	
+
 	function title($name) {
 		return ucwords(str_replace("_", " ", trim($name)));
 	}
-	
-	
-	function html_chars ($var) {
+
+	function html_chars($var) {
 		return ($this->download) ? $var : htmlspecialchars($var);
 	}
-	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 class createZip  {  
