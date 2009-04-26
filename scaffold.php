@@ -89,7 +89,9 @@ include('func.php');\n";
 		}
 		$text .= '</ul>';
 
-		$return_string .= "\nif (isset(\$_POST['submitted'])) {
+		$return_string .= "
+print_header('{$this->table['name']}');\n
+if (isset(\$_POST['submitted'])) {
 	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
 		$insert = "INSERT INTO `{$this->table['name']}` (";
 		$counter = 0;
@@ -103,17 +105,7 @@ include('func.php');\n";
 
 		$counter = 0;
 		foreach($column_array as $value) {
-			$field = $value[nombre];
-			if($value[tipo][datetime]) {
-				$seg  = $field . '_seg';
-				$min  = $field . '_min';
-				$hour = $field . '_hour';
-				$day  = $field . '_day';
-				$mth  = $field . '_mth';
-				$year = $field . '_year';
-				$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]";
-			} else
-				$val = "\$_POST[$field]";
+			$val = parse($value[nombre], $value[tipo]);
 			$insert .= "'$val'" ;
 			if ($counter < count($column_array) - 1 )
 				$insert .= ", ";
@@ -124,18 +116,19 @@ include('func.php');\n";
 		$return_string .= "	\$sql = \"$insert\";
 	mysql_query(\$sql) or die(mysql_error());
 	echo '<p>Added row.</p>';
-	echo '<p><a href=\"{$this->table['list_page']}\">Back To Listing</a></p>';
 }
 ?>\n\n";
 		$return_string .= '<form action="" method="post">' . "
 $text
 <p><input type='hidden' value='1' name='submitted' />
 <input type='submit' value='Create' /></p>
-</form>";
+</form>
+<?
+print_footer();
+?>";
 
 		return $return_string;
 	}
-
 
 
 	function editrow() {
@@ -144,7 +137,9 @@ include('func.php');\n";
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n\n";
 
-		$return_string .= "if (isset(\$_GET['{$this->table['id_key']}']) ) {
+		$return_string .= "print_header('{$this->table['name']}');
+
+if (isset(\$_GET['{$this->table['id_key']}']) ) {
 	\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];\n";
 
 		$column_array = array();
@@ -172,16 +167,7 @@ include('func.php');\n";
 		$counter = 0;
 		foreach($column_array as $value) {
 			$field = $value[nombre];
-			if($value[tipo][datetime]) {
-				$seg  = $field . '_seg';
-				$min  = $field . '_min';
-				$hour = $field . '_hour';
-				$day  = $field . '_day';
-				$mth  = $field . '_mth';
-				$year = $field . '_year';
-				$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]";
-			} else
-				$val = "\$_POST[$field]";
+			$val = parse($field, $value[tipo]);
 			$insert .= " `$field` =  '$val'" ;
 			if ($counter < count($column_array) - 1 )
 				$insert .= ", ";
@@ -192,7 +178,6 @@ include('func.php');\n";
 		$return_string .= "	\$sql = \"$insert\";
 	mysql_query(\$sql) or die(mysql_error());
 	echo (mysql_affected_rows()) ? \"Edited row.<br />\" : \"Nothing changed. <br />\";
-	echo \"<p><a href='{$this->table['list_page']}'>Back To Listing</a></p>\";
 }
 
 \$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
@@ -204,7 +189,10 @@ $return_string .= '<form action="" method="post">
   <input type="submit" value="Edit" /></p>
 </form>
 
-<? } ?>';
+<?
+}
+print_footer();
+?>';
 
 		return $return_string;
 	}
@@ -212,22 +200,45 @@ $return_string .= '<form action="" method="post">
  
 
 	function deleterow() {
-		$return_string = "<?\n";
+		$return_string = "<?
+include('func.php');\n";
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
 
-		$return_string .= "\n\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];
+		$return_string .= "
+print_header('{$this->table['name']}');\n
+\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];
 mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}'\");
 echo (mysql_affected_rows()) ? \"<p>Row deleted.</p>\" : \"<p>Nothing deleted.</p>\";
-?>
 
-<p><a href=\"{$this->table['list_page']}\">Back To Listing</a></p>";
-
+print_footer();
+?>";
 		return $return_string;
 	}
 
 	function get_functions() {
-		$return_string = "<?
+		$return_string = '<?
+function print_header($title) {
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title><?=$title?> - Admin</title>
+</head>
+
+<body>
+<h1><?=$title?> - Admin</h1>
+<?
+}
+
+function print_footer() {
+	echo \'<p><a href="'.$this->table['list_page'].'">Back to Listing</a></p>
+</body>
+</html>\';
+}'."
+
 function input_datetime(\$field, \$value) {
 	\$seg  = \$field . '_seg';
 	\$min  = \$field . '_min';
@@ -279,6 +290,19 @@ function select_range(\$name, \$selected, \$start, \$finish) {
 	}
 }
 
+function parse($field, $type) {
+	if($type[datetime]) {
+		$seg  = $field . '_seg';
+		$min  = $field . '_min';
+		$hour = $field . '_hour';
+		$day  = $field . '_day';
+		$mth  = $field . '_mth';
+		$year = $field . '_year';
+		$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]";
+	} else
+		$val = "\$_POST[$field]";
+	return $val;
+}
 
 class createZip  {  
 

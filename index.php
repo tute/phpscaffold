@@ -117,7 +117,7 @@ CREATE TABLE `users` (
   <p><textarea name="sql" id="sql" cols="80" rows="10"><? if (isset($_REQUEST['sql'])) echo stripslashes($_REQUEST['sql']); else echo '' ?></textarea></p>
 
   <p>Include File Name. You create this file. <a href="javascript:showHint('include_hint');">[Example]</a><br /> 
-    <input name="include" type="text" id="include" value="<? if (isset($_REQUEST['include'])) echo stripslashes($_REQUEST['include']); else echo 'config.php' ?>" /></p>
+    <input name="include" type="text" id="include" value="<? if (isset($_REQUEST['include'])) echo stripslashes($_REQUEST['include']); else echo 'functions.php' ?>" /></p>
 
 <div id="include_hint" style="display:none; ">
 <pre style="background: #FFFFDD;padding: 5px; margin: 10px 0; ">

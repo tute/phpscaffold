@@ -11,13 +11,6 @@ in any new model I need, without having to tweak by hand automatable tasks
 
 h2. To do list
 
- * Generate a file "partials.php", to hold the HTML for header, footer and
-   common forms (for "edit" and "new").
- * Make it aware of date columns (and other types as well).
- * Make it aware of presence of many tables, and organize CRUDS in subfolders.
-
-
-h2. FIXMEs!
-
- * modularize datetime saving (DRY)
- * "Download all" option doesn't work.
+* Make it aware of date columns (and other types as well).
+* Make it aware of presence of many tables, and organize CRUDs in subfolders.
+* "Download all" option doesn't work.
