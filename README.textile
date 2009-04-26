@@ -19,5 +19,5 @@ h2. To do list
 
 h2. FIXMEs!
 
- * save datetime on new record
+ * modularize datetime saving (DRY)
  * "Download all" option doesn't work.

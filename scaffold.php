@@ -76,7 +76,7 @@ include('func.php');\n";
 			if (is_array($value)) {
 				$column = $key;
 				if($column != $this->table['id_key'] ) {
-					$column_array[] = $key;
+					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
 					if($value['blob']) {
 						$text .= $this->html_chars('  <li>' . $this->title($column) . ': <textarea name="'.$column.'"></textarea></li>' . "\n");
 					} elseif($value['datetime']) {
@@ -93,9 +93,9 @@ include('func.php');\n";
 	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
 		$insert = "INSERT INTO `{$this->table['name']}` (";
 		$counter = 0;
-		foreach($column_array as $value){
-			$insert .= "`$value`" ;
-			if ($counter < count($column_array) - 1 )
+		foreach($column_array as $value) {
+			$insert .= "`$value[nombre]`" ;
+			if ($counter < count($column_array) - 1)
 				$insert .= ", ";
 			$counter++;
 		}
@@ -103,18 +103,18 @@ include('func.php');\n";
 
 		$counter = 0;
 		foreach($column_array as $value) {
-			// Fix this for saving new datetime records
-			// if($value[tipo][datetime]) {
-			// 	$seg  = $field . '_seg';
-			// 	$min  = $field . '_min';
-			// 	$hour = $field . '_hour';
-			// 	$day  = $field . '_day';
-			// 	$mth  = $field . '_mth';
-			// 	$year = $field . '_year';
-			// 	$val = "'\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]'";
-			// } else
-			// 	$val = "'\$_POST[$field]'";
-			$insert .= "'\$_POST[$value]'" ;
+			$field = $value[nombre];
+			if($value[tipo][datetime]) {
+				$seg  = $field . '_seg';
+				$min  = $field . '_min';
+				$hour = $field . '_hour';
+				$day  = $field . '_day';
+				$mth  = $field . '_mth';
+				$year = $field . '_year';
+				$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]";
+			} else
+				$val = "\$_POST[$field]";
+			$insert .= "'$val'" ;
 			if ($counter < count($column_array) - 1 )
 				$insert .= ", ";
 			$counter++;
@@ -179,10 +179,10 @@ include('func.php');\n";
 				$day  = $field . '_day';
 				$mth  = $field . '_mth';
 				$year = $field . '_year';
-				$val = "'\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]'";
+				$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]";
 			} else
-				$val = "'\$_POST[$field]'";
-			$insert .= " `$field` =  $val" ;
+				$val = "\$_POST[$field]";
+			$insert .= " `$field` =  '$val'" ;
 			if ($counter < count($column_array) - 1 )
 				$insert .= ", ";
 			$counter++;
