@@ -11,6 +11,9 @@ in any new model I need, without having to tweak by hand automatable tasks
 
 h2. To do list
 
+* Modularize forms.
+* Minutes in datetime with range option.
+* Generate two pages?: functions and page.
 * Make it aware of date columns (and other types as well).
 * Make it aware of presence of many tables, and organize CRUDs in subfolders.
 * "Download all" option doesn't work.
