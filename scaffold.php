@@ -53,7 +53,7 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 			$return_string .= "    <td>' . $val . '</td>\n";
 		}
 		$return_string .= "    <td><a href=\"{$this->table['edit_page']}?{$this->table['id_key']}=' . \$row['{$this->table[id_key]}'] . '\">Edit</a></td>
-    <td><a href=\"{$this->table['delete_page']}?{$this->table['id_key']}=' . \$row['{$this->table[id_key]}'] . '\">Delete</a></td>
+    <td><a href=\"{$this->table['delete_page']}?{$this->table['id_key']}=' . \$row['{$this->table[id_key]}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>
   </tr>';\n";
 		$return_string .= "}\n\n";
 		$return_string .= "echo '</table>
@@ -206,9 +206,9 @@ include('func.php');\n";
 			$return_string .= "include('{$this->table['include']}');\n";
 
 		$return_string .= "
-print_header('{$this->table['name']}');\n
-\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];
-mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}'\");
+print_header('{$this->table['name']}');
+
+mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\$_GET[{$this->table['id_key']}]}'\");
 echo (mysql_affected_rows()) ? \"<p>Row deleted.</p>\" : \"<p>Nothing deleted.</p>\";
 
 print_footer();
@@ -254,12 +254,12 @@ function input_datetime(\$field, \$value) {
 	\$sel_mth  = (substr(\$value,5,2) ? substr(\$value,5,2) : date(m));
 	\$sel_year = (substr(\$value,0,4) ? substr(\$value,0,4) : date(Y));
 
-	\$ret = select_range(\$hour, \$sel_hour, 0, 23) . ':';
-	\$ret .= select_range(\$min, \$sel_min, 0, 59) . ':';
-	\$ret .= select_range(\$seg, \$sel_seg, 0, 59) . ' @ ';
-	\$ret .= select_range(\$day, \$sel_day, 1, 31) . '/';
-	\$ret .= select_range(\$mth, \$sel_mth, 1, 12) . '/';
-	\$ret .= select_range(\$year, \$sel_year, 2009, 2020);
+	\$ret = select_range(\$hour, \$sel_hour, 0, 23, 1) . ':';
+	\$ret .= select_range(\$min, \$sel_min, 0, 59, 5) . ':';
+	\$ret .= select_range(\$seg, \$sel_seg, 0, 59, 1) . ' @ ';
+	\$ret .= select_range(\$day, \$sel_day, 1, 31, 1) . '/';
+	\$ret .= select_range(\$mth, \$sel_mth, 1, 12, 1) . '/';
+	\$ret .= select_range(\$year, \$sel_year, 2009, 2020, 1);
 
 	return \$ret;
 }
@@ -268,9 +268,9 @@ function humanize(\$mysql_datetime) {
 	return date('d/m/Y @ h:i:s', strtotime(\$mysql_datetime));
 }
 
-function select_range(\$name, \$selected, \$start, \$finish) {
+function select_range(\$name, \$selected, \$start, \$finish, \$range) {
 	\$ret = '<select name=\"'.\$name.'\">';
-	for(\$i=\$start; \$i <= \$finish; \$i++) {
+	for(\$i=\$start; \$i <= \$finish; \$i += \$range) {
 		(\$selected == \$i) ? \$sel = ' selected=\"selected\"' : \$sel = '';
 		\$ret .= \"<option\$sel>\$i</option>\n\";
 	}
