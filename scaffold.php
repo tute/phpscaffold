@@ -21,8 +21,7 @@ class Scaffold {
 
 	function listtable() {
 		$column_array = array();
-		$return_string = "<?
-include('func.php');\n";
+		$return_string = "<?\n";
 
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
@@ -65,8 +64,7 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 	}
 
 	function newrow() {
-		$return_string = "<?
-include('func.php');\n";
+		$return_string = "<?\n";
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
 
@@ -120,27 +118,26 @@ if (isset(\$_POST['submitted'])) {
 ?>\n\n";
 		$return_string .= '<form action="" method="post">' . "
 $text
-<p><input type='hidden' value='1' name='submitted' />
-<input type='submit' value='Create' /></p>
+" . '<p><input type="hidden" value="1" name="submitted" />
+<input type="submit" value="Create" /></p>
 </form>
 <?
 print_footer();
-?>";
+?>';
 
 		return $return_string;
 	}
 
 
 	function editrow() {
-		$return_string = "<?
-include('func.php');\n";
+		$return_string = "<?\n";
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n\n";
 
 		$return_string .= "print_header('{$this->table['name']}');
 
 if (isset(\$_GET['{$this->table['id_key']}']) ) {
-	\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];\n";
+	\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];\n\n";
 
 		$column_array = array();
 		$text = "<ul>\n";
@@ -200,8 +197,7 @@ print_footer();
  
 
 	function deleterow() {
-		$return_string = "<?
-include('func.php');\n";
+		$return_string = "<?\n";
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
 
@@ -218,6 +214,13 @@ print_footer();
 
 	function get_functions() {
 		$return_string = '<?
+// DB connect
+$link = mysql_connect(\'localhost\', \'mysql_user\', \'mysql_password\');
+if (!$link)
+	die(\'Not connected : \' . mysql_error());
+if (!mysql_select_db(\'foo\'))
+	die (\'Can\\\'t use foo : \' . mysql_error());
+
 function print_header($title) {
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -272,7 +275,7 @@ function select_range(\$name, \$selected, \$start, \$finish, \$range) {
 	\$ret = '<select name=\"'.\$name.'\">';
 	for(\$i=\$start; \$i <= \$finish; \$i += \$range) {
 		(\$selected == \$i) ? \$sel = ' selected=\"selected\"' : \$sel = '';
-		\$ret .= \"<option\$sel>\$i</option>\n\";
+		\$ret .= \"<option\$sel>\$i</option>\\n\";
 	}
 	\$ret .= '</select>';
 	return \$ret;

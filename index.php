@@ -138,7 +138,7 @@ if (! mysql_select_db('foo') ) {
   <? $val = (isset($_REQUEST['id_key']) ? stripslashes($_REQUEST['id_key']) : 'id'); ?>
   <p>Primary Key Name <input name="id_key" type="text" id="id_key" value="<?= $val ?>" /></p>
 
-  <? $val = (isset($_REQUEST['list_page']) ? stripslashes($_REQUEST['list_page']) : 'index'); ?>
+  <? $val = (isset($_REQUEST['list_page']) ? stripslashes($_REQUEST['list_page']) : 'index.php'); ?>
   <p>File Name of List <input type="text" name="list_page" value="<?= $val ?>" id="list_page" /></p>
 
   <? $val = (isset($_REQUEST['new_page']) ? stripslashes($_REQUEST['new_page']) : 'new.php'); ?>

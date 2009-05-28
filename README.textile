@@ -12,7 +12,6 @@ in any new model I need, without having to tweak by hand automatable tasks
 h2. To do list
 
 * Modularize forms (print_form in func.php).
-* Generate two pages?: functions and page.
-* Make it aware of date columns (and other types as well).
-* Make it aware of presence of many tables, and organize CRUDs in subfolders.
+* Add basic HTTP authentication.
+* Make it aware of date and blob columns
 * "Download all" option doesn't work.
