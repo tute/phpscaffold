@@ -26,7 +26,7 @@ class Scaffold {
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
 
-		$return_string .= "\necho '<table>\n";
+		$return_string .= "\nprint_header('{$this->table['name']}');\n\necho '<table>\n";
 		$return_string .= "  <tr>\n";
 		foreach($this->table AS $key => $value) {
 			if (is_array($value)) {
@@ -58,6 +58,8 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 		$return_string .= "echo '</table>
 
 <p><a href=\"{$this->table['new_page']}\">New entry</a></p>';
+
+print_footer();
 ?>";
 
 		return $return_string;
@@ -214,6 +216,26 @@ print_footer();
 
 	function get_functions() {
 		$return_string = '<?
+// Basic HTTP Authentication
+$vu = array(\'admin\' => \'pass\');
+function doAuth() {
+	header(\'WWW-Authenticate: Basic realm="Protected Area"\');
+	header(\'HTTP/1.0 401 Unauthorized\');
+	echo \'Valid username / password required.\';
+	exit;
+}
+function checkUser() {
+	global $vu;
+	$b = false;
+	if($_SERVER[\'PHP_AUTH_USER\']!=\'\' && $_SERVER[\'PHP_AUTH_PW\']!=\'\') {
+		if($vu[$_SERVER[\'PHP_AUTH_USER\']] == $_SERVER[\'PHP_AUTH_PW\'])
+			$b = true;
+	}
+	return $b;
+}
+if (!isset($_SERVER[\'PHP_AUTH_USER\']) or !checkUser())
+	doAuth();
+
 // DB connect
 $link = mysql_connect(\'localhost\', \'mysql_user\', \'mysql_password\');
 if (!$link)
