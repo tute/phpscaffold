@@ -217,7 +217,7 @@ print_footer();
 	function get_functions() {
 		$return_string = '<?
 // Basic HTTP Authentication
-$vu = array(\'admin\' => \'pass\');
+$login = array(\'admin\' => \'pass\');
 function doAuth() {
 	header(\'WWW-Authenticate: Basic realm="Protected Area"\');
 	header(\'HTTP/1.0 401 Unauthorized\');
@@ -225,10 +225,10 @@ function doAuth() {
 	exit;
 }
 function checkUser() {
-	global $vu;
+	global $login;
 	$b = false;
 	if($_SERVER[\'PHP_AUTH_USER\']!=\'\' && $_SERVER[\'PHP_AUTH_PW\']!=\'\') {
-		if($vu[$_SERVER[\'PHP_AUTH_USER\']] == $_SERVER[\'PHP_AUTH_PW\'])
+		if($login[$_SERVER[\'PHP_AUTH_USER\']] == $_SERVER[\'PHP_AUTH_PW\'])
 			$b = true;
 	}
 	return $b;

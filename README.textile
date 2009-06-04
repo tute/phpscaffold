@@ -9,6 +9,19 @@ in any new model I need, without having to tweak by hand automatable tasks
 (_id est_, for no more reinventing wheels!).
 
 
+h2. Installation and usage
+
+# Put the files on a PHP server.
+# Go to @index.php@, seed it with your table schema.
+# Put generated files (copy&paste for now) where you want the CRUD to live,
+with following two adjustments to @functions.php@:
+## Change @$login@ information (by default it's 'admin', 'pass').
+## Edit MySQL connection information.
+
+p{font-size:80%}. Note that the table must be up and running; phpscaffold
+doesn't generate it.
+
+
 h2. To do list
 
 * Modularize forms (print_form in func.php).
