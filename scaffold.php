@@ -78,7 +78,7 @@ print_footer();
 				if($column != $this->table['id_key'] ) {
 					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
 					if($value['blob']) {
-						$text .= $this->html_chars('  <li>' . $this->title($column) . ': <textarea name="'.$column.'"></textarea></li>' . "\n");
+						$text .= $this->html_chars('  <li>' . $this->title($column) . ': <textarea name="'.$column.'" cols="40" rows="10"></textarea></li>' . "\n");
 					} elseif($value['datetime']) {
 						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <?=input_datetime('".strtolower($this->title($column))."', NULL)?>\n");
 					} else {
@@ -149,7 +149,7 @@ if (isset(\$_GET['{$this->table['id_key']}']) ) {
 				if($column != $this->table['id_key'] ) {
 					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
 					if($value['blob']) {
-						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <textarea name=\"$column\"><?= stripslashes(\$row[$column]) ?></textarea></li>\n");
+						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <textarea name=\"$column\" cols=\"40\" rows=\"10\"><?= stripslashes(\$row[$column]) ?></textarea></li>\n");
 					} elseif($value['datetime']) {
 						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <?=input_datetime('".strtolower($this->title($column))."', \$row[$column])?>\n");
 					} else {
@@ -251,6 +251,11 @@ function print_header($title) {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title><?=$title?> - Admin</title>
+<style type="text/css" media="screen">
+body {
+  font: .9em "Trebuchet MS", Trebuchet, Verdana, Sans-Serif;
+}
+</style>
 </head>
 
 <body>
@@ -259,7 +264,8 @@ function print_header($title) {
 }
 
 function print_footer() {
-	echo \'<p><a href="'.$this->table['list_page'].'">Back to Listing</a></p>
+	if (ereg(\''.$this->table['list_page'].'\', $_SERVER[\'PHP_SELF\']))
+		echo \'<p><a href="'.$this->table['list_page'].'">Back to Listing</a></p>
 </body>
 </html>\';
 }'."
