@@ -97,7 +97,6 @@ print_footer();
 		$text .= '</ul>';
 
 		$return_string .= "
-print_header('{$this->table['name']}');\n
 if (isset(\$_POST['submitted'])) {
 	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
 		$insert = "INSERT INTO `{$this->table['name']}` (";
@@ -122,8 +121,11 @@ if (isset(\$_POST['submitted'])) {
 
 		$return_string .= "	\$sql = \"$insert\";
 	mysql_query(\$sql) or die(mysql_error());
-	echo '<p>Added row.</p>';
+	\$msg = (mysql_affected_rows()) ? 'Added row.' : 'Nothing changed.';
+	header('Location: index.php?msg='.\$msg);
 }
+
+print_header('{$this->table['name']}');
 ?>\n\n";
 		$return_string .= '<form action="" method="post">' . "
 $text
@@ -143,9 +145,7 @@ print_footer();
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n\n";
 
-		$return_string .= "print_header('{$this->table['name']}');
-
-if (isset(\$_GET['{$this->table['id_key']}']) ) {
+		$return_string .= "if (isset(\$_GET['{$this->table['id_key']}']) ) {
 	\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];\n\n";
 
 		$column_array = array();
@@ -185,8 +185,11 @@ if (isset(\$_GET['{$this->table['id_key']}']) ) {
 
 		$return_string .= "	\$sql = \"$insert\";
 	mysql_query(\$sql) or die(mysql_error());
-	echo (mysql_affected_rows()) ? \"Edited row.<br />\" : \"Nothing changed. <br />\";
+	\$msg = (mysql_affected_rows()) ? 'Edited row.' : 'Nothing changed.';
+	header('Location: index.php?msg='.\$msg);
 }
+
+print_header('{$this->table['name']}');
 
 \$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
 ?>\n\n";
