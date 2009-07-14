@@ -26,7 +26,12 @@ class Scaffold {
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
 
-		$return_string .= "\nprint_header('{$this->table['name']}');\n\necho '<table>\n";
+		$return_string .= "
+print_header('{$this->table['name']}');
+
+if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
+
+echo '<table>\n";
 		$return_string .= "  <tr>\n";
 		foreach($this->table AS $key => $value) {
 			if (is_array($value)) {
@@ -203,15 +208,12 @@ print_footer();
 	function deleterow() {
 		$return_string = "<?\n";
 		if ($this->table['include'] != '')
-			$return_string .= "include('{$this->table['include']}');\n";
+			$return_string .= 'include(\''.$this->table['include'].'\');';
 
 		$return_string .= "
-print_header('{$this->table['name']}');
-
 mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\$_GET[{$this->table['id_key']}]}'\");
-echo (mysql_affected_rows()) ? \"<p>Row deleted.</p>\" : \"<p>Nothing deleted.</p>\";
-
-print_footer();
+\$msg = (mysql_affected_rows()) ? 'Row deleted.' : 'Nothing deleted.';
+header('Location: index.php?msg='.\$msg);
 ?>";
 		return $return_string;
 	}
@@ -327,6 +329,10 @@ function print_header($title) {
 <style type="text/css" media="screen">
 body {
   font: .9em "Trebuchet MS", Trebuchet, Verdana, Sans-Serif;
+}
+#msg {
+  font-weight: bold;
+  background: #ddd;
 }
 </style>
 </head>
