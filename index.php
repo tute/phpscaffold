@@ -40,9 +40,14 @@ if (isset($_POST['scaffold_info'])) {
 		for ($i = 1; $i < $max; $i++ ) {
 			if ( strpos( trim($data_lines[$i]), '`') === 0) { // this line has a column
 				$col = find_text(trim($data_lines[$i]));
-				$blob = ( stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ) ? 1 : 0;
-				$datetime = ( stripos($data_lines[$i], 'DATETIME') ) ? 1 : 0;
-				eval( "\$table['$col'] = array('blob' => $blob, 'datetime' => $datetime );");
+				$bool = (stripos($data_lines[$i], 'INT(1)') ? 1 : 0);
+				$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ? 1 : 0);
+				$datetime = (stripos($data_lines[$i], 'DATETIME') ? 1 : 0);
+				eval( "\$table['$col'] = array(
+					'bool' => $bool,
+					'blob' => $blob,
+					'datetime' => $datetime,
+				);");
 			}
 		}
 

@@ -78,9 +78,11 @@ print_footer();
 				if($column != $this->table['id_key'] ) {
 					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
 					if($value['blob']) {
-						$text .= $this->html_chars('  <li>' . $this->title($column) . ': <textarea name="'.$column.'" cols="40" rows="10"></textarea></li>' . "\n");
+						$text .= $this->html_chars('  <li>'.$this->title($column).': <textarea name="'.$column.'" cols="40" rows="10"></textarea></li>' . "\n");
+					} elseif($value['bool']) {
+						$text .= $this->html_chars('  <li>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" /></li>');
 					} elseif($value['datetime']) {
-						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <?=input_datetime('".strtolower($this->title($column))."', NULL)?>\n");
+						$text .= $this->html_chars('  <li>'.$this->title($column).": <?=input_datetime('".strtolower($this->title($column))."', NULL)?>\n");
 					} else {
 						$text .= '  <li>' . $this->title($column) . ': <input type="text" name="'.$column.'" /></li>' . "\n";
 					}
@@ -150,6 +152,8 @@ if (isset(\$_GET['{$this->table['id_key']}']) ) {
 					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
 					if($value['blob']) {
 						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <textarea name=\"$column\" cols=\"40\" rows=\"10\"><?= stripslashes(\$row[$column]) ?></textarea></li>\n");
+					} elseif($value['bool']) {
+						$text .= $this->html_chars('  <li>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" <?= ($row['.$column.'] == 1 ? \'checked="checked"\' : \'\') ?> /></li>');
 					} elseif($value['datetime']) {
 						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <?=input_datetime('".strtolower($this->title($column))."', \$row[$column])?>\n");
 					} else {
@@ -216,7 +220,6 @@ print_footer();
 		$return_string = "<?php
 include('functions.php');
 \$msg = '';
-\$login = array('admin' => 'pass');
 
 if (isset(\$_POST['user']) && isset(\$_POST['pass'])) {
 	if ((strlen(\$_POST['user']) > 0) and (strlen(\$_POST['pass']) > 0)

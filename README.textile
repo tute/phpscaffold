@@ -4,6 +4,9 @@ h1. About phpScaffold
 table dump and some file names as input from a browser session, and cooks
 XHTML pages for editing the model.
 
+It features basic HTTP or Session based authentication; and the generated
+forms responds to column types text, datetime, (var)char and bool (int(1)).
+
 I've started it from the public copy at phpscaffold.com, to be able to use it
 in any new model I need, without having to tweak by hand automatable tasks
 (_id est_, for no more reinventing wheels!).
@@ -25,9 +28,8 @@ doesn't generate it.
 
 h2. To do list
 
-* Modularize forms (print_form in func.php).
-* Make it aware of date and blob columns
-* ISSUE: Model name gets broken if there is a column called 'name'.
 * Make index.php and auth.php dynamic variables.
+* Modularize forms (print_form in func.php).
+* Make it aware of date and blob columns* Model name gets broken if there is a column called 'name'.
 * Adjust page titles.
 
