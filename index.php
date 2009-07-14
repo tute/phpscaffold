@@ -160,8 +160,7 @@ if ($show_form) {
 	function files_textarea_head($act) {
 		$r = '<div class="options">
   <a href="javascript:toggle(\''.$act.'\');">Show/Hide</a> |
-  <a href="javascript:selectAll(\''.$act.'\');\">Select All</a> |
-  <a href="download.php">Download All Files</a>
+  <a href="javascript:selectAll(\''.$act.'\');">Select All</a>
 </div>
 
 <h2>'.ucwords($act).'</h2>
@@ -174,6 +173,15 @@ if ($show_form) {
 	echo files_textarea_head('edit') . $s->editrow() . "\n</textarea>";
 	echo files_textarea_head('delete') . $s->deleterow() . "\n</textarea>";
 	echo files_textarea_head('functions') . $s->get_functions() . "\n</textarea>";
+
+	// Save files in tmp folder
+	$dir = 'tmp/'.$table['name'].'/';
+	if(!is_dir($dir)) mkdir($dir);
+	file_put_contents($dir.$table['list_page'], $s->listtable());
+	file_put_contents($dir.$table['new_page'], $s->newrow());
+	file_put_contents($dir.$table['edit_page'], $s->editrow());
+	file_put_contents($dir.$table['delete_page'], $s->deleterow());
+	file_put_contents($dir.$table['include'], $s->get_functions());
 }
 ?>
 </div>

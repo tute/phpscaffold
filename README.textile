@@ -11,12 +11,12 @@ in any new model I need, without having to tweak by hand automatable tasks
 
 h2. Installation and usage
 
-# Put the files on a PHP server.
-# Go to @index.php@, seed it with your table schema.
-# Put generated files (copy&paste for now) where you want the CRUD to live,
-with following two adjustments to @functions.php@:
-## Change @$login@ information (by default it's 'admin', 'pass').
+# Go to @index.php@, and seed the form with your table schema.
+# You can go to @tmp/table_name/@ to grab the files, or copy&paste the code
+  from the shown textareas to where you want.
+# Adjust login and MySQL configuration from first lines of @functions.php@.
 ## Edit MySQL connection information.
+## Change @$login@ information (by default it's 'admin', 'pass').
 
 p{font-size:80%}. Note that the table must be up and running; phpscaffold
 doesn't generate it.
@@ -26,4 +26,3 @@ h2. To do list
 
 * Modularize forms (print_form in func.php).
 * Make it aware of date and blob columns
-* "Download all" option doesn't work.
