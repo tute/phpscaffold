@@ -13,7 +13,8 @@ h2. Installation and usage
 
 # Go to @index.php@, and seed the form with your table schema.
 # You can go to @tmp/table_name/@ to grab the files, or copy&paste the code
-  from the shown textareas to where you want.
+  from the shown textareas to where you want. (Make sure that @tmp/@ has
+  write permissions)
 # Adjust login and MySQL configuration from first lines of @functions.php@.
 ## Edit MySQL connection information.
 ## Change @$login@ information (by default it's 'admin', 'pass').
@@ -25,4 +26,8 @@ doesn't generate it.
 h2. To do list
 
 * Modularize forms (print_form in func.php).
-* Make it aware of date and blob columns
+* Make it aware of date and blob columns
+* ISSUE: Model name gets broken if there is a column called 'name'.
+* Make index.php and auth.php dynamic variables.
+* Adjust page titles.
+

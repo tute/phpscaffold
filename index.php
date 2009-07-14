@@ -168,10 +168,12 @@ if ($show_form) {
 		return $r;
 	}
 	$s = new Scaffold($table);
+	echo '<p>Files saved in tmp/ directory.</p>';
 	echo files_textarea_head('list') . $s->listtable() . "\n</textarea>";
 	echo files_textarea_head('new') . $s->newrow() . "\n</textarea>";
 	echo files_textarea_head('edit') . $s->editrow() . "\n</textarea>";
 	echo files_textarea_head('delete') . $s->deleterow() . "\n</textarea>";
+	echo files_textarea_head('authentication') . $s->session_auth() . "\n</textarea>";
 	echo files_textarea_head('functions') . $s->get_functions() . "\n</textarea>";
 
 	// Save files in tmp folder
@@ -181,6 +183,7 @@ if ($show_form) {
 	file_put_contents($dir.$table['new_page'], $s->newrow());
 	file_put_contents($dir.$table['edit_page'], $s->editrow());
 	file_put_contents($dir.$table['delete_page'], $s->deleterow());
+	file_put_contents($dir.'auth.php', $s->session_auth());
 	file_put_contents($dir.$table['include'], $s->get_functions());
 }
 ?>

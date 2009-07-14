@@ -196,8 +196,6 @@ print_footer();
 		return $return_string;
 	}
 
- 
-
 	function deleterow() {
 		$return_string = "<?\n";
 		if ($this->table['include'] != '')
@@ -214,43 +212,102 @@ print_footer();
 		return $return_string;
 	}
 
+	function session_auth() {
+		$return_string = "<?php
+include('functions.php');
+\$msg = '';
+\$login = array('admin' => 'pass');
+
+if (isset(\$_POST['user']) && isset(\$_POST['pass'])) {
+	if ((strlen(\$_POST['user']) > 0) and (strlen(\$_POST['pass']) > 0)
+	  and (\$login[\$_POST['user']] == \$_POST['pass'])) {
+		\$_SESSION['user_logged_in'] = true;
+		\$msg = 'Logged in.';
+	} else {
+		unset(\$_SESSION['user_logged_in']);
+		\$msg = 'Sorry, wrong user id / password';
+	}
+}
+
+print_header('emails');
+
+if (\$_GET[action] == 'logout') {
+	unset(\$_SESSION['user_logged_in']);
+	session_destroy();
+}
+
+echo '<p>'.\$msg.'</p>';
+if (\$_SESSION['user_logged_in'] != true) {
+?>\n";
+$return_string .= '<form action="auth.php" method="post">
+<p>You need to log in to edit this database.</p>
+<ul>
+  <li>User: <input type="text" name="user" value="<?= stripslashes($_POST[user]) ?>" /></li>
+  <li>Pass: <input type="password" name="pass" /></li>
+</ul>
+<p><input type="submit" value="Login" /></p>
+</form>
+<?
+} else {
+	echo \'<p><a href="'.$this->table['list_page'].'">Go to Listing</a></p>\';
+}
+
+print_footer();
+?>';
+		return $return_string;
+	}
+
 	function get_functions() {
 		$return_string = '<?
 /* General configuration */
 // MySQL
-$host = \'localhost\';
-$user = \'mysql_user\';
-$pass = \'mysql_password\';
+$mysql_host = \'localhost\';
+$mysql_user = \'root\';
+$mysql_pass = \'mysql_pass\';
 $dbname = \'database\';
 
-// Basic HTTP Authentication
-$login = array(\'admin\' => \'pass\');
+$Sess_Auth = true;        // Session based or basic HTTP authentication.
+$login = array(           // Allowed users.
+  \'admin\' => \'pass\'
+);
 
 
 /* phpscaffold code - you may leave this untouched */
-function doAuth() {
-	header(\'WWW-Authenticate: Basic realm="Protected Area"\');
-	header(\'HTTP/1.0 401 Unauthorized\');
-	echo \'Valid username / password required.\';
-	exit;
-}
 
-function checkUser() {
-	global $login;
-	$b = false;
-	if($_SERVER[\'PHP_AUTH_USER\']!=\'\' && $_SERVER[\'PHP_AUTH_PW\']!=\'\') {
-		if($login[$_SERVER[\'PHP_AUTH_USER\']] == $_SERVER[\'PHP_AUTH_PW\'])
-			$b = true;
+if ($Sess_Auth == true) {
+	session_start();
+	if ((!ereg(\'auth.php\', $_SERVER[\'PHP_SELF\']))
+		and (!isset($_SESSION[\'user_logged_in\'])
+		or $_SESSION[\'user_logged_in\'] !== true)) {
+		header(\'Location: auth.php\');
+		exit;
 	}
-	return $b;
-}
+} else {
+	function doAuth() {
+		header(\'WWW-Authenticate: Basic realm="Protected Area"\');
+		header(\'HTTP/1.0 401 Unauthorized\');
+		echo \'Valid username / password required.\';
+		exit;
+	}
 
-if (!isset($_SERVER[\'PHP_AUTH_USER\']) or !checkUser())
-	doAuth();
+	function checkUser() {
+		global $login;
+		$b = false;
+		if($_SERVER[\'PHP_AUTH_USER\']!=\'\' && $_SERVER[\'PHP_AUTH_PW\']!=\'\') {
+			if($login[$_SERVER[\'PHP_AUTH_USER\']] == $_SERVER[\'PHP_AUTH_PW\'])
+				$b = true;
+		}
+		return $b;
+	}
+
+	if (!isset($_SERVER[\'PHP_AUTH_USER\']) or !checkUser()) {
+		doAuth();
+	}
+}
 
 
 // DB connect
-$link = mysql_connect($host, $user, $pass);
+$link = mysql_connect($mysql_host, $mysql_user, $mysql_pass);
 if (!$link)
 	die(\'Not connected : \' . mysql_error());
 if (!mysql_select_db($dbname))
@@ -277,10 +334,13 @@ body {
 }
 
 function print_footer() {
-	if (ereg(\''.$this->table['list_page'].'\', $_SERVER[\'PHP_SELF\']))
-		echo \'<p><a href="'.$this->table['list_page'].'">Back to Listing</a></p>
-</body>
-</html>\';
+	$index = ereg(\''.$this->table['list_page'].'\', $_SERVER[\'PHP_SELF\']);
+	$login = ereg(\'auth.php\', $_SERVER[\'PHP_SELF\']);
+	if (!$index and !$login)
+		echo \'<p><a href="'.$this->table['list_page'].'">Back to Listing</a></p>\';
+	if ($_SESSION[\'user_logged_in\'] = true)
+		echo \'<p><a href="auth.php?action=logout">[Logout]</a></p>\';
+	echo "</body>\n</html>";
 }'."
 
 function input_datetime(\$field, \$value) {
@@ -320,6 +380,10 @@ function select_range(\$name, \$selected, \$start, \$finish, \$range) {
 	}
 	\$ret .= '</select>';
 	return \$ret;
+}
+
+function pr(\$arr) {
+	echo '<pre>'; print_r(\$arr); echo '</pre>';
 }
 ?>";
 		return $return_string;
