@@ -83,13 +83,13 @@ print_footer();
 				if($column != $this->table['id_key'] ) {
 					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
 					if($value['blob']) {
-						$text .= $this->html_chars('  <li>'.$this->title($column).': <textarea name="'.$column.'" cols="40" rows="10"></textarea></li>' . "\n");
+						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <textarea name="'.$column.'" cols="40" rows="10"></textarea></label></li>' . "\n");
 					} elseif($value['bool']) {
-						$text .= $this->html_chars('  <li>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" /></li>');
+						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" /></label></li>');
 					} elseif($value['datetime']) {
-						$text .= $this->html_chars('  <li>'.$this->title($column).": <?=input_datetime('".strtolower($this->title($column))."', NULL)?>\n");
+						$text .= $this->html_chars('  <li><label>'.$this->title($column).": <?=input_datetime('".strtolower($this->title($column))."', NULL)?></label></li>\n");
 					} else {
-						$text .= '  <li>' . $this->title($column) . ': <input type="text" name="'.$column.'" /></li>' . "\n";
+						$text .= '  <li><label>' . $this->title($column) . ': <input type="text" name="'.$column.'" /></label></li>' . "\n";
 					}
 				}
 			}
@@ -156,13 +156,13 @@ print_footer();
 				if($column != $this->table['id_key'] ) {
 					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
 					if($value['blob']) {
-						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <textarea name=\"$column\" cols=\"40\" rows=\"10\"><?= stripslashes(\$row[$column]) ?></textarea></li>\n");
+						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <textarea name=\"$column\" cols=\"40\" rows=\"10\"><?= stripslashes(\$row[$column]) ?></textarea></label></li>\n");
 					} elseif($value['bool']) {
-						$text .= $this->html_chars('  <li>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" <?= ($row['.$column.'] == 1 ? \'checked="checked"\' : \'\') ?> /></li>');
+						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" <?= ($row['.$column.'] == 1 ? \'checked="checked"\' : \'\') ?> /></label></li>');
 					} elseif($value['datetime']) {
-						$text .= $this->html_chars('  <li>' . $this->title($column) . ": <?=input_datetime('".strtolower($this->title($column))."', \$row[$column])?>\n");
+						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <?=input_datetime('".strtolower($this->title($column))."', \$row[$column])?></label></li>\n");
 					} else {
-						$text .= '  <li>' . $this->title($column) . ': <input type="text" name="'.$column.'" value="<?= stripslashes($row['.$column.']) ?>" /></li>' . "\n";
+						$text .= '  <li><label>' . $this->title($column) . ': <input type="text" name="'.$column.'" value="<?= stripslashes($row['.$column.']) ?>" /></label></li>' . "\n";
 					}
 				}
 			}
@@ -250,8 +250,8 @@ if (\$_SESSION['user_logged_in'] != true) {
 $return_string .= '<form action="auth.php" method="post">
 <p>You need to log in to edit this database.</p>
 <ul>
-  <li>User: <input type="text" name="user" value="<?= stripslashes($_POST[user]) ?>" /></li>
-  <li>Pass: <input type="password" name="pass" /></li>
+  <li><label>User: <input type="text" name="user" value="<?= stripslashes($_POST[user]) ?>" /></label></li>
+  <li><label>Pass: <input type="password" name="pass" /></label></li>
 </ul>
 <p><input type="submit" value="Login" /></p>
 </form>
@@ -395,7 +395,9 @@ function select_range(\$name, \$selected, \$start, \$finish, \$range) {
 }
 
 function pr(\$arr) {
-	echo '<pre>'; print_r(\$arr); echo '</pre>';
+	echo '<pre>';
+	print_r(\$arr);
+	echo '</pre>';
 }
 ?>";
 		return $return_string;

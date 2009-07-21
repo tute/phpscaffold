@@ -28,11 +28,11 @@ doesn't generate it.
 
 h2. To do list
 
+* Make it aware of date and blob columns.
+* Adjust page titles.
+* Handle more than one table at a time.
+
+* Put project name input (for page titles).
+* Model name gets broken if there is a column called 'name'.
 * Make index.php and auth.php dynamic variables.
 * Modularize forms (print_form in func.php).
-* Put labels in forms.
-* Put project name (title)
-* Make it aware of date and blob columns* Model name gets broken if there is a column called 'name'.
-* Adjust page titles.
-* Handle more than one table at a time
-

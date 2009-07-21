@@ -121,24 +121,7 @@ CREATE TABLE `users` (
 </div>
   <p><textarea name="sql" id="sql" cols="80" rows="10"><? if (isset($_REQUEST['sql'])) echo stripslashes($_REQUEST['sql']); else echo '' ?></textarea></p>
 
-  <p>Include File Name. You create this file. <a href="javascript:showHint('include_hint');">[Example]</a><br /> 
-    <input name="include" type="text" id="include" value="<? if (isset($_REQUEST['include'])) echo stripslashes($_REQUEST['include']); else echo 'functions.php' ?>" /></p>
-
-<div id="include_hint" style="display:none; ">
-<pre style="background: #FFFFDD;padding: 5px; margin: 10px 0; ">
-
-// connect to db
-$link = mysql_connect('localhost', 'mysql_user', 'mysql_password');
-if (!$link) {
-    die('Not connected : ' . mysql_error());
-}
-
-if (! mysql_select_db('foo') ) {
-    die ('Can\'t use foo : ' . mysql_error());
-}
-
-</pre>
-</div>
+  <p>Include File Name <input name="include" type="text" id="include" value="<? if (isset($_REQUEST['include'])) echo stripslashes($_REQUEST['include']); else echo 'functions.php' ?>" /></p>
 
   <? $val = (isset($_REQUEST['id_key']) ? stripslashes($_REQUEST['id_key']) : 'id'); ?>
   <p>Primary Key Name <input name="id_key" type="text" id="id_key" value="<?= $val ?>" /></p>
@@ -184,12 +167,12 @@ if ($show_form) {
 	// Save files in tmp folder
 	$dir = 'tmp/'.$table['name'].'/';
 	if(!is_dir($dir)) mkdir($dir);
-	file_put_contents($dir.$table['list_page'], $s->listtable());
-	file_put_contents($dir.$table['new_page'], $s->newrow());
-	file_put_contents($dir.$table['edit_page'], $s->editrow());
-	file_put_contents($dir.$table['delete_page'], $s->deleterow());
-	file_put_contents($dir.'auth.php', $s->session_auth());
-	file_put_contents($dir.$table['include'], $s->get_functions());
+	file_put_contents($dir.$table['list_page'], html_entity_decode($s->listtable()));
+	file_put_contents($dir.$table['new_page'], html_entity_decode($s->newrow()));
+	file_put_contents($dir.$table['edit_page'], html_entity_decode($s->editrow()));
+	file_put_contents($dir.$table['delete_page'], html_entity_decode($s->deleterow()));
+	file_put_contents($dir.'auth.php', html_entity_decode($s->session_auth()));
+	file_put_contents($dir.$table['include'], html_entity_decode($s->get_functions()));
 }
 ?>
 </div>
