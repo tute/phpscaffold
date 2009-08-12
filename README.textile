@@ -30,8 +30,6 @@ h2. To do list
 
 * Make it aware of date and blob columns.
 * Handle more than one table at a time.
-
-* Put project name input (for page titles).
-* Model name gets broken if there is a column called 'name'.
-* Make index.php and auth.php dynamic variables.
+* Table name and titles get broken if 'name' column exists.
+* Make auth.php dynamic variable.
 * Modularize forms (print_form in func.php).

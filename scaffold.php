@@ -121,7 +121,7 @@ if (isset(\$_POST['submitted'])) {
 		$return_string .= "	\$sql = \"$insert\";
 	mysql_query(\$sql) or die(mysql_error());
 	\$msg = (mysql_affected_rows()) ? 'Added row.' : 'Nothing changed.';
-	header('Location: index.php?msg='.\$msg);
+	header('Location: {$this->table['list_page']}?msg='.\$msg);
 }
 
 print_header('Add {$this->table['name']}');
@@ -129,7 +129,7 @@ print_header('Add {$this->table['name']}');
 		$return_string .= '<form action="" method="post">' . "
 $text
 " . '<p><input type="hidden" value="1" name="submitted" />
-<input type="submit" value="Create" /></p>
+  <input type="submit" value="Create" /></p>
 </form>
 <?
 print_footer();
@@ -185,7 +185,7 @@ print_footer();
 		$return_string .= "	\$sql = \"$insert\";
 	mysql_query(\$sql) or die(mysql_error());
 	\$msg = (mysql_affected_rows()) ? 'Edited row.' : 'Nothing changed.';
-	header('Location: index.php?msg='.\$msg);
+	header('Location: {$this->table['list_page']}?msg='.\$msg);
 }
 
 print_header('Edit {$this->table['name']}');
@@ -215,7 +215,7 @@ print_footer();
 		$return_string .= "
 mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\$_GET[{$this->table['id_key']}]}'\");
 \$msg = (mysql_affected_rows()) ? 'Row deleted.' : 'Nothing deleted.';
-header('Location: index.php?msg='.\$msg);
+header('Location: {$this->table['list_page']}?msg='.\$msg);
 ?>";
 		return $return_string;
 	}
@@ -229,7 +229,7 @@ if (isset(\$_POST['user']) && isset(\$_POST['pass'])) {
 	if ((strlen(\$_POST['user']) > 0) and (strlen(\$_POST['pass']) > 0)
 	  and (\$login[\$_POST['user']] == \$_POST['pass'])) {
 		\$_SESSION['user_logged_in'] = true;
-		header('Location: index.php?msg=Logged in.');
+		header('Location: {$this->table['list_page']}?msg=Logged in.');
 	} else {
 		unset(\$_SESSION['user_logged_in']);
 		\$msg = 'Sorry, wrong user id or password.';
