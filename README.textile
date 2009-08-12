@@ -30,8 +30,10 @@ h2. To do list
 
 * Make it aware of date and blob columns.
 * Handle more than one table at a time.
-* Table name and titles get broken if 'name' column exists.
-* Make auth.php dynamic variable.
+
 * Modularize forms and column array.
 ** Generate cols array at global scope, and use it the four times.
 ** Make print_form($action = {add|edit}) in func.php
+* Use quotes for array offsets (convert constants to strings).
+* Table name and titles get broken if 'name' column exists.
+* Make auth.php dynamic variable.

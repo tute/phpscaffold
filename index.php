@@ -38,7 +38,7 @@ if (isset($_POST['scaffold_info'])) {
 		$table['name'] = find_text($matches[0]);
 		$max = count($data_lines);
 		for ($i = 1; $i < $max; $i++ ) {
-			if ( strpos( trim($data_lines[$i]), '`') === 0) { // this line has a column
+			if (strpos( trim($data_lines[$i]), '`') === 0) { // this line has a column
 				$col = find_text(trim($data_lines[$i]));
 				$bool = (stripos($data_lines[$i], 'INT(1)') ? 1 : 0);
 				$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ? 1 : 0);
@@ -52,8 +52,7 @@ if (isset($_POST['scaffold_info'])) {
 		}
 
 		$show_form = 1;
-	}
-	else {
+	} else {
 		$message .= "Cannot find 'CREATE TABLE `table_name` ( '";
 	}
 }
@@ -80,9 +79,7 @@ if (isset($_POST['scaffold_info'])) {
 <h1>php<span class="color">Scaffold</span></h1>
 
 <div class="submenu">
-<? if ($show_form) { ?>
-<a href="javascript:showNew();">Enter New Table</a> | <a href="javascript:showAll()">Show All</a> | <a href="javascript:hideAll()">Hide All</a>
-<? } ?>
+<? if ($show_form) echo '<a href="javascript:showNew();">Enter New Table</a> | <a href="javascript:showAll()">Show All</a> | <a href="javascript:hideAll()">Hide All</a>'; ?>
 </div>
 
 <div class="container">
@@ -91,7 +88,8 @@ if (isset($_POST['scaffold_info'])) {
 <div <? if ($show_form) echo 'style="display:none"'; ?> id="new_table">
 <form action="" method="post">
 
-<p>Welcome to <span class="style1">phpscaffold.com</span>, where you can quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
+<p>Welcome to <span class="style1">phpscaffold.com</span>, where you can
+quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
 
 <p>Enter an SQL table dump below to generate your pages. <a
 href="javascript:showHint('sql_hint');">[Hint]</a></p>
@@ -136,7 +134,7 @@ CREATE TABLE `users` (
   <p>File Name of Delete <input type="text" name="delete_page" value="<?= $val ?>" id="delete_page" /></p>
 
   <p><input name="scaffold_info" type="hidden" value="1" />
-  <input  type="submit" value="Make My Pages" /></p>
+  <input  type="submit" value="Make Pages" /></p>
 </form>
 </div>
 
