@@ -84,7 +84,7 @@ print_footer();
 					if($value['blob']) {
 						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <textarea name="'.$column.'" cols="40" rows="10"></textarea></label></li>' . "\n");
 					} elseif($value['bool']) {
-						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" /></label></li>');
+						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" /></label></li>' . "\n");
 					} elseif($value['datetime']) {
 						$text .= $this->html_chars('  <li><label>'.$this->title($column).": <?=input_datetime('".strtolower($this->title($column))."', NULL)?></label></li>\n");
 					} else {
@@ -157,7 +157,7 @@ print_footer();
 					if($value['blob']) {
 						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <textarea name=\"$column\" cols=\"40\" rows=\"10\"><?= stripslashes(\$row[$column]) ?></textarea></label></li>\n");
 					} elseif($value['bool']) {
-						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" <?= ($row['.$column.'] == 1 ? \'checked="checked"\' : \'\') ?> /></label></li>');
+						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" <?= ($row['.$column.'] == 1 ? \'checked="checked"\' : \'\') ?> /></label></li>' . "\n");
 					} elseif($value['datetime']) {
 						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <?=input_datetime('".strtolower($this->title($column))."', \$row[$column])?></label></li>\n");
 					} else {

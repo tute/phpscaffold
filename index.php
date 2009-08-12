@@ -97,24 +97,21 @@ if (isset($_POST['scaffold_info'])) {
 href="javascript:showHint('sql_hint');">[Hint]</a></p>
 
 <div id="sql_hint" style="display:none">
-  <div style="background: #FFFFDD;padding: 5px; margin: 10px 0;">
-  Paste your phpMyAdmin export SQL queries for the table your which to generate list, edit, new, and delete pages in the box below. A sample text maybe:
+  <div style="background:#ffd; padding:5px; margin:10px 0">
+  Paste your database dump table for which you wish to generate CRUD files.
+  A sample text maybe:
   <pre style="color:#888">
--- 
--- Table structure for table `users`
--- 
-
 CREATE TABLE `users` (
   `id` int(10) NOT NULL auto_increment,
-  `fn` varchar(30) collate latin1_general_ci NOT NULL,
-  `mn` varchar(30) collate latin1_general_ci NOT NULL,
-  `ln` varchar(30) collate latin1_general_ci NOT NULL,
-  `email` varchar(100) collate latin1_general_ci NOT NULL,
-  `pass` varchar(32) collate latin1_general_ci NOT NULL,
-  `display_name` varchar(30) collate latin1_general_ci NOT NULL,
+  `fn` varchar(30) NOT NULL,
+  `mn` varchar(30) NOT NULL,
+  `ln` varchar(30) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `pass` varchar(32) NOT NULL,
+  `is_admin` int(1) NOT NULL,
   `created_on` datetime NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci AUTO_INCREMENT=5 ;  
+  PRIMARY KEY (`id`)
+);
   </pre>
 </div>
 
