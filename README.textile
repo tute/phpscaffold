@@ -32,4 +32,6 @@ h2. To do list
 * Handle more than one table at a time.
 * Table name and titles get broken if 'name' column exists.
 * Make auth.php dynamic variable.
-* Modularize forms (print_form in func.php).
+* Modularize forms and column array.
+** Generate cols array at global scope, and use it the four times.
+** Make print_form($action = {add|edit}) in func.php
