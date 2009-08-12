@@ -29,7 +29,6 @@ doesn't generate it.
 h2. To do list
 
 * Make it aware of date and blob columns.
-* Adjust page titles.
 * Handle more than one table at a time.
 
 * Put project name input (for page titles).

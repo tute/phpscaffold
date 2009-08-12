@@ -26,8 +26,7 @@ class Scaffold {
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
 
-		$return_string .= "
-print_header('{$this->table['name']}');
+		$return_string .= "\nprint_header('" . ucwords($this->table['name']) . "');
 
 if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
 
@@ -125,7 +124,7 @@ if (isset(\$_POST['submitted'])) {
 	header('Location: index.php?msg='.\$msg);
 }
 
-print_header('{$this->table['name']}');
+print_header('Add {$this->table['name']}');
 ?>\n\n";
 		$return_string .= '<form action="" method="post">' . "
 $text
@@ -189,7 +188,7 @@ print_footer();
 	header('Location: index.php?msg='.\$msg);
 }
 
-print_header('{$this->table['name']}');
+print_header('Edit {$this->table['name']}');
 
 \$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
 ?>\n\n";
@@ -224,27 +223,27 @@ header('Location: index.php?msg='.\$msg);
 	function session_auth() {
 		$return_string = "<?php
 include('functions.php');
-\$msg = '';
+\$msg = \$_GET['msg'];
 
 if (isset(\$_POST['user']) && isset(\$_POST['pass'])) {
 	if ((strlen(\$_POST['user']) > 0) and (strlen(\$_POST['pass']) > 0)
 	  and (\$login[\$_POST['user']] == \$_POST['pass'])) {
 		\$_SESSION['user_logged_in'] = true;
-		\$msg = 'Logged in.';
+		header('Location: index.php?msg=Logged in.');
 	} else {
 		unset(\$_SESSION['user_logged_in']);
-		\$msg = 'Sorry, wrong user id / password';
+		\$msg = 'Sorry, wrong user id or password.';
 	}
 }
 
-print_header('emails');
+print_header('Login - ".ucwords($this->table['name'])."');
 
-if (\$_GET[action] == 'logout') {
+if (\$_GET['action'] == 'logout') {
 	unset(\$_SESSION['user_logged_in']);
 	session_destroy();
 }
 
-echo '<p>'.\$msg.'</p>';
+if (strlen(\$msg) > 0) echo '<p id=\"msg\">'.\$msg.'</p>';
 if (\$_SESSION['user_logged_in'] != true) {
 ?>\n";
 $return_string .= '<form action="auth.php" method="post">
@@ -268,25 +267,28 @@ print_footer();
 	function get_functions() {
 		$return_string = '<?
 /* General configuration */
-// MySQL
+/* MySQL */
 $mysql_host = \'localhost\';
 $mysql_user = \'root\';
 $mysql_pass = \'mysql_pass\';
 $dbname = \'database\';
 
-$Sess_Auth = true;        // Session based or basic HTTP authentication.
-$login = array(           // Allowed users.
-  \'admin\' => \'pass\'
+/* Allowed users  */
+$login = array(
+	\'admin\' => \'pass\'
 );
 
 
 /* phpscaffold code - you may leave this untouched */
 
-if ($Sess_Auth == true) {
+/* Session based or basic HTTP authentication. */
+$sess_auth = true;
+
+if ($sess_auth == true) {
 	session_start();
 	if ((!ereg(\'auth.php\', $_SERVER[\'PHP_SELF\']))
-		and (!isset($_SESSION[\'user_logged_in\'])
-		or $_SESSION[\'user_logged_in\'] !== true)) {
+	  and (!isset($_SESSION[\'user_logged_in\'])
+	  or $_SESSION[\'user_logged_in\'] !== true)) {
 		header(\'Location: auth.php\');
 		exit;
 	}
@@ -300,12 +302,10 @@ if ($Sess_Auth == true) {
 
 	function checkUser() {
 		global $login;
-		$b = false;
 		if($_SERVER[\'PHP_AUTH_USER\']!=\'\' && $_SERVER[\'PHP_AUTH_PW\']!=\'\') {
-			if($login[$_SERVER[\'PHP_AUTH_USER\']] == $_SERVER[\'PHP_AUTH_PW\'])
-				$b = true;
+			return ($login[$_SERVER[\'PHP_AUTH_USER\']] == $_SERVER[\'PHP_AUTH_PW\']);
 		}
-		return $b;
+		return false;
 	}
 
 	if (!isset($_SERVER[\'PHP_AUTH_USER\']) or !checkUser()) {
@@ -328,20 +328,22 @@ function print_header($title) {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title><?=$title?> - Admin</title>
+<title><?= $title ?></title>
 <style type="text/css" media="screen">
 body {
   font: .9em "Trebuchet MS", Trebuchet, Verdana, Sans-Serif;
 }
 #msg {
+  padding: 5px 10px;
+  border: 1px solid #3a3;
+  background: #dfd;
   font-weight: bold;
-  background: #ddd;
 }
 </style>
 </head>
 
 <body>
-<h1><?=$title?> - Admin</h1>
+<h1><?= $title ?></h1>
 <?
 }
 
@@ -351,7 +353,7 @@ function print_footer() {
 	if (!$index and !$login)
 		echo \'<p><a href="'.$this->table['list_page'].'">Back to Listing</a></p>\';
 	if ($_SESSION[\'user_logged_in\'] = true)
-		echo \'<p><a href="auth.php?action=logout">[Logout]</a></p>\';
+		echo \'<p><a href="auth.php?action=logout&amp;msg=You have been logged out.">[Logout]</a></p>\';
 	echo "</body>\n</html>";
 }'."
 
