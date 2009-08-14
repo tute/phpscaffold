@@ -161,12 +161,12 @@ if ($show_form) {
 	// Save files in tmp folder
 	$dir = 'tmp/'.$table['name'].'/';
 	if(!is_dir($dir)) mkdir($dir);
-	file_put_contents($dir.$table['list_page'], html_entity_decode($s->listtable()));
-	file_put_contents($dir.$table['new_page'], html_entity_decode($s->newrow()));
-	file_put_contents($dir.$table['edit_page'], html_entity_decode($s->editrow()));
-	file_put_contents($dir.$table['delete_page'], html_entity_decode($s->deleterow()));
-	file_put_contents($dir.'auth.php', html_entity_decode($s->session_auth()));
-	file_put_contents($dir.$table['include'], html_entity_decode($s->get_functions()));
+	file_put_contents($dir.$table['list_page'], $s->listtable());
+	file_put_contents($dir.$table['new_page'], $s->newrow());
+	file_put_contents($dir.$table['edit_page'], $s->editrow());
+	file_put_contents($dir.$table['delete_page'], $s->deleterow());
+	file_put_contents($dir.'auth.php', $s->session_auth());
+	file_put_contents($dir.$table['include'], $s->get_functions());
 }
 ?>
 </div>

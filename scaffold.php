@@ -82,13 +82,13 @@ print_footer();
 				if($column != $this->table['id_key'] ) {
 					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
 					if($value['blob']) {
-						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <textarea name="'.$column.'" cols="40" rows="10"></textarea></label></li>' . "\n");
+						$text .= '  <li><label>'.$this->title($column).': <textarea name="'.$column.'" cols="40" rows="10"></textarea></label></li>' . "\n";
 					} elseif($value['bool']) {
-						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" /></label></li>' . "\n");
+						$text .= '  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" /></label></li>' . "\n";
 					} elseif($value['date']) {
-						$text .= $this->html_chars('  <li><label>'.$this->title($column).": <?= input_date('".$column."', NULL) ?></label></li>\n");
+						$text .= '  <li><label>'.$this->title($column).": <?= input_date('".$column."', NULL) ?></label></li>\n";
 					} elseif($value['datetime']) {
-						$text .= $this->html_chars('  <li><label>'.$this->title($column).": <?= input_datetime('".$column."', NULL) ?></label></li>\n");
+						$text .= '  <li><label>'.$this->title($column).": <?= input_datetime('".$column."', NULL) ?></label></li>\n";
 					} else {
 						$text .= '  <li><label>' . $this->title($column) . ': <input type="text" name="'.$column.'" /></label></li>' . "\n";
 					}
@@ -157,13 +157,13 @@ print_footer();
 				if($column != $this->table['id_key'] ) {
 					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
 					if($value['blob']) {
-						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <textarea name=\"$column\" cols=\"40\" rows=\"10\"><?= stripslashes(\$row[$column]) ?></textarea></label></li>\n");
+						$text .= '  <li><label>' . $this->title($column) . ": <textarea name=\"$column\" cols=\"40\" rows=\"10\"><?= stripslashes(\$row[$column]) ?></textarea></label></li>\n";
 					} elseif($value['bool']) {
-						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" <?= ($row['.$column.'] == 1 ? \'checked="checked"\' : \'\') ?> /></label></li>' . "\n");
+						$text .= '  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" <?= ($row['.$column.'] == 1 ? \'checked="checked"\' : \'\') ?> /></label></li>' . "\n";
 					} elseif($value['date']) {
-						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <?= input_date('".$column."', \$row[$column]) ?></label></li>\n");
+						$text .= '  <li><label>' . $this->title($column) . ": <?= input_date('".$column."', \$row[$column]) ?></label></li>\n";
 					} elseif($value['datetime']) {
-						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <?= input_datetime('".$column."', \$row[$column]) ?></label></li>\n");
+						$text .= '  <li><label>' . $this->title($column) . ": <?= input_datetime('".$column."', \$row[$column]) ?></label></li>\n";
 					} else {
 						$text .= '  <li><label>' . $this->title($column) . ': <input type="text" name="'.$column.'" value="<?= stripslashes($row['.$column.']) ?>" /></label></li>' . "\n";
 					}
@@ -429,11 +429,7 @@ function pr(\$arr) {
 	}
 
 	function title($name) {
-		return ucwords(str_replace("_", " ", trim($name)));
-	}
-
-	function html_chars($var) {
-		return ($this->download) ? $var : htmlspecialchars($var);
+		return ucwords(str_replace('_', ' ', trim($name)));
 	}
 }
 
