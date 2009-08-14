@@ -17,6 +17,11 @@ class Scaffold {
 
 	function Scaffold($table) {
 		$this->table = $table;
+		$columns = array();
+		foreach($this->table as $key => $value)
+			if (is_array($value))
+				$columns[] = array('tipo' => $value, 'nombre' => $key);
+		$this->columns = $columns;
 	}
 
 	function listtable() {
@@ -32,12 +37,8 @@ if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
 
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
-		foreach($this->table AS $key => $value) {
-			if (is_array($value)) {
-				$column = $key;
-				$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
-				$return_string .= "    <th>". $this->title($column) ."</th>\n";
-			}
+		foreach($this->columns as $v) {
+			$return_string .= '    <th>'. $this->title($v['nombre']) ."</th>\n";
 		}
 		$return_string .= "  </tr>';
 
@@ -45,13 +46,13 @@ echo '<table>\n";
 while(\$row = mysql_fetch_array(\$r)) {\n";
 		$return_string .= "	echo '  <tr>\n";
 
-		foreach($column_array as $value) {
-			if($value['tipo']['blob'])
-				$val = "nl2br(\$row['".$value['nombre']."'])";
-			elseif($value['tipo']['date'] or $value['tipo']['datetime'])
-				$val = "humanize(\$row['".$value['nombre']."'])";
+		foreach($this->columns as $v) {
+			if($v['tipo']['blob'])
+				$val = "nl2br(\$row['".$v['nombre']."'])";
+			elseif($v['tipo']['date'] or $v['tipo']['datetime'])
+				$val = "humanize(\$row['".$v['nombre']."'])";
 			else
-				$val = "\$row['".$value['nombre']."']";
+				$val = "\$row['".$v['nombre']."']";
 
 			$return_string .= "    <td>' . $val . '</td>\n";
 		}
@@ -74,47 +75,24 @@ print_footer();
 		if ($this->table['include'] != '')
 			$return_string .= "include('{$this->table['include']}');\n";
 
-		$column_array = array();
-		$text = "<ul>\n";
-		foreach($this->table as $key => $value) {
-			if (is_array($value)) {
-				$column = $key;
-				if($column != $this->table['id_key'] ) {
-					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
-					if($value['blob']) {
-						$text .= '  <li><label>'.$this->title($column).': <textarea name="'.$column.'" cols="40" rows="10"></textarea></label></li>' . "\n";
-					} elseif($value['bool']) {
-						$text .= '  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" /></label></li>' . "\n";
-					} elseif($value['date']) {
-						$text .= '  <li><label>'.$this->title($column).": <?= input_date('".$column."', NULL) ?></label></li>\n";
-					} elseif($value['datetime']) {
-						$text .= '  <li><label>'.$this->title($column).": <?= input_datetime('".$column."', NULL) ?></label></li>\n";
-					} else {
-						$text .= '  <li><label>' . $this->title($column) . ': <input type="text" name="'.$column.'" /></label></li>' . "\n";
-					}
-				}
-			}
-		}
-		$text .= '</ul>';
-
 		$return_string .= "
 if (isset(\$_POST['submitted'])) {
 	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
 		$insert = "INSERT INTO `{$this->table['name']}` (";
 		$counter = 0;
-		foreach($column_array as $value) {
-			$insert .= "`$value[nombre]`" ;
-			if ($counter < count($column_array) - 1)
+		foreach($this->columns as $v) {
+			$insert .= "`$v[nombre]`" ;
+			if ($counter < count($this->columns) - 1)
 				$insert .= ", ";
 			$counter++;
 		}
 		$insert .= ') VALUES (';
 
 		$counter = 0;
-		foreach($column_array as $value) {
-			$val = parse($value[nombre], $value[tipo]);
+		foreach($this->columns as $v) {
+			$val = parse($v['nombre'], $v['tipo']);
 			$insert .= "'$val'" ;
-			if ($counter < count($column_array) - 1 )
+			if ($counter < count($this->columns) - 1 )
 				$insert .= ", ";
 			$counter++;
 		}
@@ -128,9 +106,13 @@ if (isset(\$_POST['submitted'])) {
 
 print_header('Add {$this->table['name']}');
 ?>\n\n";
-		$return_string .= '<form action="" method="post">' . "
-$text
-" . '<p><input type="hidden" value="1" name="submitted" />
+		$return_string .= '<form action="" method="post">'."\n<ul>\n";
+		foreach ($this->columns as $col) {
+			$return_string .= $this->form_input($col);
+		}
+		$return_string .= '</ul>
+
+<p><input type="hidden" value="1" name="submitted" />
   <input type="submit" value="Create" /></p>
 </form>
 <?
@@ -151,24 +133,8 @@ print_footer();
 
 		$column_array = array();
 		$text = "<ul>\n";
-		foreach($this->table as $key => $value) {
-			if (is_array($value)) {
-				$column = $key;
-				if($column != $this->table['id_key'] ) {
-					$column_array[] = array( 'tipo' => $value, 'nombre' => $key );
-					if($value['blob']) {
-						$text .= '  <li><label>' . $this->title($column) . ": <textarea name=\"$column\" cols=\"40\" rows=\"10\"><?= stripslashes(\$row[$column]) ?></textarea></label></li>\n";
-					} elseif($value['bool']) {
-						$text .= '  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" <?= ($row['.$column.'] == 1 ? \'checked="checked"\' : \'\') ?> /></label></li>' . "\n";
-					} elseif($value['date']) {
-						$text .= '  <li><label>' . $this->title($column) . ": <?= input_date('".$column."', \$row[$column]) ?></label></li>\n";
-					} elseif($value['datetime']) {
-						$text .= '  <li><label>' . $this->title($column) . ": <?= input_datetime('".$column."', \$row[$column]) ?></label></li>\n";
-					} else {
-						$text .= '  <li><label>' . $this->title($column) . ': <input type="text" name="'.$column.'" value="<?= stripslashes($row['.$column.']) ?>" /></label></li>' . "\n";
-					}
-				}
-			}
+		foreach($this->columns as $col) {
+			$text .= $this->form_input($col);
 		}
 		$text .= '</ul>';
 
@@ -176,13 +142,15 @@ print_footer();
 	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
 		$insert = "UPDATE `{$this->table['name']}` SET ";
 		$counter = 0;
-		foreach ($column_array as $value) {
-			$field = $value['nombre'];
-			$val = parse($field, $value['tipo']);
-			$insert .= " `$field` = '$val'" ;
-			if ($counter < count($column_array) - 1 )
-				$insert .= ", ";
-			$counter++;
+		foreach ($this->columns as $v) {
+			if ($v['nombre'] != $this->table['id_key']) {
+				$field = $v['nombre'];
+				$val = parse($field, $v['tipo']);
+				$insert .= " `$field` = '$val'" ;
+				if ($counter < count($this->columns) - 2)
+					$insert .= ", ";
+				$counter++;
+			}
 		}
 		$insert .= "  WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' ";
 
@@ -319,9 +287,9 @@ if ($sess_auth == true) {
 
 
 // DB connect
-$link = mysql_connect($mysql_host, $mysql_user, $mysql_pass);
+$link = @mysql_connect($mysql_host, $mysql_user, $mysql_pass);
 if (!$link)
-	die(\'Not connected : \' . mysql_error());
+	die(\'Not connected: \' . mysql_error());
 if (!mysql_select_db($dbname))
 	die ("Can\'t use $dbname: " . mysql_error());
 
@@ -428,6 +396,24 @@ function pr(\$arr) {
 		return $return_string;
 	}
 
+	function form_input($col) {
+		if ($col['nombre'] != $this->table['id_key']) {
+			$text .= '  <li><label>' . $this->title($col['nombre']) . ': ';
+			if ($col['tipo']['bool'])
+				$text .= '<input type="checkbox" name="'.$col['nombre'].'" value="1" <?= ($row[\''.$col['nombre'].'\'] == 1 ? \'checked="checked"\' : \'\') ?> />';
+			elseif ($col['tipo']['date'])
+				$text .= '<?= input_date(\''.$col['nombre'].'\', $row[\''.$col['nombre'].'\']) ?>';
+			elseif ($col['tipo']['datetime'])
+				$text .= '<?= input_datetime(\''.$col['nombre'].'\', $row[\''.$col['nombre'].'\']) ?>';
+			elseif ($col['tipo']['blob'])
+				$text .= '<textarea name="'.$col['nombre'].'" cols="40" rows="10"><?= stripslashes($row[\''.$col['nombre'].'\']) ?></textarea>';
+			else
+				$text .= '<input type="text" name="'.$col['nombre'].'" value="<?= stripslashes($row[\''.$col['nombre'].'\']) ?>" />';
+			$text .= "</label></li>\n";
+			return $text;
+		}
+	}
+
 	function title($name) {
 		return ucwords(str_replace('_', ' ', trim($name)));
 	}
@@ -451,5 +437,11 @@ function parse($field, $type) {
 		$val = "\$_POST[$field]";
 	}
 	return $val;
+}
+
+function pr($arr) {
+	echo '<pre>';
+	print_r($arr);
+	echo '</pre>';
 }
 ?>

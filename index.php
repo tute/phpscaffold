@@ -44,12 +44,12 @@ if (isset($_POST['scaffold_info'])) {
 				$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ? 1 : 0);
 				$date = (stripos($data_lines[$i], 'DATE ') ? 1 : 0);
 				$datetime = (stripos($data_lines[$i], 'DATETIME') ? 1 : 0);
-				eval( "\$table['$col'] = array(
+				$table[$col] = array(
 					'bool' => $bool,
 					'blob' => $blob,
 					'date' => $date,
 					'datetime' => $datetime,
-				);");
+				);
 			}
 		}
 		$show_form = 1;
@@ -84,7 +84,7 @@ if (isset($_POST['scaffold_info'])) {
 </div>
 
 <div class="container">
-<? if ($message != '') echo "<div class=message>$message</div>"; ?>
+<? if ($message != '') echo "<div class=\"message\">$message</div>"; ?>
 
 <div <? if ($show_form) echo 'style="display:none"'; ?> id="new_table">
 <form action="" method="post">
@@ -95,45 +95,44 @@ quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
 <p>Enter an SQL table dump below to generate your pages. <a
 href="javascript:showHint('sql_hint');">[Hint]</a></p>
 
-<div id="sql_hint" style="display:none">
-  <div style="background:#ffd; padding:5px; margin:10px 0">
-  Paste your database dump table for which you wish to generate CRUD files.
-  A sample text maybe:
-  <pre style="color:#888">
+<div id="sql_hint" style="display:none; background:#ffd; padding:5px; margin:10px 0">
+Paste your database dump table for which you wish to generate CRUD files.
+A sample text maybe:
+<pre>
 CREATE TABLE `users_test` (
   `id` int(10) NOT NULL auto_increment,
   `email` varchar(100) NOT NULL,
   `pass` varchar(32) NOT NULL,
+  `curriculum` text NOT NULL,
   `is_admin` int(1) NOT NULL,
   `last_login` datetime NOT NULL,
   `created` date NOT NULL,
   PRIMARY KEY (`id`)
 );
-  </pre>
+</pre>
 </div>
 
-</div>
-  <p><textarea name="sql" id="sql" cols="80" rows="10"><? if (isset($_REQUEST['sql'])) echo stripslashes($_REQUEST['sql']); else echo '' ?></textarea></p>
+<p><textarea name="sql" id="sql" cols="55" rows="10"><?= (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
 
-  <p>Include File Name <input name="include" type="text" id="include" value="<? if (isset($_REQUEST['include'])) echo stripslashes($_REQUEST['include']); else echo 'functions.php' ?>" /></p>
+<p>Include File Name <input name="include" type="text" id="include" value="<? if (isset($_REQUEST['include'])) echo stripslashes($_REQUEST['include']); else echo 'functions.php' ?>" /></p>
 
-  <? $val = (isset($_REQUEST['id_key']) ? stripslashes($_REQUEST['id_key']) : 'id'); ?>
-  <p>Primary Key Name <input name="id_key" type="text" id="id_key" value="<?= $val ?>" /></p>
+<? $val = (isset($_REQUEST['id_key']) ? stripslashes($_REQUEST['id_key']) : 'id'); ?>
+<p>Primary Key Name <input name="id_key" type="text" id="id_key" value="<?= $val ?>" /></p>
 
-  <? $val = (isset($_REQUEST['list_page']) ? stripslashes($_REQUEST['list_page']) : 'index.php'); ?>
-  <p>File Name of List <input type="text" name="list_page" value="<?= $val ?>" id="list_page" /></p>
+<? $val = (isset($_REQUEST['list_page']) ? stripslashes($_REQUEST['list_page']) : 'index.php'); ?>
+<p>List File Name <input type="text" name="list_page" value="<?= $val ?>" id="list_page" /></p>
 
-  <? $val = (isset($_REQUEST['new_page']) ? stripslashes($_REQUEST['new_page']) : 'new.php'); ?>
-  <p>File Name of New <input type="text" name="new_page" value="<?= $val ?>" id="new_page" /></p>
+<? $val = (isset($_REQUEST['new_page']) ? stripslashes($_REQUEST['new_page']) : 'new.php'); ?>
+<p>New File Name <input type="text" name="new_page" value="<?= $val ?>" id="new_page" /></p>
 
-  <? $val = (isset($_REQUEST['edit_page']) ? stripslashes($_REQUEST['edit_page']) : 'edit.php'); ?>
-  <p>File Name of Edit <input type="text" name="edit_page" value="<?= $val ?>" id="edit_page" /></p>
+<? $val = (isset($_REQUEST['edit_page']) ? stripslashes($_REQUEST['edit_page']) : 'edit.php'); ?>
+<p>Edit File Name <input type="text" name="edit_page" value="<?= $val ?>" id="edit_page" /></p>
 
-  <? $val = (isset($_REQUEST['delete_page']) ? stripslashes($_REQUEST['delete_page']) : 'delete.php'); ?>
-  <p>File Name of Delete <input type="text" name="delete_page" value="<?= $val ?>" id="delete_page" /></p>
+<? $val = (isset($_REQUEST['delete_page']) ? stripslashes($_REQUEST['delete_page']) : 'delete.php'); ?>
+<p>Delete File Name <input type="text" name="delete_page" value="<?= $val ?>" id="delete_page" /></p>
 
-  <p><input name="scaffold_info" type="hidden" value="1" />
-  <input  type="submit" value="Make Pages" /></p>
+<p><input name="scaffold_info" type="hidden" value="1" />
+  <input type="submit" value="Make pages" /></p>
 </form>
 </div>
 
@@ -151,12 +150,12 @@ if ($show_form) {
 	}
 	$s = new Scaffold($table);
 	echo '<p>Files saved in tmp/ directory.</p>';
-	echo files_textarea_head('list') . $s->listtable() . "\n</textarea>";
-	echo files_textarea_head('new') . $s->newrow() . "\n</textarea>";
-	echo files_textarea_head('edit') . $s->editrow() . "\n</textarea>";
-	echo files_textarea_head('delete') . $s->deleterow() . "\n</textarea>";
-	echo files_textarea_head('authentication') . $s->session_auth() . "\n</textarea>";
-	echo files_textarea_head('functions') . $s->get_functions() . "\n</textarea>";
+	echo files_textarea_head('list') . htmlspecialchars($s->listtable()) . "\n</textarea>";
+	echo files_textarea_head('new') . htmlspecialchars($s->newrow()) . "\n</textarea>";
+	echo files_textarea_head('edit') . htmlspecialchars($s->editrow()) . "\n</textarea>";
+	echo files_textarea_head('delete') . htmlspecialchars($s->deleterow()) . "\n</textarea>";
+	echo files_textarea_head('authentication') . htmlspecialchars($s->session_auth()) . "\n</textarea>";
+	echo files_textarea_head('functions') . htmlspecialchars($s->get_functions()) . "\n</textarea>";
 
 	// Save files in tmp folder
 	$dir = 'tmp/'.$table['name'].'/';
