@@ -5,7 +5,8 @@ table dump and some file names as input from a browser session, and cooks
 XHTML pages for editing the model.
 
 It features basic HTTP or Session based authentication; and the generated
-forms responds to column types text, datetime, (var)char and bool (int(1)).
+forms responds to column types text, date, datetime, (var)char and
+bool (int(1)).
 
 I've started it from the public copy at phpscaffold.com, to be able to use it
 in any new model I need, without having to tweak by hand automatable tasks
@@ -28,7 +29,7 @@ doesn't generate it.
 
 h2. To do list
 
-* Make it aware of date and blob columns.
+* Make it aware of blob columns.
 * Handle more than one table at a time.
 
 * Modularize forms and column array.

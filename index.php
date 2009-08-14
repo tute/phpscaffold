@@ -34,23 +34,24 @@ if (isset($_POST['scaffold_info'])) {
 	if ($table['id_key'] == '') $table['id_key'] = 'id';
 	
 	// get first table name
-	if ( eregi('CREATE TABLE `(.)+` \(', $data, $matches) ) {
+	if (eregi('CREATE TABLE `(.)+` \(', $data, $matches)) {
 		$table['name'] = find_text($matches[0]);
 		$max = count($data_lines);
-		for ($i = 1; $i < $max; $i++ ) {
-			if (strpos( trim($data_lines[$i]), '`') === 0) { // this line has a column
+		for ($i = 1; $i < $max; $i++) {
+			if (strpos(trim($data_lines[$i]), '`') === 0) { // this line has a column
 				$col = find_text(trim($data_lines[$i]));
 				$bool = (stripos($data_lines[$i], 'INT(1)') ? 1 : 0);
 				$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ? 1 : 0);
+				$date = (stripos($data_lines[$i], 'DATE ') ? 1 : 0);
 				$datetime = (stripos($data_lines[$i], 'DATETIME') ? 1 : 0);
 				eval( "\$table['$col'] = array(
 					'bool' => $bool,
 					'blob' => $blob,
+					'date' => $date,
 					'datetime' => $datetime,
 				);");
 			}
 		}
-
 		$show_form = 1;
 	} else {
 		$message .= "Cannot find 'CREATE TABLE `table_name` ( '";
@@ -99,15 +100,13 @@ href="javascript:showHint('sql_hint');">[Hint]</a></p>
   Paste your database dump table for which you wish to generate CRUD files.
   A sample text maybe:
   <pre style="color:#888">
-CREATE TABLE `users` (
+CREATE TABLE `users_test` (
   `id` int(10) NOT NULL auto_increment,
-  `fn` varchar(30) NOT NULL,
-  `mn` varchar(30) NOT NULL,
-  `ln` varchar(30) NOT NULL,
   `email` varchar(100) NOT NULL,
   `pass` varchar(32) NOT NULL,
   `is_admin` int(1) NOT NULL,
-  `created_on` datetime NOT NULL,
+  `last_login` datetime NOT NULL,
+  `created` date NOT NULL,
   PRIMARY KEY (`id`)
 );
   </pre>

@@ -44,14 +44,14 @@ echo '<table>\n";
 \$r = mysql_query(\"SELECT * FROM `{$this->table['name']}`\") or trigger_error(mysql_error());
 while(\$row = mysql_fetch_array(\$r)) {\n";
 		$return_string .= "	echo '  <tr>\n";
-		
+
 		foreach($column_array as $value) {
-			if($value[tipo][blob])
-				$val = 'nl2br($row['.$value[nombre].'])';
-			elseif($value[tipo][datetime])
-				$val = 'humanize($row['.$value[nombre].'])';
+			if($value['tipo']['blob'])
+				$val = "nl2br(\$row['".$value['nombre']."'])";
+			elseif($value['tipo']['date'] or $value['tipo']['datetime'])
+				$val = "humanize(\$row['".$value['nombre']."'])";
 			else
-				$val = '$row['.$value[nombre].']';
+				$val = "\$row['".$value['nombre']."']";
 
 			$return_string .= "    <td>' . $val . '</td>\n";
 		}
@@ -85,8 +85,10 @@ print_footer();
 						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <textarea name="'.$column.'" cols="40" rows="10"></textarea></label></li>' . "\n");
 					} elseif($value['bool']) {
 						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" /></label></li>' . "\n");
+					} elseif($value['date']) {
+						$text .= $this->html_chars('  <li><label>'.$this->title($column).": <?= input_date('".$column."', NULL) ?></label></li>\n");
 					} elseif($value['datetime']) {
-						$text .= $this->html_chars('  <li><label>'.$this->title($column).": <?=input_datetime('".strtolower($this->title($column))."', NULL)?></label></li>\n");
+						$text .= $this->html_chars('  <li><label>'.$this->title($column).": <?= input_datetime('".$column."', NULL) ?></label></li>\n");
 					} else {
 						$text .= '  <li><label>' . $this->title($column) . ': <input type="text" name="'.$column.'" /></label></li>' . "\n";
 					}
@@ -120,7 +122,7 @@ if (isset(\$_POST['submitted'])) {
 
 		$return_string .= "	\$sql = \"$insert\";
 	mysql_query(\$sql) or die(mysql_error());
-	\$msg = (mysql_affected_rows()) ? 'Added row.' : 'Nothing changed.';
+	\$msg = (mysql_affected_rows() ? 'Added row.' : 'Nothing changed.');
 	header('Location: {$this->table['list_page']}?msg='.\$msg);
 }
 
@@ -158,8 +160,10 @@ print_footer();
 						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <textarea name=\"$column\" cols=\"40\" rows=\"10\"><?= stripslashes(\$row[$column]) ?></textarea></label></li>\n");
 					} elseif($value['bool']) {
 						$text .= $this->html_chars('  <li><label>'.$this->title($column).': <input type="checkbox" name="'.$column.'" value="1" <?= ($row['.$column.'] == 1 ? \'checked="checked"\' : \'\') ?> /></label></li>' . "\n");
+					} elseif($value['date']) {
+						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <?= input_date('".$column."', \$row[$column]) ?></label></li>\n");
 					} elseif($value['datetime']) {
-						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <?=input_datetime('".strtolower($this->title($column))."', \$row[$column])?></label></li>\n");
+						$text .= $this->html_chars('  <li><label>' . $this->title($column) . ": <?= input_datetime('".$column."', \$row[$column]) ?></label></li>\n");
 					} else {
 						$text .= '  <li><label>' . $this->title($column) . ': <input type="text" name="'.$column.'" value="<?= stripslashes($row['.$column.']) ?>" /></label></li>' . "\n";
 					}
@@ -172,10 +176,10 @@ print_footer();
 	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
 		$insert = "UPDATE `{$this->table['name']}` SET ";
 		$counter = 0;
-		foreach($column_array as $value) {
-			$field = $value[nombre];
-			$val = parse($field, $value[tipo]);
-			$insert .= " `$field` =  '$val'" ;
+		foreach ($column_array as $value) {
+			$field = $value['nombre'];
+			$val = parse($field, $value['tipo']);
+			$insert .= " `$field` = '$val'" ;
 			if ($counter < count($column_array) - 1 )
 				$insert .= ", ";
 			$counter++;
@@ -214,7 +218,7 @@ print_footer();
 
 		$return_string .= "
 mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\$_GET[{$this->table['id_key']}]}'\");
-\$msg = (mysql_affected_rows()) ? 'Row deleted.' : 'Nothing deleted.';
+\$msg = (mysql_affected_rows() ? 'Row deleted.' : 'Nothing deleted.');
 header('Location: {$this->table['list_page']}?msg='.\$msg);
 ?>";
 		return $return_string;
@@ -357,6 +361,22 @@ function print_footer() {
 	echo "</body>\n</html>";
 }'."
 
+function input_date(\$field, \$value) {
+	\$day  = \$field . '_day';
+	\$mth  = \$field . '_mth';
+	\$year = \$field . '_year';
+
+	\$sel_day  = (substr(\$value,8,2) ? substr(\$value,8,2) : date(d));
+	\$sel_mth  = (substr(\$value,5,2) ? substr(\$value,5,2) : date(m));
+	\$sel_year = (substr(\$value,0,4) ? substr(\$value,0,4) : date(Y));
+
+	\$ret = select_range(\$day, \$sel_day, 1, 31, 1) . '/';
+	\$ret .= select_range(\$mth, \$sel_mth, 1, 12, 1) . '/';
+	\$ret .= select_range(\$year, \$sel_year, 2009, 2020, 1);
+
+	return \$ret;
+}
+
 function input_datetime(\$field, \$value) {
 	\$seg  = \$field . '_seg';
 	\$min  = \$field . '_min';
@@ -382,8 +402,11 @@ function input_datetime(\$field, \$value) {
 	return \$ret;
 }
 
-function humanize(\$mysql_datetime) {
-	return date('d/m/Y @ h:i:s', strtotime(\$mysql_datetime));
+function humanize(\$date) {
+	if (strlen(\$date) == 10)
+		return date('d/m/Y', strtotime(\$date));
+	else
+		return date('d/m/Y @ h:i:s', strtotime(\$date));
 }
 
 function select_range(\$name, \$selected, \$start, \$finish, \$range) {
@@ -415,7 +438,12 @@ function pr(\$arr) {
 }
 
 function parse($field, $type) {
-	if($type[datetime]) {
+	if ($type['date']) {
+		$day  = $field . '_day';
+		$mth  = $field . '_mth';
+		$year = $field . '_year';
+		$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day]";
+	} elseif ($type['datetime']) {
 		$seg  = $field . '_seg';
 		$min  = $field . '_min';
 		$hour = $field . '_hour';
@@ -423,8 +451,9 @@ function parse($field, $type) {
 		$mth  = $field . '_mth';
 		$year = $field . '_year';
 		$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]";
-	} else
+	} else {
 		$val = "\$_POST[$field]";
+	}
 	return $val;
 }
 ?>
