@@ -21,6 +21,7 @@ h2. Installation and usage
   you want.
 # Adjust MySQL configuration and login (by default it's 'admin', 'pass') from
   first lines of @functions.php@.
+# Start using it!
 
 p{font-size:80%}. The table must be up and running; *phpScaffold* doesn't
 change anything in the database.
@@ -28,10 +29,12 @@ change anything in the database.
 
 h2. To do list
 
-* Make it aware of blob columns.
 * Handle more than one table at a time.
-* Remove HTML values from add form.
 ** Make it aware of table relationships?
-* Use quotes for array offsets (convert constants to strings).
+* Make it aware of blob columns.
+* Remove HTML values from add form.
 * Table name and titles get broken if 'name' column exists.
-* Make auth.php dynamic variable.
+
+h2. Related projects
+
+* http://www.buildmyblog.com/2007/10/03/php-scaffold-generator/
