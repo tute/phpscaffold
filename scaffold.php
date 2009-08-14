@@ -3,24 +3,22 @@ function find_text($text, $delimit_start = '`', $delimit_end = '`') {
 	$start = strpos($text, $delimit_start);
 	if ($start === false) return false;
 
-	$end = strpos( substr($text, $start + 1), $delimit_end);
+	$end = strpos(substr($text, $start + 1), $delimit_end);
 	if ($end === false) return false;
 
-	return substr( $text, $start + 1, $end);
+	return substr($text, $start + 1, $end);
 }
 
 
 class Scaffold {
-
 	public $table = array();
-	public $download = false;
 
 	function Scaffold($table) {
-		$this->table = $table;
 		$columns = array();
-		foreach($this->table as $key => $value)
+		foreach($table as $key => $value)
 			if (is_array($value))
 				$columns[] = array('tipo' => $value, 'nombre' => $key);
+		$this->table = $table;
 		$this->columns = $columns;
 	}
 
@@ -338,9 +336,9 @@ function input_date(\$field, \$value) {
 	\$sel_mth  = (substr(\$value,5,2) ? substr(\$value,5,2) : date(m));
 	\$sel_year = (substr(\$value,0,4) ? substr(\$value,0,4) : date(Y));
 
-	\$ret = select_range(\$day, \$sel_day, 1, 31, 1) . '/';
-	\$ret .= select_range(\$mth, \$sel_mth, 1, 12, 1) . '/';
-	\$ret .= select_range(\$year, \$sel_year, 2009, 2020, 1);
+	\$ret = select_range(\$day, \$sel_day, 1, 31) . '/';
+	\$ret .= select_range(\$mth, \$sel_mth, 1, 12) . '/';
+	\$ret .= select_range(\$year, \$sel_year, 2009, 2020);
 
 	return \$ret;
 }
@@ -349,42 +347,32 @@ function input_datetime(\$field, \$value) {
 	\$seg  = \$field . '_seg';
 	\$min  = \$field . '_min';
 	\$hour = \$field . '_hour';
-	\$day  = \$field . '_day';
-	\$mth  = \$field . '_mth';
-	\$year = \$field . '_year';
 
 	\$sel_seg  = (substr(\$value,17,2) ? substr(\$value,17,2) : date(s));
 	\$sel_min  = (substr(\$value,14,2) ? substr(\$value,14,2) : date(i));
 	\$sel_hour = (substr(\$value,11,2) ? substr(\$value,11,2) : date(h));
-	\$sel_day  = (substr(\$value,8,2) ? substr(\$value,8,2) : date(d));
-	\$sel_mth  = (substr(\$value,5,2) ? substr(\$value,5,2) : date(m));
-	\$sel_year = (substr(\$value,0,4) ? substr(\$value,0,4) : date(Y));
 
-	\$ret = select_range(\$hour, \$sel_hour, 0, 23, 1) . ':';
+	\$ret = input_date(\$field, \$value) . ' @ ';
+	\$ret .= select_range(\$hour, \$sel_hour, 0, 23) . ':';
 	\$ret .= select_range(\$min, \$sel_min, 0, 59, 5) . ':';
-	\$ret .= select_range(\$seg, \$sel_seg, 0, 59, 1) . ' @ ';
-	\$ret .= select_range(\$day, \$sel_day, 1, 31, 1) . '/';
-	\$ret .= select_range(\$mth, \$sel_mth, 1, 12, 1) . '/';
-	\$ret .= select_range(\$year, \$sel_year, 2009, 2020, 1);
+	\$ret .= select_range(\$seg, \$sel_seg, 0, 59, 5);
 
 	return \$ret;
 }
 
-function humanize(\$date) {
-	if (strlen(\$date) == 10)
-		return date('d/m/Y', strtotime(\$date));
-	else
-		return date('d/m/Y @ h:i:s', strtotime(\$date));
-}
-
-function select_range(\$name, \$selected, \$start, \$finish, \$range) {
+function select_range(\$name, \$selected, \$start, \$finish, \$range = 1) {
 	\$ret = '<select name=\"'.\$name.'\">';
 	for(\$i=\$start; \$i <= \$finish; \$i += \$range) {
-		(\$selected == \$i) ? \$sel = ' selected=\"selected\"' : \$sel = '';
+		\$sel = (\$selected == \$i ? ' selected=\"selected\"' : '');
 		\$ret .= \"<option\$sel>\$i</option>\\n\";
 	}
 	\$ret .= '</select>';
 	return \$ret;
+}
+
+function humanize(\$date) {
+	\$pattern = (strlen(\$date) == 10 ? 'd/m/Y' : 'd/m/Y @ h:i:s');
+	return date(\$pattern, strtotime(\$date));
 }
 
 function pr(\$arr) {
