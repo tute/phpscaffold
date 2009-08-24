@@ -32,6 +32,18 @@ class Scaffold {
 		$return_string .= "\nprint_header('" . ucwords($this->table['name']) . "');
 
 if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
+?>
+".$this->build_form($this->columns, 'Search', 'get') . "
+<?
+\$lim = 100;
+\$cond = '1=1';
+";
+foreach($this->columns as $col) {
+	$return_string .= "if (isset(\$_GET['{$col['nombre']}']) and strlen(\$_GET['{$col['nombre']}']) > 0)
+	\$cond .= \" AND {$col['nombre']} = '{\$_GET['{$col['nombre']}']}'\";\n";
+}
+
+$return_string .= "\n\$sql = \"SELECT * FROM `{$this->table['name']}` WHERE \$cond LIMIT \$lim\";
 
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
@@ -40,7 +52,7 @@ echo '<table>\n";
 		}
 		$return_string .= "  </tr>';
 
-\$r = mysql_query(\"SELECT * FROM `{$this->table['name']}`\") or trigger_error(mysql_error());
+\$r = mysql_query(\$sql) or trigger_error(mysql_error());
 while(\$row = mysql_fetch_array(\$r)) {\n";
 		$return_string .= "	echo '  <tr>\n";
 
@@ -103,16 +115,8 @@ if (isset(\$_POST['submitted'])) {
 }
 
 print_header('Add {$this->table['name']}');
-?>\n\n";
-		$return_string .= '<form action="" method="post">'."\n<ul>\n";
-		foreach ($this->columns as $col) {
-			$return_string .= $this->form_input($col);
-		}
-		$return_string .= '</ul>
-
-<p><input type="hidden" value="1" name="submitted" />
-  <input type="submit" value="Create" /></p>
-</form>
+?>\n";
+		$return_string .= $this->build_form($this->columns, 'Create') . '
 <?
 print_footer();
 ?>';
@@ -130,11 +134,6 @@ print_footer();
 	\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];\n\n";
 
 		$column_array = array();
-		$text = "<ul>\n";
-		foreach($this->columns as $col) {
-			$text .= $this->form_input($col);
-		}
-		$text .= '</ul>';
 
 		$return_string .= "if (isset(\$_POST['submitted'])) {
 	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
@@ -161,13 +160,9 @@ print_footer();
 print_header('Edit {$this->table['name']}');
 
 \$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
-?>\n\n";
+?>\n";
 
-$return_string .= '<form action="" method="post">
-'.$text.'
-<p><input type="hidden" value="1" name="submitted" />
-  <input type="submit" value="Edit" /></p>
-</form>
+$return_string .= $this->build_form($this->columns, 'Edit') . '
 
 <?
 }
@@ -382,6 +377,17 @@ function pr(\$arr) {
 }
 ?>";
 		return $return_string;
+	}
+
+
+	function build_form($cols, $submit, $method = 'post') {
+		$res .= '<form action="" method="'.$method.'">'."\n<ul>\n";
+		foreach ($cols as $col) {
+			$res .= $this->form_input($col);
+		}
+		$res .= "</ul>\n\n".'<p><input type="hidden" value="1" name="submitted" />  <input type="submit" value="'.$submit.'" /></p>
+</form>';
+		return $res;
 	}
 
 	function form_input($col) {
