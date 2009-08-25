@@ -33,7 +33,7 @@ class Scaffold {
 
 if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
 ?>
-".$this->build_form($this->columns, 'Search', 'get') . "
+".$this->build_form($this->columns, 'Search', 'get', '_GET') . "
 <?
 \$lim = 100;
 \$cond = '1=1';
@@ -380,31 +380,35 @@ function pr(\$arr) {
 	}
 
 
-	function build_form($cols, $submit, $method = 'post') {
+	function build_form($cols, $submit, $method = 'post', $value = 'row') {
 		$res .= '<form action="" method="'.$method.'">'."\n<ul>\n";
 		foreach ($cols as $col) {
-			$res .= $this->form_input($col);
+			$res .= $this->form_input($col, $value);
 		}
 		$res .= "</ul>\n\n".'<p><input type="hidden" value="1" name="submitted" />  <input type="submit" value="'.$submit.'" /></p>
 </form>';
 		return $res;
 	}
 
-	function form_input($col) {
+	function form_input($col, $value) {
 		if ($col['nombre'] != $this->table['id_key']) {
 			$text .= '  <li><label>' . $this->title($col['nombre']) . ': ';
+
+			/* $_GET['id'] or $row['id'] */ 
+			$val = '$'.$value.'[\''.$col['nombre'].'\']';
+
 			if ($col['tipo']['bool'])
-				$text .= '<input type="checkbox" name="'.$col['nombre'].'" value="1" <?= ($row[\''.$col['nombre'].'\'] == 1 ? \'checked="checked"\' : \'\') ?> />';
+				$text .= '<input type="checkbox" name="'.$col['nombre'].'" value="1" <?= ('.$val.' == 1 ? \'checked="checked"\' : \'\') ?> />';
 			elseif ($col['tipo']['date'])
-				$text .= '<?= input_date(\''.$col['nombre'].'\', $row[\''.$col['nombre'].'\']) ?>';
+				$text .= '<?= input_date(\''.$col['nombre'].'\', '.$val.') ?>';
 			elseif ($col['tipo']['datetime'])
-				$text .= '<?= input_datetime(\''.$col['nombre'].'\', $row[\''.$col['nombre'].'\']) ?>';
+				$text .= '<?= input_datetime(\''.$col['nombre'].'\', '.$val.') ?>';
 			elseif ($col['tipo']['blob'])
-				$text .= '<textarea name="'.$col['nombre'].'" cols="40" rows="10"><?= stripslashes($row[\''.$col['nombre'].'\']) ?></textarea>';
+				$text .= '<textarea name="'.$col['nombre'].'" cols="40" rows="10"><?= stripslashes('.$val.') ?></textarea>';
 			else
-				$text .= '<input type="text" name="'.$col['nombre'].'" value="<?= stripslashes($row[\''.$col['nombre'].'\']) ?>" />';
-			$text .= "</label></li>\n";
-			return $text;
+				$text .= '<input type="text" name="'.$col['nombre'].'" value="<?= stripslashes('.$val.') ?>" />';
+
+			return $text . "</label></li>\n";
 		}
 	}
 
