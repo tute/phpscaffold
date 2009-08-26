@@ -324,13 +324,18 @@ function print_header($title) {
 <title><?= $title ?></title>
 <style type="text/css" media="screen">
 body {
-  font: .9em "Trebuchet MS", Trebuchet, Verdana, Sans-Serif;
+  font: .8em "Trebuchet MS", Trebuchet, Verdana, Sans-Serif;
 }
 #msg {
   padding: 5px 10px;
   border: 1px solid #3a3;
   background: #dfd;
   font-weight: bold;
+}
+label span {
+  display: block;
+  float: left;
+  width: 9em;
 }
 </style>
 </head>
@@ -409,11 +414,16 @@ function pr(\$arr) {
 
 
 	function build_form($cols, $submit, $method = 'post', $value = 'row') {
-		$res .= '<form action="" method="'.$method.'">'."\n<ul>\n";
-		foreach ($cols as $col) {
+		$res .= '<form action="" method="'.$method.'">
+<fieldset>
+<ul>
+';
+		foreach ($cols as $col)
 			$res .= $this->form_input($col, $value);
-		}
-		$res .= "</ul>\n\n".'<p><input type="hidden" value="1" name="submitted" />  <input type="submit" value="'.$submit.'" /></p>
+
+		$res .= '</ul>
+<p><input type="hidden" value="1" name="submitted" />  <input type="submit" value="'.$submit.'" /></p>
+</fieldset>
 </form>';
 		return $res;
 	}
@@ -421,7 +431,7 @@ function pr(\$arr) {
 	function form_input($col, $value) {
 	if ($col['nombre'] != $this->table['id_key']) {
 
-		$text .= '  <li><label>' . $this->title($col['nombre']) . ': ';
+		$text .= '  <li><label><span>' . $this->title($col['nombre']) . ':</span> ';
 
 		/* Takes value either from $_GET['id'] or from $row['id'] */
 		$val = '$'.$value.'[\''.$col['nombre'].'\']';
