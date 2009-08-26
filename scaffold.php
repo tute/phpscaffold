@@ -32,18 +32,14 @@ class Scaffold {
 		$return_string .= "\nprint_header('" . ucwords($this->table['name']) . "');
 
 if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
-?>
-".$this->build_form($this->columns, 'Search', 'get', '_GET') . "
-<?
-\$lim = 100;
-\$cond = '1=1';
-";
-foreach($this->columns as $col) {
-	$return_string .= "if (isset(\$_GET['{$col['nombre']}']) and strlen(\$_GET['{$col['nombre']}']) > 0)
-	\$cond .= \" AND {$col['nombre']} = '{\$_GET['{$col['nombre']}']}'\";\n";
-}
 
-$return_string .= "\n\$sql = \"SELECT * FROM `{$this->table['name']}` WHERE \$cond LIMIT \$lim\";
+/* Default search criteria (may be overriden by search form) */
+\$lim = 100;
+\$conds = 'TRUE';
+include('{$this->table['search_page']}');
+";
+
+$return_string .= "\n\$sql = \"SELECT * FROM `{$this->table['name']}` WHERE \$conds LIMIT \$lim\";
 
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
@@ -78,6 +74,17 @@ print_footer();
 ?>";
 
 		return $return_string;
+	}
+
+	function search_page() {
+		$return_string = $this->build_form($this->columns, 'Search', 'get', '_GET');
+		$return_string .= "\n\n<?\n";
+		foreach($this->columns as $col) {
+			$return_string .= "if (isset(\$_GET['{$col['nombre']}']) and strlen(\$_GET['{$col['nombre']}']) > 0)
+	\$conds .= \" AND {$col['nombre']} = '{\$_GET['{$col['nombre']}']}'\";\n";
+		}
+
+		return $return_string . "?>";
 	}
 
 	function newrow() {
@@ -391,26 +398,27 @@ function pr(\$arr) {
 	}
 
 	function form_input($col, $value) {
-		if ($col['nombre'] != $this->table['id_key']) {
-			$text .= '  <li><label>' . $this->title($col['nombre']) . ': ';
+	if ($col['nombre'] != $this->table['id_key']) {
 
-			/* $_GET['id'] or $row['id'] */ 
-			$val = '$'.$value.'[\''.$col['nombre'].'\']';
+		$text .= '  <li><label>' . $this->title($col['nombre']) . ': ';
 
-			if ($col['tipo']['bool'])
-				$text .= '<input type="checkbox" name="'.$col['nombre'].'" value="1" <?= ('.$val.' == 1 ? \'checked="checked"\' : \'\') ?> />';
-			elseif ($col['tipo']['date'])
-				$text .= '<?= input_date(\''.$col['nombre'].'\', '.$val.') ?>';
-			elseif ($col['tipo']['datetime'])
-				$text .= '<?= input_datetime(\''.$col['nombre'].'\', '.$val.') ?>';
-			elseif ($col['tipo']['blob'])
-				$text .= '<textarea name="'.$col['nombre'].'" cols="40" rows="10"><?= stripslashes('.$val.') ?></textarea>';
-			else
-				$text .= '<input type="text" name="'.$col['nombre'].'" value="<?= stripslashes('.$val.') ?>" />';
+		/* Takes value either from $_GET['id'] or from $row['id'] */
+		$val = '$'.$value.'[\''.$col['nombre'].'\']';
 
-			return $text . "</label></li>\n";
-		}
-	}
+		if ($col['tipo']['bool'])
+			$text .= '<input type="checkbox" name="'.$col['nombre'].'" value="1" <?= ('.$val.' == 1 ? \'checked="checked"\' : \'\') ?> />';
+		elseif ($col['tipo']['date'])
+			$text .= '<?= input_date(\''.$col['nombre'].'\', '.$val.') ?>';
+		elseif ($col['tipo']['datetime'])
+			$text .= '<?= input_datetime(\''.$col['nombre'].'\', '.$val.') ?>';
+		elseif ($col['tipo']['blob'])
+			$text .= '<textarea name="'.$col['nombre'].'" cols="40" rows="10"><?= stripslashes('.$val.') ?></textarea>';
+		else
+			$text .= '<input type="text" name="'.$col['nombre'].'" value="<?= stripslashes('.$val.') ?>" />';
+
+		return $text . "</label></li>\n";
+	} /* If not id column */
+	} /* form_input function */
 
 	function title($name) {
 		return ucwords(str_replace('_', ' ', trim($name)));

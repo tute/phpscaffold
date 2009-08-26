@@ -25,6 +25,7 @@ if (isset($_POST['scaffold_info'])) {
 	}
 
 	$table['list_page'] = stripslashes($_POST['list_page']);
+	$table['search_page'] = stripslashes($_POST['search_page']);
 	$table['edit_page'] = stripslashes($_POST['edit_page']);
 	$table['new_page'] = stripslashes($_POST['new_page']);
 	$table['delete_page'] = stripslashes($_POST['delete_page']);
@@ -122,6 +123,9 @@ CREATE TABLE `users_test` (
 <? $val = (isset($_REQUEST['list_page']) ? stripslashes($_REQUEST['list_page']) : 'index.php'); ?>
 <p>List File Name <input type="text" name="list_page" value="<?= $val ?>" id="list_page" /></p>
 
+<? $val = (isset($_REQUEST['search_page']) ? stripslashes($_REQUEST['search_page']) : 'inc.search.php'); ?>
+<p>List File Name <input type="text" name="search_page" value="<?= $val ?>" id="search_page" /></p>
+
 <? $val = (isset($_REQUEST['new_page']) ? stripslashes($_REQUEST['new_page']) : 'new.php'); ?>
 <p>New File Name <input type="text" name="new_page" value="<?= $val ?>" id="new_page" /></p>
 
@@ -151,6 +155,7 @@ if ($show_form) {
 	$s = new Scaffold($table);
 	echo '<p>Files saved in tmp/ directory.</p>';
 	echo files_textarea_head('list') . htmlspecialchars($s->listtable()) . "\n</textarea>";
+	echo files_textarea_head('search') . htmlspecialchars($s->search_page()) . "\n</textarea>";
 	echo files_textarea_head('new') . htmlspecialchars($s->newrow()) . "\n</textarea>";
 	echo files_textarea_head('edit') . htmlspecialchars($s->editrow()) . "\n</textarea>";
 	echo files_textarea_head('delete') . htmlspecialchars($s->deleterow()) . "\n</textarea>";
@@ -161,6 +166,7 @@ if ($show_form) {
 	$dir = 'tmp/'.$table['name'].'/';
 	if(!is_dir($dir)) mkdir($dir);
 	file_put_contents($dir.$table['list_page'], $s->listtable());
+	file_put_contents($dir.$table['search_page'], $s->search_page());
 	file_put_contents($dir.$table['new_page'], $s->newrow());
 	file_put_contents($dir.$table['edit_page'], $s->editrow());
 	file_put_contents($dir.$table['delete_page'], $s->deleterow());

@@ -17,8 +17,8 @@ h2. Installation and usage
 
 # Go to @index.php@, and seed the form with your table schema.
 # You can go to @tmp/table_name/@ to grab the files (make sure that @tmp/@ has
-  write permissions), or copy&paste the code from the shown textareas to where
-  you want.
+  write permissions for the web server), or copy&paste the code from the shown
+  textareas to where you want.
 # Adjust MySQL configuration and login (by default it's 'admin', 'pass') from
   first lines of @functions.php@.
 # Start using it!
@@ -29,6 +29,7 @@ change anything in the database.
 
 h2. To do list
 
+* Paginate results in list page (now it limits to first 100 rows).
 * Make it aware of blob columns (upload to file-system).
 * Table name and titles get broken if 'name' column exists.
 
