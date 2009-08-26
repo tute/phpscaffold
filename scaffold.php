@@ -34,12 +34,16 @@ class Scaffold {
 if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
 
 /* Default search criteria (may be overriden by search form) */
-\$lim = 100;
 \$conds = 'TRUE';
 include('{$this->table['search_page']}');
-";
 
-$return_string .= "\n\$sql = \"SELECT * FROM `{$this->table['name']}` WHERE \$conds LIMIT \$lim\";
+/* Default paging criteria (may be overriden by paging functions) */
+\$start = 0;
+\$lim   = 100;
+include('{$this->table['paging_page']}');
+
+/* Get selected entries! */
+\$sql = \"SELECT * FROM `{$this->table['name']}` WHERE \$conds LIMIT \$start,\$lim\";
 
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
@@ -74,17 +78,6 @@ print_footer();
 ?>";
 
 		return $return_string;
-	}
-
-	function search_page() {
-		$return_string = $this->build_form($this->columns, 'Search', 'get', '_GET');
-		$return_string .= "\n\n<?\n";
-		foreach($this->columns as $col) {
-			$return_string .= "if (isset(\$_GET['{$col['nombre']}']) and strlen(\$_GET['{$col['nombre']}']) > 0)
-	\$conds .= \" AND {$col['nombre']} = '{\$_GET['{$col['nombre']}']}'\";\n";
-		}
-
-		return $return_string . "?>";
 	}
 
 	function newrow() {
@@ -233,6 +226,34 @@ $return_string .= '<form action="auth.php" method="post">
 
 print_footer();
 ?>';
+		return $return_string;
+	}
+
+	function search_page() {
+		$return_string = $this->build_form($this->columns, 'Search', 'get', '_GET');
+		$return_string .= "\n\n<?\n";
+		foreach($this->columns as $col) {
+			$return_string .= "if (isset(\$_GET['{$col['nombre']}']) and strlen(\$_GET['{$col['nombre']}']) > 0)
+	\$conds .= \" AND {$col['nombre']} = '{\$_GET['{$col['nombre']}']}'\";\n";
+		}
+
+		return $return_string . "?>";
+	}
+
+	function paging_page() {
+		$return_string = '<?
+$page = ($_GET[\'page\'] ? $_GET[\'page\'] : 1);
+$start = ($page-1) * $lim;
+
+$num_results = mysql_result(mysql_query(\'SELECT COUNT(id) AS tot FROM `'.$this->table['name'].'` WHERE \' .  $conds), 0);
+$num_pages = ceil($num_results / $lim);
+
+echo \'<p>Páginas: \';
+for ($i=1; $i <= $num_pages; $i++)
+	echo ($i == $page ? "<astrong>$i</strong> | " : "<a href=\"?page=$i\">$i</a> | ");
+echo \'</p>\';
+?>';
+
 		return $return_string;
 	}
 

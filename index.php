@@ -25,11 +25,12 @@ if (isset($_POST['scaffold_info'])) {
 	}
 
 	$table['list_page'] = stripslashes($_POST['list_page']);
-	$table['search_page'] = stripslashes($_POST['search_page']);
 	$table['edit_page'] = stripslashes($_POST['edit_page']);
 	$table['new_page'] = stripslashes($_POST['new_page']);
 	$table['delete_page'] = stripslashes($_POST['delete_page']);
 	$table['include'] = stripslashes($_POST['include']);
+	$table['search_page'] = stripslashes($_POST['search_page']);
+	$table['paging_page'] = stripslashes($_POST['paging_page']);
 
 	$table['id_key'] = trim($_POST['id_key']);
 	if ($table['id_key'] == '') $table['id_key'] = 'id';
@@ -115,25 +116,29 @@ CREATE TABLE `users_test` (
 
 <p><textarea name="sql" id="sql" cols="55" rows="10"><?= (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
 
-<p>Include File Name <input name="include" type="text" id="include" value="<? if (isset($_REQUEST['include'])) echo stripslashes($_REQUEST['include']); else echo 'functions.php' ?>" /></p>
-
 <? $val = (isset($_REQUEST['id_key']) ? stripslashes($_REQUEST['id_key']) : 'id'); ?>
 <p>Primary Key Name <input name="id_key" type="text" id="id_key" value="<?= $val ?>" /></p>
 
 <? $val = (isset($_REQUEST['list_page']) ? stripslashes($_REQUEST['list_page']) : 'index.php'); ?>
-<p>List File Name <input type="text" name="list_page" value="<?= $val ?>" id="list_page" /></p>
-
-<? $val = (isset($_REQUEST['search_page']) ? stripslashes($_REQUEST['search_page']) : 'inc.search.php'); ?>
-<p>List File Name <input type="text" name="search_page" value="<?= $val ?>" id="search_page" /></p>
+<p>List file name <input type="text" name="list_page" value="<?= $val ?>" id="list_page" /></p>
 
 <? $val = (isset($_REQUEST['new_page']) ? stripslashes($_REQUEST['new_page']) : 'new.php'); ?>
-<p>New File Name <input type="text" name="new_page" value="<?= $val ?>" id="new_page" /></p>
+<p>New file name <input type="text" name="new_page" value="<?= $val ?>" id="new_page" /></p>
 
 <? $val = (isset($_REQUEST['edit_page']) ? stripslashes($_REQUEST['edit_page']) : 'edit.php'); ?>
-<p>Edit File Name <input type="text" name="edit_page" value="<?= $val ?>" id="edit_page" /></p>
+<p>Edit file name <input type="text" name="edit_page" value="<?= $val ?>" id="edit_page" /></p>
 
 <? $val = (isset($_REQUEST['delete_page']) ? stripslashes($_REQUEST['delete_page']) : 'delete.php'); ?>
-<p>Delete File Name <input type="text" name="delete_page" value="<?= $val ?>" id="delete_page" /></p>
+<p>Delete file name <input type="text" name="delete_page" value="<?= $val ?>" id="delete_page" /></p>
+
+<? $val = (isset($_REQUEST['search_page']) ? stripslashes($_REQUEST['search_page']) : 'inc.search.php'); ?>
+<p>Search file name <input type="text" name="search_page" value="<?= $val ?>" id="search_page" /></p>
+
+<? $val = (isset($_REQUEST['paging_page']) ? stripslashes($_REQUEST['paging_page']) : 'inc.paging.php'); ?>
+<p>Paging file name <input type="text" name="paging_page" value="<?= $val ?>" id="paging_page" /></p>
+
+<? $val = (isset($_REQUEST['include']) ? stripslashes($_REQUEST['include']) : 'inc.functions.php'); ?>
+<p>Include file name <input type="text" name="include" value="<?= $val ?>" id="include" /></p>
 
 <p><input name="scaffold_info" type="hidden" value="1" />
   <input type="submit" value="Make pages" /></p>
@@ -155,11 +160,12 @@ if ($show_form) {
 	$s = new Scaffold($table);
 	echo '<p>Files saved in tmp/ directory.</p>';
 	echo files_textarea_head('list') . htmlspecialchars($s->listtable()) . "\n</textarea>";
-	echo files_textarea_head('search') . htmlspecialchars($s->search_page()) . "\n</textarea>";
 	echo files_textarea_head('new') . htmlspecialchars($s->newrow()) . "\n</textarea>";
 	echo files_textarea_head('edit') . htmlspecialchars($s->editrow()) . "\n</textarea>";
 	echo files_textarea_head('delete') . htmlspecialchars($s->deleterow()) . "\n</textarea>";
 	echo files_textarea_head('authentication') . htmlspecialchars($s->session_auth()) . "\n</textarea>";
+	echo files_textarea_head('search') . htmlspecialchars($s->search_page()) . "\n</textarea>";
+	echo files_textarea_head('paging') . htmlspecialchars($s->paging_page()) . "\n</textarea>";
 	echo files_textarea_head('functions') . htmlspecialchars($s->get_functions()) . "\n</textarea>";
 
 	// Save files in tmp folder
@@ -167,6 +173,7 @@ if ($show_form) {
 	if(!is_dir($dir)) mkdir($dir);
 	file_put_contents($dir.$table['list_page'], $s->listtable());
 	file_put_contents($dir.$table['search_page'], $s->search_page());
+	file_put_contents($dir.$table['paging_page'], $s->paging_page());
 	file_put_contents($dir.$table['new_page'], $s->newrow());
 	file_put_contents($dir.$table['edit_page'], $s->editrow());
 	file_put_contents($dir.$table['delete_page'], $s->deleterow());
