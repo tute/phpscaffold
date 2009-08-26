@@ -187,7 +187,7 @@ header('Location: {$this->table['list_page']}?msg='.\$msg);
 
 	function session_auth() {
 		$return_string = "<?php
-include('functions.php');
+include('".$this->table['include']."');
 \$msg = \$_GET['msg'];
 
 if (isset(\$_POST['user']) && isset(\$_POST['pass'])) {
@@ -195,6 +195,7 @@ if (isset(\$_POST['user']) && isset(\$_POST['pass'])) {
 	  and (\$login[\$_POST['user']] == \$_POST['pass'])) {
 		\$_SESSION['user_logged_in'] = true;
 		header('Location: {$this->table['list_page']}?msg=Logged in.');
+		exit;
 	} else {
 		unset(\$_SESSION['user_logged_in']);
 		\$msg = 'Sorry, wrong user id or password.';
@@ -211,7 +212,7 @@ if (\$_GET['action'] == 'logout') {
 if (strlen(\$msg) > 0) echo '<p id=\"msg\">'.\$msg.'</p>';
 if (\$_SESSION['user_logged_in'] != true) {
 ?>\n";
-$return_string .= '<form action="auth.php" method="post">
+$return_string .= '<form action="" method="post">
 <p>You need to log in to edit this database.</p>
 <ul>
   <li><label>User: <input type="text" name="user" value="<?= stripslashes($_POST[user]) ?>" /></label></li>
@@ -248,10 +249,30 @@ $start = ($page-1) * $lim;
 $num_results = mysql_result(mysql_query(\'SELECT COUNT(id) AS tot FROM `'.$this->table['name'].'` WHERE \' .  $conds), 0);
 $num_pages = ceil($num_results / $lim);
 
-echo \'<p>Páginas: \';
-for ($i=1; $i <= $num_pages; $i++)
-	echo ($i == $page ? "<astrong>$i</strong> | " : "<a href=\"?page=$i\">$i</a> | ");
-echo \'</p>\';
+echo \'<p>Pages: \';
+echo ($page-1 > 0 ? \'<a href="?page=\'.($page-1).\'">Previous</a>\' : \'Previous\') . \' | \';
+if ($num_pages <= 50) {
+	options_range(1, $num_pages);
+} else {
+	if ($page <= 5 or ($page >= $num_pages-5 and !($page > $num_pages))) {
+		options_range(1,5);
+		echo "... |\n";
+		options_range($num_pages-5, $num_pages);
+	} elseif (5 < $page and $page <= $num_pages-5) {
+		options_range(1,5);
+		echo "... |\n";
+		options_range(max(5,$page-3), min($page+3, $num_pages-5));
+		echo "... |\n";
+		options_range($num_pages-5, $num_pages);
+	}
+}
+echo ($page+1 <= $num_pages ? \'<a href="?page=\'.($page+1).\'">Next</a>\' : \'Next\');
+echo "</p>\n\n";
+
+function options_range($start, $end) {
+	for ($i=$start; $i <= $end; $i++)
+		echo ($i == $_GET[\'page\'] ? "<strong>$i</strong>" : "<a href=\"?page=$i\">$i</a>") . " |\n";
+}
 ?>';
 
 		return $return_string;
@@ -279,10 +300,10 @@ $sess_auth = true;
 
 if ($sess_auth == true) {
 	session_start();
-	if ((!ereg(\'auth.php\', $_SERVER[\'PHP_SELF\']))
+	if ((!ereg(\'inc.auth.php\', $_SERVER[\'PHP_SELF\']))
 	  and (!isset($_SESSION[\'user_logged_in\'])
 	  or $_SESSION[\'user_logged_in\'] !== true)) {
-		header(\'Location: auth.php\');
+		header(\'Location: inc.auth.php\');
 		exit;
 	}
 } else {
@@ -347,11 +368,11 @@ label span {
 
 function print_footer() {
 	$index = ereg(\''.$this->table['list_page'].'\', $_SERVER[\'PHP_SELF\']);
-	$login = ereg(\'auth.php\', $_SERVER[\'PHP_SELF\']);
+	$login = ereg(\'inc.auth.php\', $_SERVER[\'PHP_SELF\']);
 	if (!$index and !$login)
 		echo \'<p><a href="'.$this->table['list_page'].'">Back to Listing</a></p>\';
 	if ($_SESSION[\'user_logged_in\'] = true)
-		echo \'<p><a href="auth.php?action=logout&amp;msg=You have been logged out.">[Logout]</a></p>\';
+		echo \'<p><a href="inc.auth.php?action=logout&amp;msg=You have been logged out.">[Logout]</a></p>\';
 	echo "</body>\n</html>";
 }'."
 

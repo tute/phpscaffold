@@ -177,7 +177,7 @@ if ($show_form) {
 	file_put_contents($dir.$table['new_page'], $s->newrow());
 	file_put_contents($dir.$table['edit_page'], $s->editrow());
 	file_put_contents($dir.$table['delete_page'], $s->deleterow());
-	file_put_contents($dir.'auth.php', $s->session_auth());
+	file_put_contents($dir.'inc.auth.php', $s->session_auth());
 	file_put_contents($dir.$table['include'], $s->get_functions());
 }
 ?>
