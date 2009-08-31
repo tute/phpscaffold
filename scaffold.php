@@ -48,7 +48,7 @@ include('{$this->table['paging_page']}');
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
 		foreach($this->columns as $v) {
-			$return_string .= '    <th>'. $this->title($v['nombre']) . ' \' . put_order('.$v['nombre'].")  . '</th>\n";
+			$return_string .= '    <th>'. $this->title($v['nombre']) . ' \' . put_order('.$v['nombre'].") . '</th>\n";
 		}
 		$return_string .= "  </tr>';
 
@@ -249,8 +249,18 @@ $start = ($page-1) * $lim;
 $num_results = mysql_result(mysql_query(\'SELECT COUNT(id) AS tot FROM `'.$this->table['name'].'` WHERE \' .  $conds), 0);
 $num_pages = ceil($num_results / $lim);
 
+/* Mantain search and sorting parameters */
+$pars = split("[&]", $_SERVER[\'argv\'][0]);
+$res = array();
+foreach($pars as $n => $par) {
+	$p = split("[=]", $par);
+	if ($p[0] != \'page\')
+		array_push($res, join(\'=\', $p));
+}
+$pars = join("&amp;", $res);
+
 echo \'<p>Pages: \';
-echo ($page-1 > 0 ? \'<a href="?page=\'.($page-1).\'">Previous</a>\' : \'Previous\') . \' | \';
+echo ($page-1 > 0 ? \'<a href="?\'.$pars.\'&amp;page=\'.($page-1).\'">Previous</a>\' : \'Previous\') . \' | \';
 if ($num_pages <= 50) {
 	options_range(1, $num_pages);
 } else {
@@ -266,12 +276,13 @@ if ($num_pages <= 50) {
 		options_range($num_pages-5, $num_pages);
 	}
 }
-echo ($page+1 <= $num_pages ? \'<a href="?page=\'.($page+1).\'">Next</a>\' : \'Next\');
+echo ($page+1 <= $num_pages ? \'<a href="?\'.$pars.\'&amp;page=\'.($page+1).\'">Next</a>\' : \'Next\');
 echo "</p>\n\n";
 
 function options_range($start, $end) {
+	global $pars;
 	for ($i=$start; $i <= $end; $i++)
-		echo ($i == $_GET[\'page\'] ? "<strong>$i</strong>" : "<a href=\"?page=$i\">$i</a>") . " |\n";
+		echo ($i == $_GET[\'page\'] ? "<strong>$i</strong>" : "<a href=\"?$pars&amp;page=$i\">$i</a>") . " |\n";
 }
 ?>';
 
@@ -425,7 +436,7 @@ function put_order(\$col) {
 	foreach(\$pars as \$n => \$par) {
 		\$p = split(\"[=]\", \$par);
 		if (\$p[0] != 'order' and \$p[0] != 'col')
-			array_push(\$res, join('=',\$p));
+			array_push(\$res, join('=', \$p));
 	}
 	array_push(\$res, \"col=\$col\");
 	\$pars = join(\"&amp;\", \$res);
