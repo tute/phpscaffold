@@ -43,12 +43,12 @@ include('{$this->table['search_page']}');
 include('{$this->table['paging_page']}');
 
 /* Get selected entries! */
-\$sql = \"SELECT * FROM `{$this->table['name']}` WHERE \$conds LIMIT \$start,\$lim\";
+\$sql = \"SELECT * FROM `{$this->table['name']}` WHERE \$conds \" . get_order('{$this->table['name']}') . \" LIMIT \$start,\$lim\";
 
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
 		foreach($this->columns as $v) {
-			$return_string .= '    <th>'. $this->title($v['nombre']) ."</th>\n";
+			$return_string .= '    <th>'. $this->title($v['nombre']) . ' \' . put_order('.$v['nombre'].")  . '</th>\n";
 		}
 		$return_string .= "  </tr>';
 
@@ -417,6 +417,27 @@ function select_range(\$name, \$selected, \$start, \$finish, \$range = 1) {
 	}
 	\$ret .= '</select>';
 	return \$ret;
+}
+
+function put_order(\$col) {
+	\$pars = split(\"[&]\", \$_SERVER['argv'][0]);
+	\$res = \$pars;
+	foreach(\$pars as \$n => \$par) {
+		\$p = split(\"[=]\", \$par);
+		if (\$p[0] != 'order' and \$p[0] != 'col')
+			array_push(\$res, join('=',\$p));
+	}
+	array_push(\$res, \"col=\$col\");
+	\$pars = join(\"&amp;\", \$res);
+	return \"<a href=\\\"\$_SERVER[PHP_SELF]?\$pars&amp;order=ASC\\\">↑</a>
+	<a href=\\\"\$_SERVER[PHP_SELF]?\$pars&amp;order=DESC\\\">↓</a>\";
+}
+
+function get_order(\$table) {
+	if(\$_GET['order'] and \$_GET['col'])
+		return \"ORDER BY \$table.{\$_GET['col']} {\$_GET['order']}\";
+	else
+		return 'ORDER BY id ASC';
 }
 
 function humanize(\$date) {
