@@ -88,10 +88,10 @@ if (isset($_POST['scaffold_info'])) {
 <div class="container">
 <? if ($message != '') echo "<div class=\"message\">$message</div>"; ?>
 
-<div <? if ($show_form) echo 'style="display:none"'; ?> id="new_table">
+<div <? if ($show_form) echo 'style="display:none"'; ?> id="create_crud">
 <form action="" method="post">
 
-<p>Welcome to <span class="style1">phpscaffold.com</span>, where you can
+<p>Welcome to <span style="color:#9D608C;font-weight:bold">phpscaffold.com</span>, where you can
 quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
 
 <p>Enter an SQL table dump below to generate your pages. <a
@@ -117,28 +117,36 @@ CREATE TABLE `users_test` (
 <p><textarea name="sql" id="sql" cols="55" rows="10"><?= (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
 
 <? $val = (isset($_REQUEST['id_key']) ? stripslashes($_REQUEST['id_key']) : 'id'); ?>
-<p>Primary Key Name <input name="id_key" type="text" id="id_key" value="<?= $val ?>" /></p>
+<p><label>Primary Key Name</label>
+  <input name="id_key" type="text" id="id_key" value="<?= $val ?>" /></p>
 
 <? $val = (isset($_REQUEST['list_page']) ? stripslashes($_REQUEST['list_page']) : 'index.php'); ?>
-<p>List file name <input type="text" name="list_page" value="<?= $val ?>" id="list_page" /></p>
+<p><label>List file name</label>
+  <input type="text" name="list_page" value="<?= $val ?>" id="list_page" /></p>
 
 <? $val = (isset($_REQUEST['new_page']) ? stripslashes($_REQUEST['new_page']) : 'new.php'); ?>
-<p>New file name <input type="text" name="new_page" value="<?= $val ?>" id="new_page" /></p>
+<p><label>New file name</label>
+  <input type="text" name="new_page" value="<?= $val ?>" id="new_page" /></p>
 
 <? $val = (isset($_REQUEST['edit_page']) ? stripslashes($_REQUEST['edit_page']) : 'edit.php'); ?>
-<p>Edit file name <input type="text" name="edit_page" value="<?= $val ?>" id="edit_page" /></p>
+<p><label>Edit file name</label>
+  <input type="text" name="edit_page" value="<?= $val ?>" id="edit_page" /></p>
 
 <? $val = (isset($_REQUEST['delete_page']) ? stripslashes($_REQUEST['delete_page']) : 'delete.php'); ?>
-<p>Delete file name <input type="text" name="delete_page" value="<?= $val ?>" id="delete_page" /></p>
+<p><label>Delete file name</label>
+  <input type="text" name="delete_page" value="<?= $val ?>" id="delete_page" /></p>
 
 <? $val = (isset($_REQUEST['search_page']) ? stripslashes($_REQUEST['search_page']) : 'inc.search.php'); ?>
-<p>Search file name <input type="text" name="search_page" value="<?= $val ?>" id="search_page" /></p>
+<p><label>Search file name</label>
+  <input type="text" name="search_page" value="<?= $val ?>" id="search_page" /></p>
 
 <? $val = (isset($_REQUEST['paging_page']) ? stripslashes($_REQUEST['paging_page']) : 'inc.paging.php'); ?>
-<p>Paging file name <input type="text" name="paging_page" value="<?= $val ?>" id="paging_page" /></p>
+<p><label>Paging file name</label>
+  <input type="text" name="paging_page" value="<?= $val ?>" id="paging_page" /></p>
 
 <? $val = (isset($_REQUEST['include']) ? stripslashes($_REQUEST['include']) : 'inc.functions.php'); ?>
-<p>Include file name <input type="text" name="include" value="<?= $val ?>" id="include" /></p>
+<p><label>Include file name</label>
+  <input type="text" name="include" value="<?= $val ?>" id="include" /></p>
 
 <p><input name="scaffold_info" type="hidden" value="1" />
   <input type="submit" value="Make pages" /></p>
@@ -158,7 +166,7 @@ if ($show_form) {
 		return $r;
 	}
 	$s = new Scaffold($table);
-	echo '<p>Files saved in tmp/ directory.</p>';
+	echo '<p>Files saved in <span style="font-family:Monaco,"Courier New",monospace">tmp/</span> directory.</p>';
 	echo files_textarea_head('list') . htmlspecialchars($s->listtable()) . "\n</textarea>";
 	echo files_textarea_head('new') . htmlspecialchars($s->newrow()) . "\n</textarea>";
 	echo files_textarea_head('edit') . htmlspecialchars($s->editrow()) . "\n</textarea>";

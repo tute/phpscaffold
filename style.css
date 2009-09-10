@@ -1,10 +1,9 @@
 body {
-  font-family: verdana, "Times New Roman", Times, serif;
-  font-size: 12px;
-  margin: 0 0 20px 0;
+  font: 12px "Trebuchet MS", Trebuchet, Verdana, sans-serif;
+  margin: 0;
 }
 .container {
-  width: 700px;
+  max-width: 700px;
   padding: 0 10px ;
 }
 .options {
@@ -49,10 +48,7 @@ h2 {
 pre {
   color: #888;
 }
-#new_table {
-  margin: 0 0 100px 0;
-}
-#new_table textarea {
+#create_crud textarea {
   background: #eee;
   border: 1px dashed #aaa;
   padding: 5px;
@@ -60,7 +56,7 @@ pre {
   width: 450px;
   height: 200px;
 }
-#new_table input[type='text'] {
+#create_crud input[type='text'] {
   background: #eee;
   border: 1px dashed #aaa;
   color: #0033CC;
@@ -69,7 +65,8 @@ pre {
 .message {
   color: red;
 }
-.style1 {
-  color: #9D608C;
-  font-weight: bold;
+label {
+  display: block;
+  float: left;
+  width: 130px;
 }
