@@ -235,7 +235,7 @@ print_footer();
 		$return_string .= "\n\n<?\n";
 		foreach($this->columns as $col) {
 			$return_string .= "if (isset(\$_GET['{$col['nombre']}']) and strlen(\$_GET['{$col['nombre']}']) > 0)
-	\$conds .= \" AND {$col['nombre']} = '{\$_GET['{$col['nombre']}']}'\";\n";
+	\$conds .= \" AND {$col['nombre']} {\$_GET['{$col['nombre']}_opts']} '{\$_GET['{$col['nombre']}']}'\";\n";
 		}
 
 		return $return_string . "?>";
@@ -420,6 +420,25 @@ function input_datetime(\$field, \$value) {
 	return \$ret;
 }
 
+function search_options(\$field, \$selected = 'is', \$type = 'int') {
+	\$ret = \"<select name=".'\"{$field}_opts\">\n"'.";
+	if (\$type == 'int') {
+		\$selected = (\$selected == 'is') ? '=' : \$selected;
+		\$options = array('=' => '=',
+			'<' => '&lt;',
+			'>' => '&gt;',
+			'<=' => '&lt;=',
+			'>=' => '&gt;=');
+	} else { /* is string */
+		\$options = array('is', 'contains');
+	}
+	foreach (\$options as \$k => \$v) {
+		\$sel = (\$selected == \$k ? ' selected=\"selected\"' : '');
+		\$ret .= \"  <option value=\\\"\$k\\\"\$sel>\$v</option>\\n\";
+	}
+	return \$ret .= \"</select>\\n\";
+}
+
 function select_range(\$name, \$selected, \$start, \$finish, \$range = 1) {
 	\$ret = '<select name=\"'.\$name.'\">';
 	for(\$i=\$start; \$i <= \$finish; \$i += \$range) {
@@ -432,7 +451,7 @@ function select_range(\$name, \$selected, \$start, \$finish, \$range = 1) {
 
 function put_order(\$col) {
 	\$pars = split(\"[&]\", \$_SERVER['argv'][0]);
-	\$res = \$pars;
+	\$res = array();
 	foreach(\$pars as \$n => \$par) {
 		\$p = split(\"[=]\", \$par);
 		if (\$p[0] != 'order' and \$p[0] != 'col')
@@ -471,8 +490,9 @@ function pr(\$arr) {
 <fieldset>
 <ul>
 ';
+		$is_search = ($submit == 'Search');
 		foreach ($cols as $col)
-			$res .= $this->form_input($col, $value);
+			$res .= $this->form_input($col, $value, $is_search);
 
 		$res .= '</ul>
 <p><input type="hidden" value="1" name="submitted" />  <input type="submit" value="'.$submit.'" /></p>
@@ -481,10 +501,13 @@ function pr(\$arr) {
 		return $res;
 	}
 
-	function form_input($col, $value) {
+	function form_input($col, $value, $is_search = false) {
 	if ($col['nombre'] != $this->table['id_key']) {
 
-		$text .= '  <li><label><span>' . $this->title($col['nombre']) . ':</span> ';
+		$text .= '  <li><label><span>' . $this->title($col['nombre']) . ":</span>\n";
+		if ($is_search)
+			$text .= "    <?= search_options('".$col['nombre']."', \$_GET['".$col['nombre']."_opts']) ?></label>\n";
+		$text .= '    ';
 
 		/* Takes value either from $_GET['id'] or from $row['id'] */
 		$val = '$'.$value.'[\''.$col['nombre'].'\']';
@@ -500,7 +523,8 @@ function pr(\$arr) {
 		else
 			$text .= '<input type="text" name="'.$col['nombre'].'" value="<?= stripslashes('.$val.') ?>" />';
 
-		return $text . "</label></li>\n";
+		if (!$is_search) $text .= '</label>'; /* Could be closed after search_options */
+		return $text . "</li>\n";
 	} /* If not id column */
 	} /* form_input function */
 

@@ -29,6 +29,7 @@ change anything in the database.
 
 h2. To do list
 
+* Add text search options ('is', 'contains').
 * Make it aware of blob columns (upload to file-system).
 * Table name and titles get broken if 'name' column exists.
 
