@@ -426,9 +426,9 @@ function search_options(\$field, \$selected = 'is', \$type = 'int') {
 		\$selected = (\$selected == 'is') ? '=' : \$selected;
 		\$options = array('=' => '=',
 			'<' => '&lt;',
+			'<=' => '≤',
 			'>' => '&gt;',
-			'<=' => '&lt;=',
-			'>=' => '&gt;=');
+			'>=' => '≥');
 	} else { /* is string */
 		\$options = array('is', 'contains');
 	}
