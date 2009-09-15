@@ -24,6 +24,7 @@ if (isset($_POST['scaffold_info'])) {
 		setcookie($key, $value, $date, '/');
 	}
 
+	$table['project_name'] = stripslashes($_POST['project_name']);
 	$table['list_page'] = stripslashes($_POST['list_page']);
 	$table['edit_page'] = stripslashes($_POST['edit_page']);
 	$table['new_page'] = stripslashes($_POST['new_page']);
@@ -116,13 +117,12 @@ CREATE TABLE `users_test` (
 
 <p><textarea name="sql" id="sql" cols="55" rows="10"><?= (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
 
-<? $val = (isset($_REQUEST['id_key']) ? stripslashes($_REQUEST['id_key']) : 'id'); ?>
-<p><label>Primary Key Name</label>
-  <input name="id_key" type="text" id="id_key" value="<?= $val ?>" /></p>
+<? $val = (isset($_REQUEST['project_name']) ? stripslashes($_REQUEST['project_name']) : 'project'); ?>
+<p><label>Project folder name</label>
+  <input name="project_name" type="text" id="project_name" value="<?= $val ?>" /></p>
 
-<? $val = (isset($_REQUEST['list_page']) ? stripslashes($_REQUEST['list_page']) : 'index.php'); ?>
-<p><label>List file name</label>
-  <input type="text" name="list_page" value="<?= $val ?>" id="list_page" /></p>
+<input type="hidden" name="id_key" id="id_key" value="id" />
+<input type="hidden" name="list_page" id="list_page" value="index.php" />
 
 <? $val = (isset($_REQUEST['new_page']) ? stripslashes($_REQUEST['new_page']) : 'new.php'); ?>
 <p><label>New file name</label>
@@ -166,7 +166,7 @@ if ($show_form) {
 		return $r;
 	}
 	$s = new Scaffold($table);
-	echo '<p>Files saved in <span style="font-family:Monaco,"Courier New",monospace">tmp/</span> directory.</p>';
+	echo '<p>Files saved in <span style="font-family:Monaco,"Courier New",monospace">tmp/'.$table['project_name'].'</span> directory.</p>';
 	echo files_textarea_head('list') . htmlspecialchars($s->listtable()) . "\n</textarea>";
 	echo files_textarea_head('new') . htmlspecialchars($s->newrow()) . "\n</textarea>";
 	echo files_textarea_head('edit') . htmlspecialchars($s->editrow()) . "\n</textarea>";
@@ -177,16 +177,19 @@ if ($show_form) {
 	echo files_textarea_head('functions') . htmlspecialchars($s->get_functions()) . "\n</textarea>";
 
 	// Save files in tmp folder
-	$dir = 'tmp/'.$table['name'].'/';
+	$dir = "tmp/{$table['project_name']}/";
+	$abm = "{$table['name']}/";
 	if(!is_dir($dir)) mkdir($dir);
-	file_put_contents($dir.$table['list_page'], $s->listtable());
-	file_put_contents($dir.$table['search_page'], $s->search_page());
-	file_put_contents($dir.$table['paging_page'], $s->paging_page());
-	file_put_contents($dir.$table['new_page'], $s->newrow());
-	file_put_contents($dir.$table['edit_page'], $s->editrow());
-	file_put_contents($dir.$table['delete_page'], $s->deleterow());
+	if(!is_dir($dir.$abm)) mkdir($dir.$abm);
+	file_put_contents($dir.$abm.$table['list_page'], $s->listtable());
+	file_put_contents($dir.$abm.$table['search_page'], $s->search_page());
+	file_put_contents($dir.$abm.$table['paging_page'], $s->paging_page());
+	file_put_contents($dir.$abm.$table['new_page'], $s->newrow());
+	file_put_contents($dir.$abm.$table['edit_page'], $s->editrow());
+	file_put_contents($dir.$abm.$table['delete_page'], $s->deleterow());
 	file_put_contents($dir.'inc.auth.php', $s->session_auth());
 	file_put_contents($dir.$table['include'], $s->get_functions());
+	file_put_contents($dir.'index.php', "<?\nheader('Location: {$table['name']}/')\n?>");
 }
 ?>
 </div>

@@ -27,7 +27,7 @@ class Scaffold {
 		$return_string = "<?\n";
 
 		if ($this->table['include'] != '')
-			$return_string .= "include('{$this->table['include']}');\n";
+			$return_string .= "include('../{$this->table['include']}');\n";
 
 		$return_string .= "\nprint_header('" . ucwords($this->table['name']) . "');
 
@@ -83,7 +83,7 @@ print_footer();
 	function newrow() {
 		$return_string = "<?\n";
 		if ($this->table['include'] != '')
-			$return_string .= "include('{$this->table['include']}');\n";
+			$return_string .= "include('../{$this->table['include']}');\n";
 
 		$return_string .= "
 if (isset(\$_POST['submitted'])) {
@@ -128,7 +128,7 @@ print_footer();
 	function editrow() {
 		$return_string = "<?\n";
 		if ($this->table['include'] != '')
-			$return_string .= "include('{$this->table['include']}');\n\n";
+			$return_string .= "include('../{$this->table['include']}');\n\n";
 
 		$return_string .= "if (isset(\$_GET['{$this->table['id_key']}']) ) {
 	\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];\n\n";
@@ -175,7 +175,7 @@ print_footer();
 	function deleterow() {
 		$return_string = "<?\n";
 		if ($this->table['include'] != '')
-			$return_string .= 'include(\''.$this->table['include'].'\');';
+			$return_string .= 'include(\'../'.$this->table['include'].'\');';
 
 		$return_string .= "
 mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\$_GET[{$this->table['id_key']}]}'\");
@@ -314,7 +314,7 @@ if ($sess_auth == true) {
 	if ((!ereg(\'inc.auth.php\', $_SERVER[\'PHP_SELF\']))
 	  and (!isset($_SESSION[\'user_logged_in\'])
 	  or $_SESSION[\'user_logged_in\'] !== true)) {
-		header(\'Location: inc.auth.php\');
+		header(\'Location: ../inc.auth.php\');
 		exit;
 	}
 } else {
@@ -373,7 +373,8 @@ label span {
 </head>
 
 <body>
-<h1><?= $title ?></h1>
+<h1><?= $title ?>
+  <? if ($_SESSION[\'user_logged_in\'] = true) echo \'<span style="font-size:12px"><a href="../inc.auth.php?action=logout&amp;msg=You have been logged out.">[Logout]</a></p>\'; ?></h1>
 <?
 }
 
@@ -382,8 +383,6 @@ function print_footer() {
 	$login = ereg(\'inc.auth.php\', $_SERVER[\'PHP_SELF\']);
 	if (!$index and !$login)
 		echo \'<p><a href="'.$this->table['list_page'].'">Back to Listing</a></p>\';
-	if ($_SESSION[\'user_logged_in\'] = true)
-		echo \'<p><a href="inc.auth.php?action=logout&amp;msg=You have been logged out.">[Logout]</a></p>\';
 	echo "</body>\n</html>";
 }'."
 
