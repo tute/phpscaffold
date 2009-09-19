@@ -277,7 +277,10 @@ if ($num_pages <= 50) {
 	}
 }
 echo ($page+1 <= $num_pages ? \'<a href="?\'.$pars.\'&amp;page=\'.($page+1).\'">Next</a>\' : \'Next\');
-echo "</p>\n\n";
+echo "</p>
+
+<p style=\"text-align:center;font-size:.9em\">(Showing entries $start to "
+  . min($start+$lim, $num_results) . " out of $num_results.)</p>\n\n";
 
 function options_range($start, $end) {
 	global $pars;
