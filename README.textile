@@ -27,11 +27,15 @@ h2. Installation and usage
 p{font-size:80%}. The table must be up and running; *phpScaffold* doesn't
 change anything in the database.
 
+p{font-size:80%}. You may add text search criteria adding 'text' as third
+parameter to @search_options@ (in search page).
+
 
 h2. To do list
 
 * Link subfolders in layout.
-* Add text search options ('is', 'contains').
+* Distinguish between @int@ and @char@ columns, to tie text/number search
+  options automatically.
 * Make it aware of blob columns (upload to file-system).
 * Table name and titles get broken if 'name' column exists.
 

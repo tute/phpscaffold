@@ -233,6 +233,19 @@ print_footer();
 	function search_page() {
 		$return_string = $this->build_form($this->columns, 'Search', 'get', '_GET');
 		$return_string .= "\n\n<?\n";
+
+		$return_string .= '$opts = array(';
+		foreach($this->columns as $col) {
+			$cols .= "'{$col['nombre']}_opts', ";
+		}
+		$return_string .= substr($cols, 0, -2) . ");\n"
+. '/* Sorround "contains" search term between %% */
+foreach ($opts as $o) {
+	if ($_GET[$o] == \'like\') {
+		$v = substr($o, 0, -5);
+		$_GET[$v] = \'%\' . $_GET[$v] . \'%\';
+	}
+}'."\n\n";
 		foreach($this->columns as $col) {
 			$return_string .= "if (isset(\$_GET['{$col['nombre']}']) and strlen(\$_GET['{$col['nombre']}']) > 0)
 	\$conds .= \" AND {$col['nombre']} {\$_GET['{$col['nombre']}_opts']} '{\$_GET['{$col['nombre']}']}'\";\n";
@@ -432,7 +445,7 @@ function search_options(\$field, \$selected = 'is', \$type = 'int') {
 			'>' => '&gt;',
 			'>=' => '≥');
 	} else { /* is string */
-		\$options = array('is', 'contains');
+		\$options = array('=' => 'is', 'like' => 'contains');
 	}
 	foreach (\$options as \$k => \$v) {
 		\$sel = (\$selected == \$k ? ' selected=\"selected\"' : '');
