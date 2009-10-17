@@ -478,11 +478,11 @@ function put_order(\$col) {
 	<a href=\\\"\$_SERVER[PHP_SELF]?\$pars&amp;order=DESC\\\">↓</a>\";
 }
 
-function get_order(\$table) {
+function get_order(\$table, \$default = 'id ASC') {
 	if(\$_GET['order'] and \$_GET['col'])
 		return \"ORDER BY \$table.{\$_GET['col']} {\$_GET['order']}\";
 	else
-		return 'ORDER BY id ASC';
+		return 'ORDER BY \$default';
 }
 
 function humanize(\$date) {
