@@ -247,7 +247,7 @@ foreach ($opts as $o) {
 	}
 }'."\n\n";
 		foreach($this->columns as $col) {
-			$return_string .= "if (isset(\$_GET['{$col['nombre']}']) and strlen(\$_GET['{$col['nombre']}']) > 0)
+			$return_string .= "if (search_by('{$col['nombre']}'))
 	\$conds .= \" AND {$col['nombre']} {\$_GET['{$col['nombre']}_opts']} '{\$_GET['{$col['nombre']}']}'\";\n";
 		}
 
@@ -409,7 +409,7 @@ function input_date(\$field, \$value) {
 
 	\$sel_day  = (substr(\$value,8,2) ? substr(\$value,8,2) : date(d));
 	\$sel_mth  = (substr(\$value,5,2) ? substr(\$value,5,2) : date(m));
-	\$sel_year = (substr(\$value,0,4) ? substr(\$value,0,4) : date(Y));
+	\$sel_year = (substr(\$value,0,4) > 0 ? substr(\$value,0,4) : date(Y));
 
 	\$ret = select_range(\$day, \$sel_day, 1, 31) . '/';
 	\$ret .= select_range(\$mth, \$sel_mth, 1, 12) . '/';
@@ -464,6 +464,28 @@ function select_range(\$name, \$selected, \$start, \$finish, \$range = 1) {
 	return \$ret;
 }
 
+/*
+*	From separate _GET variables (YYYY, (M)M, (D)D)
+*	 to MySQL string (YYYY-MM-DD)
+*/
+function parse_date_vars(\$date_field) {
+	\$year = \$_GET[\$date_field.'_year'];
+	\$mth  = \$_GET[\$date_field.'_mth'];
+	\$day  = \$_GET[\$date_field.'_day'];
+
+	if(strlen(\$mth) == 1) \$mth = '0'.\$mth;
+	if(strlen(\$day) == 1) \$day = '0'.\$day;
+
+	return \$year.'-'.\$mth.'-'.\$day;
+}
+
+/*
+*	_GET variable set with non-trivial value?
+*/
+function search_by(\$var) {
+	return (isset(\$_GET[\$var]) and strlen(\$_GET[\$var]) > 0);
+}
+
 function put_order(\$col) {
 	\$pars = split(\"[&]\", \$_SERVER['argv'][0]);
 	\$res = array();
@@ -510,7 +532,8 @@ function pr(\$arr) {
 			$res .= $this->form_input($col, $value, $is_search);
 
 		$res .= '</ul>
-<p><input type="hidden" value="1" name="submitted" />  <input type="submit" value="'.$submit.'" /></p>
+<p><input type="hidden" value="1" name="submitted" />
+  <input type="submit" value="'.$submit.'" /></p>
 </fieldset>
 </form>';
 		return $res;

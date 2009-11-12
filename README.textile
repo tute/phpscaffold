@@ -36,10 +36,6 @@ h2. To do list
 * Link subfolders in layout.
 * Distinguish between @int@ and @char@ columns, to tie text/number search
   options automatically.
-* Make it aware of blob columns (upload to file-system).
+* Date/date-range search.
 * Table name and titles get broken if 'name' column exists.
-
-
-h2. Related projects
-
-* http://www.buildmyblog.com/2007/10/03/php-scaffold-generator/
+* Upload files capability?
