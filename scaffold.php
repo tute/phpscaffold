@@ -504,7 +504,7 @@ function get_order(\$table, \$default = 'id ASC') {
 	if(\$_GET['order'] and \$_GET['col'])
 		return \"ORDER BY \$table.{\$_GET['col']} {\$_GET['order']}\";
 	else
-		return 'ORDER BY \$default';
+		return \"ORDER BY \$default\";
 }
 
 function humanize(\$date) {
