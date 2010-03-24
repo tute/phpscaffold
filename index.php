@@ -25,15 +25,14 @@ if (isset($_POST['scaffold_info'])) {
 	}
 
 	$table['project_name'] = stripslashes($_POST['project_name']);
-	$table['list_page'] = stripslashes($_POST['list_page']);
-	$table['edit_page'] = stripslashes($_POST['edit_page']);
-	$table['new_page'] = stripslashes($_POST['new_page']);
-	$table['delete_page'] = stripslashes($_POST['delete_page']);
-	$table['include'] = stripslashes($_POST['include']);
-	$table['search_page'] = stripslashes($_POST['search_page']);
-	$table['paging_page'] = stripslashes($_POST['paging_page']);
-
-	$table['id_key'] = trim($_POST['id_key']);
+	$table['list_page']    = stripslashes($_POST['list_page']);
+	$table['edit_page']    = stripslashes($_POST['edit_page']);
+	$table['new_page']     = stripslashes($_POST['new_page']);
+	$table['delete_page']  = stripslashes($_POST['delete_page']);
+	$table['include']      = stripslashes($_POST['include']);
+	$table['search_page']  = stripslashes($_POST['search_page']);
+	$table['paging_page']  = stripslashes($_POST['paging_page']);
+	$table['id_key'] = get_primary_key($_POST['sql']);
 	if ($table['id_key'] == '') $table['id_key'] = 'id';
 	
 	// get first table name
@@ -96,24 +95,7 @@ if (isset($_POST['scaffold_info'])) {
 quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
 
 <p>Enter an SQL table dump below to generate your pages. <a
-href="javascript:showHint('sql_hint');">[Hint]</a></p>
-
-<div id="sql_hint" style="display:none; background:#ffd; padding:5px; margin:10px 0">
-Paste your database dump table for which you wish to generate CRUD files.
-A sample text maybe:
-<pre>
-CREATE TABLE `users_test` (
-  `id` int(10) NOT NULL auto_increment,
-  `email` varchar(100) NOT NULL,
-  `pass` varchar(32) NOT NULL,
-  `curriculum` text NOT NULL,
-  `is_admin` int(1) NOT NULL,
-  `last_login` datetime NOT NULL,
-  `created` date NOT NULL,
-  PRIMARY KEY (`id`)
-);
-</pre>
-</div>
+href="javascript:showHint();">[Hint]</a></p>
 
 <p><textarea name="sql" id="sql" cols="55" rows="10"><?= (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
 

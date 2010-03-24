@@ -259,7 +259,7 @@ foreach ($opts as $o) {
 $page = ($_GET[\'page\'] ? $_GET[\'page\'] : 1);
 $start = ($page-1) * $lim;
 
-$num_results = mysql_result(mysql_query(\'SELECT COUNT(id) AS tot FROM `'.$this->table['name'].'` WHERE \' .  $conds), 0);
+$num_results = mysql_result(mysql_query(\'SELECT COUNT('.$this->table['id_key'].') AS tot FROM `'.$this->table['name'].'` WHERE \' .  $conds), 0);
 $num_pages = ceil($num_results / $lim);
 
 /* Mantain search and sorting parameters */
@@ -500,7 +500,7 @@ function put_order(\$col) {
 	<a href=\\\"\$_SERVER[PHP_SELF]?\$pars&amp;order=DESC\\\">↓</a>\";
 }
 
-function get_order(\$table, \$default = 'id ASC') {
+function get_order(\$table, \$default = '{$this->table['id_key']} ASC') {
 	if(\$_GET['order'] and \$_GET['col'])
 		return \"ORDER BY \$table.{\$_GET['col']} {\$_GET['order']}\";
 	else
@@ -589,6 +589,21 @@ function parse($field, $type) {
 		$val = "\$_POST[$field]";
 	}
 	return $val;
+}
+
+/* Given a table, compute it's Primary Key */
+function get_primary_key($text) {
+	$text = explode("\n", $text);
+	foreach ($text as $line) {
+		if (preg_match('/PRIMARY KEY/', $line)) {
+			/* Remove parenthesis */
+			$key = explode('(', $line);
+			$key = substr($key[1], 0, -1);
+			/* Remove surrounding comillas? */
+			if ($key[0] == '`') $key = substr($key,1,-2);
+		}
+	}
+	return $key;
 }
 
 function pr($arr) {
