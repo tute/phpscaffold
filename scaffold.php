@@ -24,7 +24,7 @@ class Scaffold {
 
 	function listtable() {
 		$column_array = array();
-		$return_string = "<?\n";
+		$return_string = "<?php\n";
 
 		if ($this->table['include'] != '')
 			$return_string .= "include('../{$this->table['include']}');\n";
@@ -66,8 +66,8 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 
 			$return_string .= "    <td>' . $val . '</td>\n";
 		}
-		$return_string .= "    <td><a href=\"{$this->table['edit_page']}?{$this->table['id_key']}=' . \$row['{$this->table[id_key]}'] . '\">Edit</a></td>
-    <td><a href=\"{$this->table['delete_page']}?{$this->table['id_key']}=' . \$row['{$this->table[id_key]}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>
+		$return_string .= "    <td><a href=\"{$this->table['edit_page']}?{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\">Edit</a></td>
+    <td><a href=\"{$this->table['delete_page']}?{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>
   </tr>';\n";
 		$return_string .= "}\n\n";
 		$return_string .= "echo '</table>
@@ -81,7 +81,7 @@ print_footer();
 	}
 
 	function newrow() {
-		$return_string = "<?\n";
+		$return_string = "<?php\n";
 		if ($this->table['include'] != '')
 			$return_string .= "include('../{$this->table['include']}');\n";
 
@@ -126,7 +126,7 @@ print_footer();
 
 
 	function editrow() {
-		$return_string = "<?\n";
+		$return_string = "<?php\n";
 		if ($this->table['include'] != '')
 			$return_string .= "include('../{$this->table['include']}');\n\n";
 
@@ -173,7 +173,7 @@ print_footer();
 	}
 
 	function deleterow() {
-		$return_string = "<?\n";
+		$return_string = "<?php\n";
 		if ($this->table['include'] != '')
 			$return_string .= 'include(\'../'.$this->table['include'].'\');';
 
@@ -232,9 +232,10 @@ print_footer();
 
 	function search_page() {
 		$return_string = $this->build_form($this->columns, 'Search', 'get', '_GET');
-		$return_string .= "\n\n<?\n";
+		$return_string .= "\n\n<?php\n";
 
 		$return_string .= '$opts = array(';
+		$cols = '';
 		foreach($this->columns as $col) {
 			$cols .= "'{$col['nombre']}_opts', ";
 		}
@@ -255,7 +256,7 @@ foreach ($opts as $o) {
 	}
 
 	function paging_page() {
-		$return_string = '<?
+		$return_string = '<?php
 $page = ($_GET[\'page\'] ? $_GET[\'page\'] : 1);
 $start = ($page-1) * $lim;
 
@@ -306,7 +307,7 @@ function options_range($start, $end) {
 	}
 
 	function get_functions() {
-		$return_string = '<?
+		$return_string = '<?php
 /* General configuration */
 /* MySQL */
 $mysql_host = \'localhost\';
@@ -523,8 +524,9 @@ function pr(\$arr) {
 
 
 	function build_form($cols, $submit, $method = 'post', $value = 'row') {
-		$res .= '<form action="" method="'.$method.'">
+		$res = '<form action="" method="'.$method.'">
 <fieldset>
+<legend>' . $submit . '</legend>
 <ul>
 ';
 		$is_search = ($submit == 'Search');
@@ -542,7 +544,7 @@ function pr(\$arr) {
 	function form_input($col, $value, $is_search = false) {
 	if ($col['nombre'] != $this->table['id_key']) {
 
-		$text .= '  <li><label><span>' . $this->title($col['nombre']) . ":</span>\n";
+		$text = '  <li><label><span>' . $this->title($col['nombre']) . ":</span>\n";
 		if ($is_search)
 			$text .= "    <?= search_options('".$col['nombre']."', \$_GET['".$col['nombre']."_opts']) ?></label>\n";
 		$text .= '    ';

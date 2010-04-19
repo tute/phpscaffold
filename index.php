@@ -1,4 +1,5 @@
 <?
+error_reporting(E_ALL);
 include('scaffold.php');
 
 $show_form = 0;
@@ -36,7 +37,7 @@ if (isset($_POST['scaffold_info'])) {
 	if ($table['id_key'] == '') $table['id_key'] = 'id';
 	
 	// get first table name
-	if (eregi('CREATE TABLE `(.)+` \(', $data, $matches)) {
+	if (preg_match('/CREATE TABLE .+/', $data, $matches)) {
 		$table['name'] = find_text($matches[0]);
 		$max = count($data_lines);
 		for ($i = 1; $i < $max; $i++) {
