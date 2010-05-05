@@ -466,6 +466,20 @@ function select_range(\$name, \$selected, \$start, \$finish, \$range = 1) {
 }
 
 /*
+*	Relate different models through select menu.
+*/
+function build_options(\$table_name, \$name_col, \$selected = null, \$id_col = 'id') {
+	\$sql = \"SELECT \$id_col, \$name_col FROM \$table_name\";
+	\$r = mysql_query(\$sql) or trigger_error(mysql_error());
+	\$ret = '<select name=\"'.\$table_name.'\">';
+	while(\$row = mysql_fetch_array(\$r)) {
+		\$sel = (\$selected == \$r[\$id_col] ? ' selected=\"selected\"' : '');
+		\$ret .= \"<option value=\\\"\$row[\$id_col]\\\"\$sel>\$row[\$name_col]</option>\\n\";
+	}
+	return \$ret . '</select>';
+}
+
+/*
 *	From separate _GET variables (YYYY, (M)M, (D)D)
 *	 to MySQL string (YYYY-MM-DD)
 */
