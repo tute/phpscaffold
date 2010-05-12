@@ -48,7 +48,7 @@ include('{$this->table['paging_page']}');
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
 		foreach($this->columns as $v) {
-			$return_string .= '    <th>'. $this->title($v['nombre']) . ' \' . put_order('.$v['nombre'].") . '</th>\n";
+			$return_string .= '    <th>'. $this->title($v['nombre']) . ' \' . put_order(\''.$v['nombre']."') . '</th>\n";
 		}
 		$return_string .= "  </tr>';
 
@@ -516,7 +516,7 @@ function put_order(\$col) {
 }
 
 function get_order(\$table, \$default = '{$this->table['id_key']} ASC') {
-	if(\$_GET['order'] and \$_GET['col'])
+	if (isset(\$_GET['order']) and isset(\$_GET['col']))
 		return \"ORDER BY \$table.{\$_GET['col']} {\$_GET['order']}\";
 	else
 		return \"ORDER BY \$default\";
