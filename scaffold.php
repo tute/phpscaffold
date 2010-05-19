@@ -264,10 +264,10 @@ $num_results = mysql_result(mysql_query(\'SELECT COUNT('.$this->table['id_key'].
 $num_pages = ceil($num_results / $lim);
 
 /* Mantain search and sorting parameters */
-$pars = split("[&]", $_SERVER[\'argv\'][0]);
+$pars = explode("[&]", $_SERVER[\'argv\'][0]);
 $res = array();
 foreach($pars as $n => $par) {
-	$p = split("[=]", $par);
+	$p = explode("[=]", $par);
 	if ($p[0] != \'page\')
 		array_push($res, join(\'=\', $p));
 }
@@ -328,7 +328,7 @@ $sess_auth = true;
 
 if ($sess_auth == true) {
 	session_start();
-	if ((!ereg(\'inc.auth.php\', $_SERVER[\'PHP_SELF\']))
+	if ((!preg_match(\'/inc.auth.php/\', $_SERVER[\'PHP_SELF\']))
 	  and (!isset($_SESSION[\'user_logged_in\'])
 	  or $_SESSION[\'user_logged_in\'] !== true)) {
 		header(\'Location: ../inc.auth.php\');
@@ -396,8 +396,8 @@ label span {
 }
 
 function print_footer() {
-	$index = ereg(\''.$this->table['list_page'].'\', $_SERVER[\'PHP_SELF\']);
-	$login = ereg(\'inc.auth.php\', $_SERVER[\'PHP_SELF\']);
+	$index = preg_match(\'/'.$this->table['list_page'].'/\', $_SERVER[\'PHP_SELF\']);
+	$login = preg_match(\'/inc.auth.php/\', $_SERVER[\'PHP_SELF\']);
 	if (!$index and !$login)
 		echo \'<p><a href="'.$this->table['list_page'].'">Back to Listing</a></p>\';
 	echo "</body>\n</html>";
@@ -466,14 +466,14 @@ function select_range(\$name, \$selected, \$start, \$finish, \$range = 1) {
 }
 
 /*
-*	Relate different models through select menu.
+*	Build select menu with data from a model.
 */
 function build_options(\$table_name, \$name_col, \$selected = null, \$id_col = 'id') {
 	\$sql = \"SELECT \$id_col, \$name_col FROM \$table_name\";
 	\$r = mysql_query(\$sql) or trigger_error(mysql_error());
 	\$ret = '<select name=\"'.\$table_name.'\">';
 	while(\$row = mysql_fetch_array(\$r)) {
-		\$sel = (\$selected == \$r[\$id_col] ? ' selected=\"selected\"' : '');
+		\$sel = (\$selected == \$row[\$id_col] ? ' selected=\"selected\"' : '');
 		\$ret .= \"<option value=\\\"\$row[\$id_col]\\\"\$sel>\$row[\$name_col]</option>\\n\";
 	}
 	return \$ret . '</select>';
@@ -502,10 +502,10 @@ function search_by(\$var) {
 }
 
 function put_order(\$col) {
-	\$pars = split(\"[&]\", \$_SERVER['argv'][0]);
+	\$pars = explode(\"[&]\", \$_SERVER['argv'][0]);
 	\$res = array();
 	foreach(\$pars as \$n => \$par) {
-		\$p = split(\"[=]\", \$par);
+		\$p = explode(\"[=]\", \$par);
 		if (\$p[0] != 'order' and \$p[0] != 'col')
 			array_push(\$res, join('=', \$p));
 	}
