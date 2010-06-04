@@ -275,19 +275,19 @@ $pars = join("&amp;", $res);
 
 echo \'<p>Pages: \';
 echo ($page-1 > 0 ? \'<a href="?\'.$pars.\'&amp;page=\'.($page-1).\'">Previous</a>\' : \'Previous\') . \' | \';
-if ($num_pages <= 50) {
+if ($num_pages <= 25) {
 	options_range(1, $num_pages);
 } else {
-	if ($page <= 5 or ($page >= $num_pages-5 and !($page > $num_pages))) {
+	if ($page <= 5 or ($page >= $num_pages-4 and !($page > $num_pages))) {
 		options_range(1,5);
 		echo "... |\n";
-		options_range($num_pages-5, $num_pages);
-	} elseif (5 < $page and $page <= $num_pages-5) {
+		options_range($num_pages-4, $num_pages);
+	} elseif (5 < $page and $page <= $num_pages-4) {
 		options_range(1,5);
 		echo "... |\n";
-		options_range(max(5,$page-3), min($page+3, $num_pages-5));
+		options_range(max(6,$page-3), min($page+3, $num_pages-5));
 		echo "... |\n";
-		options_range($num_pages-5, $num_pages);
+		options_range($num_pages-4, $num_pages);
 	}
 }
 echo ($page+1 <= $num_pages ? \'<a href="?\'.$pars.\'&amp;page=\'.($page+1).\'">Next</a>\' : \'Next\');
@@ -386,7 +386,12 @@ label span {
   float: left;
   width: 9em;
 }
+form {
+  width: 50em;
+  margin: auto;
+}
 </style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 </head>
 
 <body>
@@ -538,18 +543,25 @@ function pr(\$arr) {
 
 
 	function build_form($cols, $submit, $method = 'post', $value = 'row') {
+		$is_search = ($submit == 'Search');
+
+		$legend = $submit;
+		if ($is_search)
+			$legend = "<a href=\"#\" onclick=\"$('#search-form').slideToggle()\">$legend</a>";
+
 		$res = '<form action="" method="'.$method.'">
 <fieldset>
-<legend>' . $submit . '</legend>
+<legend>' . $legend . '</legend>
+<div' . ($is_search ? ' id="search-form" style="display:none"' : '') . '>
 <ul>
 ';
-		$is_search = ($submit == 'Search');
 		foreach ($cols as $col)
 			$res .= $this->form_input($col, $value, $is_search);
 
 		$res .= '</ul>
 <p><input type="hidden" value="1" name="submitted" />
   <input type="submit" value="'.$submit.'" /></p>
+</div>
 </fieldset>
 </form>';
 		return $res;

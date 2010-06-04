@@ -32,10 +32,9 @@ parameter to @search_options@ (in search page).
 
 
 h2. To do list
-
+* Make CRUD operations in single file (REPLACE statement).
 * Link subfolders in layout.
 * Generate schema.sql (concatenate dumps per project).
-* Search box with roll-up/roll-down effect on <legend>.
 * Stylize it (at least a little bit)!
 * Distinguish between @int@ and @char@ columns, to tie text/number search
   options automatically.
