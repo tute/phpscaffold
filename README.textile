@@ -32,7 +32,6 @@ parameter to @search_options@ (in search page).
 
 
 h2. To do list
-* Make CRUD operations in single file (REPLACE statement).
 * Link subfolders in layout.
 * Generate schema.sql (concatenate dumps per project).
 * Stylize it (at least a little bit)!

@@ -27,9 +27,7 @@ if (isset($_POST['scaffold_info'])) {
 
 	$table['project_name'] = stripslashes($_POST['project_name']);
 	$table['list_page']    = stripslashes($_POST['list_page']);
-	$table['edit_page']    = stripslashes($_POST['edit_page']);
-	$table['new_page']     = stripslashes($_POST['new_page']);
-	$table['delete_page']  = stripslashes($_POST['delete_page']);
+	$table['crud_page']    = stripslashes($_POST['crud_page']);
 	$table['include']      = stripslashes($_POST['include']);
 	$table['search_page']  = stripslashes($_POST['search_page']);
 	$table['paging_page']  = stripslashes($_POST['paging_page']);
@@ -68,7 +66,6 @@ if (isset($_POST['scaffold_info'])) {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <script type="text/javascript" src="js/prototype.js"></script>
-<script type="text/javascript" src="js/scriptaculous.js"></script>
 <script type="text/javascript" src="js/s.js"></script>
 
 <title>PHP MySQL CRUD Scaffold</title>
@@ -80,10 +77,10 @@ if (isset($_POST['scaffold_info'])) {
 </head>
 
 <body>
-<h1>php<span class="color">Scaffold</span></h1>
+<h1><a href="index.php" style="color:#fff;text-decoration:none">php<span class="color">Scaffold</span></a></h1>
 
 <div class="submenu">
-<? if ($show_form) echo '<a href="javascript:showNew();">Enter New Table</a> | <a href="javascript:showAll()">Show All</a> | <a href="javascript:hideAll()">Hide All</a>'; ?>
+<? if ($show_form) echo 'Files saved in <strong style="font-family:Monaco,"Courier New",monospace">tmp/'.$table['project_name'].'</strong> directory.'; ?>
 </div>
 
 <div class="container">
@@ -107,17 +104,9 @@ href="javascript:showHint();">[Hint]</a></p>
 <input type="hidden" name="id_key" id="id_key" value="id" />
 <input type="hidden" name="list_page" id="list_page" value="index.php" />
 
-<? $val = (isset($_REQUEST['new_page']) ? stripslashes($_REQUEST['new_page']) : 'new.php'); ?>
-<p><label>New file name</label>
-  <input type="text" name="new_page" value="<?= $val ?>" id="new_page" /></p>
-
-<? $val = (isset($_REQUEST['edit_page']) ? stripslashes($_REQUEST['edit_page']) : 'edit.php'); ?>
-<p><label>Edit file name</label>
-  <input type="text" name="edit_page" value="<?= $val ?>" id="edit_page" /></p>
-
-<? $val = (isset($_REQUEST['delete_page']) ? stripslashes($_REQUEST['delete_page']) : 'delete.php'); ?>
-<p><label>Delete file name</label>
-  <input type="text" name="delete_page" value="<?= $val ?>" id="delete_page" /></p>
+<? $val = (isset($_REQUEST['crud_page']) ? stripslashes($_REQUEST['crud_page']) : 'crud.php'); ?>
+<p><label>CRUD file name</label>
+  <input type="text" name="crud_page" value="<?= $val ?>" id="crud_page" /></p>
 
 <? $val = (isset($_REQUEST['search_page']) ? stripslashes($_REQUEST['search_page']) : 'inc.search.php'); ?>
 <p><label>Search file name</label>
@@ -149,11 +138,8 @@ if ($show_form) {
 		return $r;
 	}
 	$s = new Scaffold($table);
-	echo '<p>Files saved in <span style="font-family:Monaco,"Courier New",monospace">tmp/'.$table['project_name'].'</span> directory.</p>';
 	echo files_textarea_head('list') . htmlspecialchars($s->listtable()) . "\n</textarea>";
-	echo files_textarea_head('new') . htmlspecialchars($s->newrow()) . "\n</textarea>";
-	echo files_textarea_head('edit') . htmlspecialchars($s->editrow()) . "\n</textarea>";
-	echo files_textarea_head('delete') . htmlspecialchars($s->deleterow()) . "\n</textarea>";
+	echo files_textarea_head('crud') . htmlspecialchars($s->crud_page()) . "\n</textarea>";
 	echo files_textarea_head('authentication') . htmlspecialchars($s->session_auth()) . "\n</textarea>";
 	echo files_textarea_head('search') . htmlspecialchars($s->search_page()) . "\n</textarea>";
 	echo files_textarea_head('paging') . htmlspecialchars($s->paging_page()) . "\n</textarea>";
@@ -167,9 +153,7 @@ if ($show_form) {
 	file_put_contents($dir.$abm.$table['list_page'], $s->listtable());
 	file_put_contents($dir.$abm.$table['search_page'], $s->search_page());
 	file_put_contents($dir.$abm.$table['paging_page'], $s->paging_page());
-	file_put_contents($dir.$abm.$table['new_page'], $s->newrow());
-	file_put_contents($dir.$abm.$table['edit_page'], $s->editrow());
-	file_put_contents($dir.$abm.$table['delete_page'], $s->deleterow());
+	file_put_contents($dir.$abm.$table['crud_page'], $s->crud_page());
 	file_put_contents($dir.'inc.auth.php', $s->session_auth());
 	file_put_contents($dir.$table['include'], $s->get_functions());
 	file_put_contents($dir.'index.php', "<?\nheader('Location: {$table['name']}/')\n?>");

@@ -66,13 +66,13 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 
 			$return_string .= "    <td>' . $val . '</td>\n";
 		}
-		$return_string .= "    <td><a href=\"{$this->table['edit_page']}?{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\">Edit</a></td>
-    <td><a href=\"{$this->table['delete_page']}?{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>
+		$return_string .= "    <td><a href=\"{$this->table['crud_page']}?{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\">Edit</a></td>
+    <td><a href=\"{$this->table['crud_page']}?delete=1&amp;{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>
   </tr>';\n";
 		$return_string .= "}\n\n";
 		$return_string .= "echo '</table>
 
-<p><a href=\"{$this->table['new_page']}\">New entry</a></p>';
+<p><a href=\"{$this->table['crud_page']}\">New entry</a></p>';
 
 print_footer();
 ?>";
@@ -80,15 +80,25 @@ print_footer();
 		return $return_string;
 	}
 
-	function newrow() {
+	function crud_page() {
 		$return_string = "<?php\n";
 		if ($this->table['include'] != '')
-			$return_string .= "include('../{$this->table['include']}');\n";
+			$return_string .= "include('../{$this->table['include']}');\n\n";
 
-		$return_string .= "
-if (isset(\$_POST['submitted'])) {
-	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
-		$insert = "INSERT INTO `{$this->table['name']}` (";
+		$return_string .= "if (isset(\$_GET['delete'])) {
+	mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\$_GET[{$this->table['id_key']}]}'\");
+	\$msg = (mysql_affected_rows() ? 'Row deleted.' : 'Nothing deleted.');
+	header('Location: {$this->table['list_page']}?msg='.\$msg);
+}
+
+\${$this->table['id_key']} = (isset(\$_GET['{$this->table['id_key']}']) ? \$_GET['{$this->table['id_key']}'] : 0);
+\$action = (\${$this->table['id_key']} ? 'Edit' : 'Add new');\n\n";
+
+		$column_array = array();
+
+		$return_string .= "if (isset(\$_POST['submitted'])) {
+			foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
+		$insert = "REPLACE INTO `{$this->table['name']}` (";
 		$counter = 0;
 		foreach($this->columns as $v) {
 			$insert .= "`$v[nombre]`" ;
@@ -96,60 +106,20 @@ if (isset(\$_POST['submitted'])) {
 				$insert .= ", ";
 			$counter++;
 		}
-		$insert .= ') VALUES (';
+		$insert .= ") VALUES (\${$this->table['id_key']}, ";
 
-		$counter = 0;
-		foreach($this->columns as $v) {
-			$val = parse($v['nombre'], $v['tipo']);
-			$insert .= "'$val'" ;
-			if ($counter < count($this->columns) - 1 )
-				$insert .= ", ";
-			$counter++;
-		}
-		$insert .= ")";
-
-		$return_string .= "	\$sql = \"$insert\";
-	mysql_query(\$sql) or die(mysql_error());
-	\$msg = (mysql_affected_rows() ? 'Added row.' : 'Nothing changed.');
-	header('Location: {$this->table['list_page']}?msg='.\$msg);
-}
-
-print_header('Add {$this->table['name']}');
-?>\n";
-		$return_string .= $this->build_form($this->columns, 'Create') . '
-<?
-print_footer();
-?>';
-
-		return $return_string;
-	}
-
-
-	function editrow() {
-		$return_string = "<?php\n";
-		if ($this->table['include'] != '')
-			$return_string .= "include('../{$this->table['include']}');\n\n";
-
-		$return_string .= "if (isset(\$_GET['{$this->table['id_key']}']) ) {
-	\${$this->table['id_key']} = \$_GET['{$this->table['id_key']}'];\n\n";
-
-		$column_array = array();
-
-		$return_string .= "if (isset(\$_POST['submitted'])) {
-	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
-		$insert = "UPDATE `{$this->table['name']}` SET ";
 		$counter = 0;
 		foreach ($this->columns as $v) {
 			if ($v['nombre'] != $this->table['id_key']) {
 				$field = $v['nombre'];
 				$val = parse($field, $v['tipo']);
-				$insert .= " `$field` = '$val'" ;
+				$insert .= "'$val'";
 				if ($counter < count($this->columns) - 2)
 					$insert .= ", ";
 				$counter++;
 			}
 		}
-		$insert .= "  WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' ";
+		$insert .= ');';
 
 		$return_string .= "	\$sql = \"$insert\";
 	mysql_query(\$sql) or die(mysql_error());
@@ -157,15 +127,14 @@ print_footer();
 	header('Location: {$this->table['list_page']}?msg='.\$msg);
 }
 
-print_header('Edit {$this->table['name']}');
+print_header(\"\$action {$this->table['name']}\");
 
 \$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
 ?>\n";
 
-$return_string .= $this->build_form($this->columns, 'Edit') . '
+$return_string .= $this->build_form($this->columns, 'Add / Edit') . '
 
 <?
-}
 print_footer();
 ?>';
 
@@ -312,7 +281,7 @@ function options_range($start, $end) {
 /* MySQL */
 $mysql_host = \'localhost\';
 $mysql_user = \'root\';
-$mysql_pass = \'mysql_pass\';
+$mysql_pass = \'\';
 $dbname = \'database\';
 
 /* Allowed users  */
