@@ -32,6 +32,7 @@ parameter to @search_options@ (in search page).
 
 
 h2. To do list
+* Simplify scaffold.php code including external files for each page.
 * Link subfolders in layout.
 * Generate schema.sql (concatenate dumps per project).
 * Stylize it (at least a little bit)!

@@ -97,7 +97,7 @@ print_footer();
 		$column_array = array();
 
 		$return_string .= "if (isset(\$_POST['submitted'])) {
-			foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
+	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
 		$insert = "REPLACE INTO `{$this->table['name']}` (";
 		$counter = 0;
 		foreach($this->columns as $v) {
@@ -133,24 +133,10 @@ print_header(\"\$action {$this->table['name']}\");
 ?>\n";
 
 $return_string .= $this->build_form($this->columns, 'Add / Edit') . '
-
 <?
 print_footer();
 ?>';
 
-		return $return_string;
-	}
-
-	function deleterow() {
-		$return_string = "<?php\n";
-		if ($this->table['include'] != '')
-			$return_string .= 'include(\'../'.$this->table['include'].'\');';
-
-		$return_string .= "
-mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\$_GET[{$this->table['id_key']}]}'\");
-\$msg = (mysql_affected_rows() ? 'Row deleted.' : 'Nothing deleted.');
-header('Location: {$this->table['list_page']}?msg='.\$msg);
-?>";
 		return $return_string;
 	}
 
@@ -282,7 +268,7 @@ function options_range($start, $end) {
 $mysql_host = \'localhost\';
 $mysql_user = \'root\';
 $mysql_pass = \'\';
-$dbname = \'database\';
+$dbname = \'phpsc_db\';
 
 /* Allowed users  */
 $login = array(
