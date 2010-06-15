@@ -1,15 +1,4 @@
 <?
-function find_text($text, $delimit_start = '`', $delimit_end = '`') {
-	$start = strpos($text, $delimit_start);
-	if ($start === false) return false;
-
-	$end = strpos(substr($text, $start + 1), $delimit_end);
-	if ($end === false) return false;
-
-	return substr($text, $start + 1, $end);
-}
-
-
 class Scaffold {
 	public $table = array();
 
@@ -22,7 +11,7 @@ class Scaffold {
 		$this->columns = $columns;
 	}
 
-	function listtable() {
+	function list_page() {
 		$column_array = array();
 		$return_string = "<?php\n";
 
@@ -48,7 +37,7 @@ include('{$this->table['paging_page']}');
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
 		foreach($this->columns as $v) {
-			$return_string .= '    <th>'. $this->title($v['nombre']) . ' \' . put_order(\''.$v['nombre']."') . '</th>\n";
+			$return_string .= '    <th>'. $this->_title($v['nombre']) . ' \' . put_order(\''.$v['nombre']."') . '</th>\n";
 		}
 		$return_string .= "  </tr>';
 
@@ -112,7 +101,7 @@ print_footer();
 		foreach ($this->columns as $v) {
 			if ($v['nombre'] != $this->table['id_key']) {
 				$field = $v['nombre'];
-				$val = parse($field, $v['tipo']);
+				$val = _parse($field, $v['tipo']);
 				$insert .= "'$val'";
 				if ($counter < count($this->columns) - 2)
 					$insert .= ", ";
@@ -132,7 +121,7 @@ print_header(\"\$action {$this->table['name']}\");
 \$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
 ?>\n";
 
-$return_string .= $this->build_form($this->columns, 'Add / Edit') . '
+$return_string .= $this->_build_form($this->columns, 'Add / Edit') . '
 <?
 print_footer();
 ?>';
@@ -186,7 +175,7 @@ print_footer();
 	}
 
 	function search_page() {
-		$return_string = $this->build_form($this->columns, 'Search', 'get', '_GET');
+		$return_string = $this->_build_form($this->columns, 'Search', 'get', '_GET');
 		$return_string .= "\n\n<?php\n";
 
 		$return_string .= '$opts = array(';
@@ -497,7 +486,7 @@ function pr(\$arr) {
 	}
 
 
-	function build_form($cols, $submit, $method = 'post', $value = 'row') {
+	function _build_form($cols, $submit, $method = 'post', $value = 'row') {
 		$is_search = ($submit == 'Search');
 
 		$legend = $submit;
@@ -511,7 +500,7 @@ function pr(\$arr) {
 <ul>
 ';
 		foreach ($cols as $col)
-			$res .= $this->form_input($col, $value, $is_search);
+			$res .= $this->_form_input($col, $value, $is_search);
 
 		$res .= '</ul>
 <p><input type="hidden" value="1" name="submitted" />
@@ -522,10 +511,10 @@ function pr(\$arr) {
 		return $res;
 	}
 
-	function form_input($col, $value, $is_search = false) {
-	if ($col['nombre'] != $this->table['id_key']) {
+	function _form_input($col, $value, $is_search = false) {
+		if ($col['nombre'] != $this->table['id_key']) {
 
-		$text = '  <li><label><span>' . $this->title($col['nombre']) . ":</span>\n";
+		$text = '  <li><label><span>' . $this->_title($col['nombre']) . ":</span>\n";
 		if ($is_search)
 			$text .= "    <?= search_options('".$col['nombre']."', \$_GET['".$col['nombre']."_opts']) ?></label>\n";
 		$text .= '    ';
@@ -546,52 +535,32 @@ function pr(\$arr) {
 
 		if (!$is_search) $text .= '</label>'; /* Could be closed after search_options */
 		return $text . "</li>\n";
-	} /* If not id column */
-	} /* form_input function */
+		} /* If not id column */
+	}
 
-	function title($name) {
+	/* Merge split form data into single (SQL) data */
+	function _parse($field, $type) {
+		if ($type['date']) {
+			$day  = $field . '_day';
+			$mth  = $field . '_mth';
+			$year = $field . '_year';
+			$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day]";
+		} elseif ($type['datetime']) {
+			$seg  = $field . '_seg';
+			$min  = $field . '_min';
+			$hour = $field . '_hour';
+			$day  = $field . '_day';
+			$mth  = $field . '_mth';
+			$year = $field . '_year';
+			$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]";
+		} else {
+			$val = "\$_POST[$field]";
+		}
+		return $val;
+	}
+
+	function _title($name) {
 		return ucwords(str_replace('_', ' ', trim($name)));
 	}
-}
-
-function parse($field, $type) {
-	if ($type['date']) {
-		$day  = $field . '_day';
-		$mth  = $field . '_mth';
-		$year = $field . '_year';
-		$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day]";
-	} elseif ($type['datetime']) {
-		$seg  = $field . '_seg';
-		$min  = $field . '_min';
-		$hour = $field . '_hour';
-		$day  = $field . '_day';
-		$mth  = $field . '_mth';
-		$year = $field . '_year';
-		$val = "\$_POST[$year]-\$_POST[$mth]-\$_POST[$day] \$_POST[$hour]:\$_POST[$min]:\$_POST[$seg]";
-	} else {
-		$val = "\$_POST[$field]";
-	}
-	return $val;
-}
-
-/* Given a table, compute it's Primary Key */
-function get_primary_key($text) {
-	$text = explode("\n", $text);
-	foreach ($text as $line) {
-		if (preg_match('/PRIMARY KEY/', $line)) {
-			/* Remove parenthesis */
-			$key = explode('(', $line);
-			$key = substr($key[1], 0, -1);
-			/* Remove surrounding comillas? */
-			if ($key[0] == '`') $key = substr($key,1,-2);
-		}
-	}
-	return $key;
-}
-
-function pr($arr) {
-	echo '<pre>';
-	print_r($arr);
-	echo '</pre>';
 }
 ?>

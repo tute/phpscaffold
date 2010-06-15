@@ -1,6 +1,7 @@
-<?
+<?php
 error_reporting(E_ALL);
 include('scaffold.php');
+include('functions.inc');
 
 $show_form = 0;
 $message = '';
@@ -127,18 +128,8 @@ href="javascript:showHint();">[Hint]</a></p>
 
 <?
 if ($show_form) {
-	function files_textarea_head($act) {
-		$r = '<div class="options">
-  <a href="javascript:toggle(\''.$act.'\');">Show/Hide</a> |
-  <a href="javascript:selectAll(\''.$act.'\');">Select All</a>
-</div>
-
-<h2>'.ucwords($act).'</h2>
-<textarea rows="30" cols="80" class="textarea" id="'.$act.'">';
-		return $r;
-	}
 	$s = new Scaffold($table);
-	echo files_textarea_head('list') . htmlspecialchars($s->listtable()) . "\n</textarea>";
+	echo files_textarea_head('list') . htmlspecialchars($s->list_page()) . "\n</textarea>";
 	echo files_textarea_head('crud') . htmlspecialchars($s->crud_page()) . "\n</textarea>";
 	echo files_textarea_head('authentication') . htmlspecialchars($s->session_auth()) . "\n</textarea>";
 	echo files_textarea_head('search') . htmlspecialchars($s->search_page()) . "\n</textarea>";
@@ -150,7 +141,7 @@ if ($show_form) {
 	$abm = "{$table['name']}/";
 	if(!is_dir($dir)) mkdir($dir);
 	if(!is_dir($dir.$abm)) mkdir($dir.$abm);
-	file_put_contents($dir.$abm.$table['list_page'], $s->listtable());
+	file_put_contents($dir.$abm.$table['list_page'], $s->list_page());
 	file_put_contents($dir.$abm.$table['search_page'], $s->search_page());
 	file_put_contents($dir.$abm.$table['paging_page'], $s->paging_page());
 	file_put_contents($dir.$abm.$table['crud_page'], $s->crud_page());
