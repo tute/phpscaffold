@@ -101,7 +101,7 @@ print_footer();
 		foreach ($this->columns as $v) {
 			if ($v['nombre'] != $this->table['id_key']) {
 				$field = $v['nombre'];
-				$val = _parse($field, $v['tipo']);
+				$val = $this->_parse($field, $v['tipo']);
 				$insert .= "'$val'";
 				if ($counter < count($this->columns) - 2)
 					$insert .= ", ";
@@ -329,6 +329,13 @@ label span {
   display: block;
   float: left;
   width: 9em;
+}
+table {
+  width: 90%;
+  margin: auto;
+}
+td {
+  border-bottom: 1px solid #00a;
 }
 form {
   width: 50em;
