@@ -47,9 +47,11 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 
 		foreach($this->columns as $v) {
 			if($v['tipo']['blob'])
-				$val = "nl2br(\$row['".$v['nombre']."'])";
+				$val = "limit_chars(nl2br(\$row['".$v['nombre']."']))";
 			elseif($v['tipo']['date'] or $v['tipo']['datetime'])
 				$val = "humanize(\$row['".$v['nombre']."'])";
+			elseif($v['tipo']['bool'])
+				$val = "(\$row['".$v['nombre']."'] ? 'Yes' : 'No')";
 			else
 				$val = "\$row['".$v['nombre']."']";
 
@@ -476,6 +478,12 @@ function get_order(\$table, \$default = '{$this->table['id_key']} ASC') {
 		return \"ORDER BY \$table.{\$_GET['col']} {\$_GET['order']}\";
 	else
 		return \"ORDER BY \$default\";
+}
+
+function limit_chars(\$str, \$lim = 150) {
+	\$words = explode(' ', substr(\$str, 0, \$lim));
+	\$cut = (strlen(\$str) > \$lim);
+	return implode(' ', array_slice(\$words, 0, count(\$words)-\$cut)) . (\$cut ? '...' : '');
 }
 
 function humanize(\$date) {

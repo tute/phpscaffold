@@ -36,4 +36,10 @@ function get_primary_key($text) {
 	}
 	return $key;
 }
+
+function pr($arr) {
+	echo '<pre>';
+	print_r($arr);
+	echo '</pre>';
+}
 ?>
