@@ -28,7 +28,6 @@ if (isset($_POST['scaffold_info'])) {
 	$table['project_name'] = stripslashes($_POST['project_name']);
 	$table['list_page']    = stripslashes($_POST['list_page']);
 	$table['crud_page']    = stripslashes($_POST['crud_page']);
-	$table['include']      = stripslashes($_POST['include']);
 	$table['search_page']  = stripslashes($_POST['search_page']);
 	$table['paging_page']  = stripslashes($_POST['paging_page']);
 	$table['id_key'] = get_primary_key($_POST['sql']);
@@ -107,10 +106,6 @@ href="javascript:show_hint();">[Hint]</a></p>
 <p><label>Paging file name</label>
   <input type="text" name="paging_page" value="<?= $val ?>" id="paging_page" /></p>
 
-<? $val = (isset($_REQUEST['include']) ? stripslashes($_REQUEST['include']) : 'inc.functions.php'); ?>
-<p><label>Include file name</label>
-  <input type="text" name="include" value="<?= $val ?>" id="include" /></p>
-
 <p><input type="hidden" name="id_key" id="id_key" value="id" />
   <input type="hidden" name="list_page" id="list_page" value="index.php" />
   <input name="scaffold_info" type="hidden" value="1" />
@@ -120,14 +115,13 @@ href="javascript:show_hint();">[Hint]</a></p>
 
 <?
 if ($show_form) {
-	echo '<h2><a href="tmp/'.$table['project_name'].'">See projects</a></h2><br />';
+	echo '<h2><a href="tmp/">See projects</a></h2><br />';
 	echo "\n<h2>Generated files:</h2>";
 	$s = new Scaffold($table);
 	echo files_textarea_head('list') . htmlspecialchars($s->list_page()) . "\n</textarea>";
 	echo files_textarea_head('crud') . htmlspecialchars($s->crud_page()) . "\n</textarea>";
 	echo files_textarea_head('authentication') . htmlspecialchars($s->session_auth()) . "\n</textarea>";
 	echo files_textarea_head('search') . htmlspecialchars($s->search_page()) . "\n</textarea>";
-	echo files_textarea_head('functions') . htmlspecialchars($s->get_functions()) . "\n</textarea>";
 
 	/* Save files in tmp folder */
 	$dir = "tmp/{$table['project_name']}/";
@@ -141,9 +135,9 @@ if ($show_form) {
 	file_put_contents($dir.$abm.$table['search_page'], $s->search_page());
 	file_put_contents($dir.$abm.$table['crud_page'], $s->crud_page());
 	file_put_contents($dir.'inc.auth.php', $s->session_auth());
-	file_put_contents($dir.$table['include'], $s->get_functions());
 	file_put_contents($dir.'index.php', "<?\nheader('Location: {$table['name']}/')\n?>");
 	copy($statics.'inc.paging.php', $dir.'inc.paging.php');
+	copy($statics.'inc.functions.php', $dir.'inc.functions.php');
 	copy($statics.'css/stylesheet.css', $dir.$css.'stylesheet.css');
 }
 ?>
