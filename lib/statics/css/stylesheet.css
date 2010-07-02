@@ -1,0 +1,25 @@
+body {
+  font: .8em "Trebuchet MS", Trebuchet, Verdana, Sans-Serif;
+}
+#msg {
+  padding: 5px 10px;
+  border: 1px solid #3a3;
+  background: #dfd;
+  font-weight: bold;
+}
+label span {
+  display: block;
+  float: left;
+  width: 9em;
+}
+table {
+  width: 90%;
+  margin: auto;
+}
+td {
+  border-bottom: 1px solid #00a;
+}
+form {
+  width: 50em;
+  margin: auto;
+}
