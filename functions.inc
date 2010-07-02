@@ -1,14 +1,8 @@
 <?php
 /* Common layout for showing files */
 function files_textarea_head($file) {
-	$r = '<div class="options">
-  <a href="javascript:toggle(\''.$file.'\');">Show/Hide</a> |
-  <a href="javascript:selectAll(\''.$file.'\');">Select All</a>
-</div>
-
-<h2>' . ucwords($file) . '</h2>
-<textarea rows="30" cols="80" class="textarea" id="'.$file.'">';
-	return $r;
+	return "\n\n<h3><a href=\"#\" onclick=\"$('#{$file}').slideToggle()\">" . ucwords($file) . '</a></h3>
+<textarea rows="30" cols="80" class="textarea" style="display:none" id="'.$file.'">';
 }
 
 /* Get rid of comillas around text */

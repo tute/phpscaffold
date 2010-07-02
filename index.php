@@ -10,14 +10,12 @@ if (isset($_POST['scaffold_info'])) {
 	$data = trim($_POST['sql']);
 	$data_lines = explode("\n", $data);
 	
-	// strip all comments
-	foreach ($data_lines  AS $key => $value) {
+	/* Strip SQL comments */
+	foreach ($data_lines as $key => $value) {
 		$value = trim($value);
 		if ($value[0] == '-' && $value[1] == '-') unset($data_lines[$key]);
 		elseif (stripos($value, 'insert into')) unset($data_lines[$key]);
 	}
-
-	$table = array();
 
 	// store into cookie
 	foreach($_POST AS $key => $value) {
@@ -26,6 +24,7 @@ if (isset($_POST['scaffold_info'])) {
 		setcookie($key, $value, $date, '/');
 	}
 
+	$table = array();
 	$table['project_name'] = stripslashes($_POST['project_name']);
 	$table['list_page']    = stripslashes($_POST['list_page']);
 	$table['crud_page']    = stripslashes($_POST['crud_page']);
@@ -65,15 +64,9 @@ if (isset($_POST['scaffold_info'])) {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-<script type="text/javascript" src="js/prototype.js"></script>
-<script type="text/javascript" src="js/s.js"></script>
-
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="js/functions.js"></script>
 <title>PHP MySQL CRUD Scaffold</title>
-
-<meta name="Keywords" content="php, mysql, crud, scaffold" />
-<meta name="Description" content="Fast PHP CRUD Scaffold Maker" />
-
 <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 
@@ -81,7 +74,7 @@ if (isset($_POST['scaffold_info'])) {
 <h1><a href="index.php" style="color:#fff;text-decoration:none">php<span class="color">Scaffold</span></a></h1>
 
 <div class="submenu">
-<? if ($show_form) echo 'Files saved in <strong style="font-family:Monaco,"Courier New",monospace">tmp/'.$table['project_name'].'</strong> directory.'; ?>
+<? if ($show_form) echo 'Files saved in <strong>tmp/'.$table['project_name'].'</strong> directory.'; ?>
 </div>
 
 <div class="container">
@@ -94,16 +87,13 @@ if (isset($_POST['scaffold_info'])) {
 quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
 
 <p>Enter an SQL table dump below to generate your pages. <a
-href="javascript:showHint();">[Hint]</a></p>
+href="javascript:show_hint();">[Hint]</a></p>
 
-<p><textarea name="sql" id="sql" cols="55" rows="10"><?= (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
+<p><textarea id="sql" name="sql" cols="55" rows="10"><?= (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
 
 <? $val = (isset($_REQUEST['project_name']) ? stripslashes($_REQUEST['project_name']) : 'project'); ?>
 <p><label>Project folder name</label>
   <input name="project_name" type="text" id="project_name" value="<?= $val ?>" /></p>
-
-<input type="hidden" name="id_key" id="id_key" value="id" />
-<input type="hidden" name="list_page" id="list_page" value="index.php" />
 
 <? $val = (isset($_REQUEST['crud_page']) ? stripslashes($_REQUEST['crud_page']) : 'crud.php'); ?>
 <p><label>CRUD file name</label>
@@ -121,35 +111,43 @@ href="javascript:showHint();">[Hint]</a></p>
 <p><label>Include file name</label>
   <input type="text" name="include" value="<?= $val ?>" id="include" /></p>
 
-<p><input name="scaffold_info" type="hidden" value="1" />
+<p><input type="hidden" name="id_key" id="id_key" value="id" />
+  <input type="hidden" name="list_page" id="list_page" value="index.php" />
+  <input name="scaffold_info" type="hidden" value="1" />
   <input type="submit" value="Make pages" /></p>
 </form>
 </div>
 
 <?
 if ($show_form) {
+	echo '<h2><a href="tmp/'.$table['project_name'].'">See projects</a></h2><br />';
+	echo "\n<h2>Generated files:</h2>";
 	$s = new Scaffold($table);
 	echo files_textarea_head('list') . htmlspecialchars($s->list_page()) . "\n</textarea>";
 	echo files_textarea_head('crud') . htmlspecialchars($s->crud_page()) . "\n</textarea>";
 	echo files_textarea_head('authentication') . htmlspecialchars($s->session_auth()) . "\n</textarea>";
 	echo files_textarea_head('search') . htmlspecialchars($s->search_page()) . "\n</textarea>";
-	echo files_textarea_head('paging') . htmlspecialchars($s->paging_page()) . "\n</textarea>";
 	echo files_textarea_head('functions') . htmlspecialchars($s->get_functions()) . "\n</textarea>";
 
-	// Save files in tmp folder
+	/* Save files in tmp folder */
 	$dir = "tmp/{$table['project_name']}/";
 	$abm = "{$table['name']}/";
+	$css = 'css/';
+	$statics = 'lib/statics/';
 	if(!is_dir($dir)) mkdir($dir);
 	if(!is_dir($dir.$abm)) mkdir($dir.$abm);
+	if(!is_dir($dir.$css)) mkdir($dir.$css);
 	file_put_contents($dir.$abm.$table['list_page'], $s->list_page());
 	file_put_contents($dir.$abm.$table['search_page'], $s->search_page());
-	file_put_contents($dir.$abm.$table['paging_page'], $s->paging_page());
 	file_put_contents($dir.$abm.$table['crud_page'], $s->crud_page());
 	file_put_contents($dir.'inc.auth.php', $s->session_auth());
 	file_put_contents($dir.$table['include'], $s->get_functions());
 	file_put_contents($dir.'index.php', "<?\nheader('Location: {$table['name']}/')\n?>");
+	copy($statics.'inc.paging.php', $dir.'inc.paging.php');
+	copy($statics.'css/stylesheet.css', $dir.$css.'stylesheet.css');
 }
 ?>
+
 </div>
 
 </body>
