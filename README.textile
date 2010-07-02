@@ -32,6 +32,8 @@ parameter to @search_options@ (in search page).
 
 
 h2. To do list
+* Split layout from common functions in inc file.
+* Exract 'auth' and 'functions' as static pages.
 * date and datetime fields shouldn't be surrounded by @<legend>@.
 * Link subfolders in layout.
 * Generate schema.sql (concatenate dumps per project).
