@@ -193,7 +193,7 @@ function put_order($col) {
 	<a href=\"$_SERVER[PHP_SELF]?$pars&amp;order=DESC\">↓</a>";
 }
 
-function get_order($table, $default = 'user_id ASC') {
+function get_order($table, $default = 'id ASC') {
 	if (isset($_GET['order']) and isset($_GET['col']))
 		return "ORDER BY $table.{$_GET['col']} {$_GET['order']}";
 	else
