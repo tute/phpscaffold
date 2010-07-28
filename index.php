@@ -42,7 +42,7 @@ if (isset($_POST['scaffold_info'])) {
 				$col = find_text(trim($data_lines[$i]));
 				$bool = (stripos($data_lines[$i], 'INT(1)') ? 1 : 0);
 				$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ? 1 : 0);
-				$date = (stripos($data_lines[$i], 'DATE ') ? 1 : 0);
+				$date = (stripos($data_lines[$i], 'DATE') ? 1 : 0);
 				$datetime = (stripos($data_lines[$i], 'DATETIME') ? 1 : 0);
 				$table[$col] = array(
 					'bool' => $bool,
@@ -138,6 +138,7 @@ if ($show_form) {
 	file_put_contents($dir.'index.php', "<?\nheader('Location: {$table['name']}/')\n?>");
 	copy($statics.'inc.paging.php', $dir.'inc.paging.php');
 	copy($statics.'inc.functions.php', $dir.'inc.functions.php');
+	copy($statics.'inc.layout.php', $dir.'inc.layout.php');
 	copy($statics.'css/stylesheet.css', $dir.$css.'stylesheet.css');
 }
 ?>

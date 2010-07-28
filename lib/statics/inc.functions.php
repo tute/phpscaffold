@@ -13,10 +13,13 @@ $login = array(
 
 
 /* phpscaffold code - you may leave this untouched */
+include('../inc.layout.php');
 
 /* Session based or basic HTTP authentication. */
 $sess_auth = true;
 
+/* We're in admin (FIXME) */
+if (preg_match('/admin/', $_SERVER['PHP_SELF'])) {
 if ($sess_auth == true) {
 	session_start();
 	if ((!preg_match('/inc.auth.php/', $_SERVER['PHP_SELF']))
@@ -45,7 +48,7 @@ if ($sess_auth == true) {
 		doAuth();
 	}
 }
-
+}
 
 // DB connect
 $link = @mysql_connect($mysql_host, $mysql_user, $mysql_pass);
@@ -53,33 +56,7 @@ if (!$link)
 	die('Not connected: ' . mysql_error());
 if (!mysql_select_db($dbname))
 	die ("Can't use $dbname: " . mysql_error());
-
-function print_header($title) {
-	$login = preg_match('/inc.auth.php/', $_SERVER['PHP_SELF']);
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
- "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title><?= $title ?></title>
-<link rel="stylesheet" type="text/css" href="<?= $login ? '' : '../' ?>css/stylesheet.css" />
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-</head>
-
-<body>
-<h1><?= $title ?>
-  <? if ($_SESSION['user_logged_in'] == true) echo '<span style="font-size:12px"><a href="../inc.auth.php?action=logout&amp;msg=You have been logged out.">[Logout]</a></p>'; ?></h1>
-<?
-}
-
-function print_footer() {
-	$index = preg_match('/index.php/', $_SERVER['PHP_SELF']);
-	$login = preg_match('/inc.auth.php/', $_SERVER['PHP_SELF']);
-	if (!$index and !$login)
-		echo '<p><a href="index.php">Back to Listing</a></p>';
-	echo "</body>\n</html>";
-}
+mysql_query('SET NAMES "utf8"');
 
 function input_date($field, $value) {
 	$day  = $field . '_day';
@@ -144,12 +121,22 @@ function select_range($name, $selected, $start, $finish, $range = 1) {
 }
 
 /*
+*	Given a table and an id, return it's name.
+*/
+function get_data($table_name, $name_col, $id) {
+	$sql = "SELECT $name_col FROM $table_name WHERE id = $id";
+	$r = mysql_query($sql) or trigger_error(mysql_error());
+	$row = mysql_fetch_array($r);
+	return $row[$name_col];
+}
+
+/*
 *	Build select menu with data from a model.
 */
-function build_options($table_name, $name_col, $selected = null, $id_col = 'id') {
+function build_options($table_name, $name_col, $fk_col_name, $selected = null, $id_col = 'id') {
 	$sql = "SELECT $id_col, $name_col FROM $table_name";
 	$r = mysql_query($sql) or trigger_error(mysql_error());
-	$ret = '<select name="'.$table_name.'">';
+	$ret = '<select name="'.$fk_col_name.'">';
 	while($row = mysql_fetch_array($r)) {
 		$sel = ($selected == $row[$id_col] ? ' selected="selected"' : '');
 		$ret .= "<option value=\"$row[$id_col]\"$sel>$row[$name_col]</option>\n";

@@ -32,7 +32,6 @@ parameter to @search_options@ (in search page).
 
 
 h2. To do list
-* Split layout from common functions in inc file.
 * Exract 'auth' as static page.
 * date and datetime fields shouldn't be surrounded by @<legend>@.
 * Link subfolders in layout.
@@ -43,3 +42,5 @@ h2. To do list
 * Date/date-range search.
 * Table name and titles get broken if 'name' column exists.
 * Upload files capability?
+* index.php:42 make it case insensitive.
+* showEmpty option for @build_options()@.
