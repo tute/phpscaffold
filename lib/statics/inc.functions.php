@@ -13,7 +13,7 @@ $login = array(
 
 
 /* phpscaffold code - you may leave this untouched */
-include('../inc.layout.php');
+include('inc.layout.php');
 
 /* Session based or basic HTTP authentication. */
 $sess_auth = true;
