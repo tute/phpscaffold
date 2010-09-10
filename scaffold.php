@@ -25,13 +25,13 @@ if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
 include('{$this->table['search_page']}');
 
 /* Default paging criteria (may be overriden by paging functions) */
-\$start = 0;
-\$lim   = 100;
+\$start     = 0;
+\$per_page  = 100;
 \$count_sql = 'SELECT COUNT({$this->table['id_key']}) AS tot FROM `{$this->table['name']}` WHERE ' . \$conds;
 include('../{$this->table['paging_page']}');
 
 /* Get selected entries! */
-\$sql = \"SELECT * FROM `{$this->table['name']}` WHERE \$conds \" . get_order('{$this->table['name']}') . \" LIMIT \$start,\$lim\";
+\$sql = \"SELECT * FROM `{$this->table['name']}` WHERE \$conds \" . get_order('{$this->table['name']}') . \" LIMIT \$start,\$per_page\";
 
 echo '<table>\n";
 		$return_string .= "  <tr>\n";

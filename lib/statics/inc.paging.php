@@ -1,15 +1,15 @@
 <?php
-$page = ($_GET['page'] ? $_GET['page'] : 1);
-$start = ($page-1) * $lim;
+$page = (isset($_GET['page']) ? $_GET['page'] : 1);
+$start = ($page-1) * $per_page;
 
 $num_results = mysql_result(mysql_query($count_sql), 0);
-$num_pages = ceil($num_results / $lim);
+$num_pages = ceil($num_results / $per_page);
 
 /* Mantain search and sorting parameters */
-$pars = explode("[&]", $_SERVER['argv'][0]);
+$pars = explode('&', $_SERVER['QUERY_STRING']);
 $res = array();
 foreach($pars as $n => $par) {
-	$p = explode("[=]", $par);
+	$p = explode('=', $par);
 	if ($p[0] != 'page')
 		array_push($res, join('=', $p));
 }
@@ -36,11 +36,11 @@ echo ($page+1 <= $num_pages ? '<a href="?'.$pars.'&amp;page='.($page+1).'">Next<
 echo "</p>
 
 <p style=\"text-align:center;font-size:.9em\">(Showing entries $start to "
-  . min($start+$lim, $num_results) . " out of $num_results.)</p>\n\n";
+  . min($start+$per_page, $num_results) . " out of $num_results.)</p>\n\n";
 
 function options_range($start, $end) {
 	global $pars;
 	for ($i=$start; $i <= $end; $i++)
-		echo ($i == $_GET['page'] ? "<strong>$i</strong>" : "<a href=\"?$pars&amp;page=$i\">$i</a>") . " |\n";
+		echo ((isset($_GET['page']) and $i == $_GET['page']) ? "<strong>$i</strong>" : "<a href=\"?$pars&amp;page=$i\">$i</a>") . " |\n";
 }
 ?>
