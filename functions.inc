@@ -23,9 +23,10 @@ function get_primary_key($text) {
 		if (preg_match('/PRIMARY KEY/', $line)) {
 			/* Remove parenthesis */
 			$key = explode('(', $line);
-			$key = substr($key[1], 0, -1);
+			$key = explode(')', $key[1]);
+			$key = substr($key[0], 0, -1);
 			/* Remove surrounding comillas? */
-			if ($key[0] == '`') $key = substr($key,1,-2);
+			if ($key[0] == '`') $key = substr($key,1);
 		}
 	}
 	return $key;

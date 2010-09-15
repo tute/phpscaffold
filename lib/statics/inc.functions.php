@@ -15,12 +15,8 @@ $login = array(
 /* phpscaffold code - you may leave this untouched */
 include('inc.layout.php');
 
-/* Session based or basic HTTP authentication. */
-$sess_auth = true;
-
 /* We're in admin (FIXME) */
 if (preg_match('/admin/', $_SERVER['PHP_SELF'])) {
-if ($sess_auth == true) {
 	session_start();
 	if ((!preg_match('/inc.auth.php/', $_SERVER['PHP_SELF']))
 	  and (!isset($_SESSION['user_logged_in'])
@@ -28,26 +24,6 @@ if ($sess_auth == true) {
 		header('Location: ../inc.auth.php');
 		exit;
 	}
-} else {
-	function doAuth() {
-		header('WWW-Authenticate: Basic realm="Protected Area"');
-		header('HTTP/1.0 401 Unauthorized');
-		echo 'Valid username / password required.';
-		exit;
-	}
-
-	function checkUser() {
-		global $login;
-		if($_SERVER['PHP_AUTH_USER']!='' && $_SERVER['PHP_AUTH_PW']!='') {
-			return ($login[$_SERVER['PHP_AUTH_USER']] == $_SERVER['PHP_AUTH_PW']);
-		}
-		return false;
-	}
-
-	if (!isset($_SERVER['PHP_AUTH_USER']) or !checkUser()) {
-		doAuth();
-	}
-}
 }
 
 // DB connect

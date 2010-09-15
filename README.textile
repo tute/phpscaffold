@@ -4,7 +4,7 @@ h1. About phpScaffold
 takes a table dump and some file names as input from a browser session, and
 cooks XHTML pages for editing the model.
 
-It features basic HTTP or Session based authentication; searching, sorting and
+It features session based authentication; searching, sorting and
 paging facilities in listing page; and the generated forms responds to column
 types @text@, @date@, @datetime@, @(var)char@ and @bool (int(1))@. It makes it
 easy to add many CRUD modules to a single project.
