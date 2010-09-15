@@ -1,4 +1,13 @@
 <?php
+/* Already included (and defined)? */
+if (!function_exists('options_range')) {
+	function options_range($start, $end) {
+		global $pars;
+		for ($i=$start; $i <= $end; $i++)
+			echo ((isset($_GET['page']) and $i == $_GET['page']) ? "<strong>$i</strong>" : "<a href=\"?$pars&amp;page=$i\">$i</a>") . " |\n";
+	}
+}
+
 $page = (isset($_GET['page']) ? $_GET['page'] : 1);
 $start = ($page-1) * $per_page;
 
@@ -37,10 +46,4 @@ echo "</p>
 
 <p style=\"text-align:center;font-size:.9em\">(Showing entries $start to "
   . min($start+$per_page, $num_results) . " out of $num_results.)</p>\n\n";
-
-function options_range($start, $end) {
-	global $pars;
-	for ($i=$start; $i <= $end; $i++)
-		echo ((isset($_GET['page']) and $i == $_GET['page']) ? "<strong>$i</strong>" : "<a href=\"?$pars&amp;page=$i\">$i</a>") . " |\n";
-}
 ?>

@@ -64,6 +64,8 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 
 <p><a href=\"{$this->table['crud_page']}\">New entry</a></p>';
 
+include('../inc.paging.php');
+
 print_footer();
 ?>";
 
