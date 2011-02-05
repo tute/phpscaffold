@@ -36,7 +36,6 @@ h2. To do list
 * date and datetime fields shouldn't be surrounded by @<legend>@.
 * Link subfolders in layout.
 * Generate schema.sql (concatenate dumps per project).
-* Stylize it (at least a little bit)!
 * Distinguish between @int@ and @char@ columns, to tie text/number search
   options automatically.
 * Date/date-range search.

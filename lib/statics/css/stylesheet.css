@@ -1,25 +1,99 @@
 body {
-  font: .8em "Trebuchet MS", Trebuchet, Verdana, Sans-Serif;
+  font: normal 0.8em auto Verdana, Arial, Helvetica, sans-serif;
+  color: #4f6b72;
+  background: #E6EAE9;
 }
 #msg {
   padding: 5px 10px;
-  border: 1px solid #3a3;
-  background: #dfd;
+  border: 1px solid #919594;
+  background: #c4c8c7;
   font-weight: bold;
+}
+a {
+  color: #222;
+  text-decoration: none;
+  font-weight: bold;
+  color: #0088BB;
+}
+img {
+  border: 0px;
+  vertical-align: middle;
+}
+caption {
+  padding: 0 0 5px 0;
+  font: italic 11px Verdana, Arial, Helvetica, sans-serif;
+  text-align: right;
+}
+small {
+  font: italic auto Verdana, Arial, Helvetica, sans-serif;
+  color: #4f6b72;
+}
+li {
+  list-style-type: none;
 }
 label span {
   display: block;
   float: left;
+  text-decoration: none;
   width: 9em;
 }
-table {
-  width: 90%;
-  margin: auto;
+input.uppercase {
+  text-transform: uppercase;
+}
+input .medium {
+  width: 30px;
+  height: 30px;
+}
+
+/* special */
+.error {
+  background: #F7CBCA !important
+}
+
+/* Tables */
+th {
+  font: bold 11px "Gill sans", Gill Sans, sans-serif;
+  color: #18375e;
+  border-right: 1px solid #C1DAD7;
+  border-bottom: 1px solid #C1DAD7;
+  border-top: 1px solid #C1DAD7;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 6px 6px 6px 12px;
+  cursor: pointer;
+  cursor: hand;
+  background: #94a3ad no-repeat;
+}
+th.nobg {
+  border-top: 0;
+  border-left: 0;
+  border-right: 1px solid #C1DAD7;
+  background: none;
 }
 td {
-  border-bottom: 1px solid #00a;
+  border-right: 1px solid #C1DAD7;
+  border-bottom: 1px solid #C1DAD7;
+  background: #fff;
+  padding: 6px 6px 6px 12px;
+  color: #4f6b72;
 }
-form {
-  width: 50em;
-  margin: auto;
+td.alt {
+  background: #F5FAFA;
+  color: #000;
+  font-weight: bold;
+}
+td.spec {
+  color: #000;
+  border-left: 1px solid #C1DAD7;
+  border-top: 0;
+  background: #fff url(../images/bullet1.gif) no-repeat;
+  font: bold 10px Verdana, Arial, Helvetica, sans-serif;
+}
+td.specalt {
+  border-left: 1px solid #C1DAD7;
+  border-top: 0;
+  background: #f5fafa url(../images/bullet2.gif) no-repeat;
+  font: bold 12px Verdana, Arial, Helvetica, sans-serif;
+  color: #000;
 }
