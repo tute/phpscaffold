@@ -188,7 +188,7 @@ print_footer();
 		$return_string .= substr($cols, 0, -2) . ");\n"
 . '/* Sorround "contains" search term between %% */
 foreach ($opts as $o) {
-	if ($_GET[$o] == \'like\') {
+	if (isset($_GET[$o]) && $_GET[$o] == \'like\') {
 		$v = substr($o, 0, -5);
 		$_GET[$v] = \'%\' . $_GET[$v] . \'%\';
 	}
@@ -244,9 +244,9 @@ foreach ($opts as $o) {
 		elseif ($col['tipo']['datetime'])
 			$text .= '<?= input_datetime(\''.$col['nombre'].'\', '.$val.') ?>';
 		elseif ($col['tipo']['blob'])
-			$text .= '<textarea name="'.$col['nombre'].'" cols="40" rows="10"><?= stripslashes('.$val.') ?></textarea>';
+			$text .= '<textarea name="'.$col['nombre'].'" cols="40" rows="10"><?= (isset('.$val.') ? stripslashes('.$val.') : \'\') ?></textarea>';
 		else
-			$text .= '<input type="text" name="'.$col['nombre'].'" value="<?= stripslashes('.$val.') ?>" />';
+			$text .= '<input type="text" name="'.$col['nombre'].'" value="<?= (isset('.$val.') ? stripslashes('.$val.') : \'\') ?>" />';
 
 		if (!$is_search) $text .= '</label>'; /* Could be closed after search_options */
 		return $text . "</li>\n";

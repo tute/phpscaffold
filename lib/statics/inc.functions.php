@@ -143,6 +143,7 @@ function search_by($var) {
 }
 
 function put_order($col) {
+	if (isset($_SERVER['argv'])) {
 	$pars = explode("[&]", $_SERVER['argv'][0]);
 	$res = array();
 	foreach($pars as $n => $par) {
@@ -154,6 +155,7 @@ function put_order($col) {
 	$pars = join("&amp;", $res);
 	return "<a href=\"$_SERVER[PHP_SELF]?$pars&amp;order=ASC\">↑</a>
 	<a href=\"$_SERVER[PHP_SELF]?$pars&amp;order=DESC\">↓</a>";
+	}
 }
 
 function get_order($table, $default = 'id ASC') {

@@ -13,7 +13,7 @@ function print_header($title) {
 
 <body>
 <h1><a href="../"><?= $title ?></a>
-  <? if ($_SESSION['user_logged_in'] == true) echo '<span style="font-size:12px"><a href="../inc.auth.php?action=logout&amp;msg=You have been logged out.">[Logout]</a></p>'; ?></h1>
+  <? if (isset($_SESSION) && $_SESSION['user_logged_in'] == true) echo '<span style="font-size:12px"><a href="../inc.auth.php?action=logout&amp;msg=You have been logged out.">[Logout]</a></p>'; ?></h1>
 <?
 }
 
