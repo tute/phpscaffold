@@ -42,8 +42,8 @@ if (isset($_POST['scaffold_info'])) {
 				$col = find_text(trim($data_lines[$i]));
 				$bool = (stripos($data_lines[$i], 'INT(1)') ? 1 : 0);
 				$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ? 1 : 0);
-				$date = (stripos($data_lines[$i], 'DATE') ? 1 : 0);
 				$datetime = (stripos($data_lines[$i], 'DATETIME') ? 1 : 0);
+				$date = (!$datetime && stripos($data_lines[$i], 'DATE') ? 1 : 0);
 				$table[$col] = array(
 					'bool' => $bool,
 					'blob' => $blob,

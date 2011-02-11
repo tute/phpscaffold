@@ -60,14 +60,14 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
     <td><a href=\"{$this->table['crud_page']}?delete=1&amp;{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>
   </tr>';\n";
 		$return_string .= "}\n\n";
-		$return_string .= "echo '</table>
+		$return_string .= 'echo "</table>\n\n";
 
-<p><a href=\"{$this->table['crud_page']}\">New entry</a></p>';
+include(\'../inc.paging.php\');
 
-include('../inc.paging.php');
+echo \'<p><a href="' . $this->table['crud_page'] . '">New entry</a></p>\';
 
 print_footer();
-?>";
+?>';
 
 		return $return_string;
 	}

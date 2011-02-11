@@ -50,7 +50,15 @@ input .medium {
   background: #F7CBCA !important
 }
 
+#paging_links {
+  text-align: center;
+  font-size: .9em;
+}
+
 /* Tables */
+table {
+  margin: auto;
+}
 th {
   font: bold 11px "Gill sans", Gill Sans, sans-serif;
   color: #18375e;

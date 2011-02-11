@@ -24,7 +24,7 @@ foreach($pars as $n => $par) {
 }
 $pars = join("&amp;", $res);
 
-echo '<p>Pages: ';
+echo '<div id="paging_links"><p>Pages: ';
 echo ($page-1 > 0 ? '<a href="?'.$pars.'&amp;page='.($page-1).'">Previous</a>' : 'Previous') . ' | ';
 if ($num_pages <= 25) {
 	options_range(1, $num_pages);
@@ -44,6 +44,6 @@ if ($num_pages <= 25) {
 echo ($page+1 <= $num_pages ? '<a href="?'.$pars.'&amp;page='.($page+1).'">Next</a>' : 'Next');
 echo "</p>
 
-<p style=\"text-align:center;font-size:.9em\">(Showing entries $start to "
-  . min($start+$per_page, $num_results) . " out of $num_results.)</p>\n\n";
+<p>(Showing entries $start to "
+  . min($start+$per_page, $num_results) . " out of $num_results.)</p></div>\n\n";
 ?>
