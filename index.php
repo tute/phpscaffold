@@ -143,6 +143,9 @@ if ($show_form) {
 	copy($statics.'inc.functions.php', $dir.'inc.functions.php');
 	copy($statics.'inc.layout.php', $dir.'inc.layout.php');
 	copy($statics.'css/stylesheet.css', $dir.$css.'stylesheet.css');
+
+	/* Log table schema definition */
+	file_put_contents($dir.'schema.sql', $_POST['sql']."\n\n", FILE_APPEND);
 }
 ?>
 
