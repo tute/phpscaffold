@@ -115,27 +115,30 @@ href="javascript:show_hint();">[Hint]</a></p>
 
 <?
 if ($show_form) {
-	echo '<h2><a href="tmp/">See projects</a></h2><br />';
-	echo "\n<h2>Generated files:</h2>";
 	$s = new Scaffold($table);
-	echo files_textarea_head('list') . htmlspecialchars($s->list_page()) . "\n</textarea>";
-	echo files_textarea_head('crud') . htmlspecialchars($s->crud_page()) . "\n</textarea>";
-	echo files_textarea_head('authentication') . htmlspecialchars($s->session_auth()) . "\n</textarea>";
-	echo files_textarea_head('search') . htmlspecialchars($s->search_page()) . "\n</textarea>";
 
-	/* Save files in tmp folder */
+	echo '<h2><a href="tmp/">Created projects</a>:</h2>';
+	echo list_dir('tmp');
+
+	/* Directories */
 	$dir = "tmp/{$table['project_name']}/";
 	$abm = "{$table['name']}/";
 	$css = 'css/';
 	$statics = 'lib/statics/';
+
+	/* Create directory layout if not exists */
 	if(!is_dir($dir)) mkdir($dir);
 	if(!is_dir($dir.$abm)) mkdir($dir.$abm);
 	if(!is_dir($dir.$css)) mkdir($dir.$css);
+
+	/* Create generated files */
 	file_put_contents($dir.$abm.$table['list_page'], $s->list_page());
 	file_put_contents($dir.$abm.$table['search_page'], $s->search_page());
 	file_put_contents($dir.$abm.$table['crud_page'], $s->crud_page());
 	file_put_contents($dir.'inc.auth.php', $s->session_auth());
 	file_put_contents($dir.'index.php', "<?\nheader('Location: {$table['name']}/')\n?>");
+
+	/* Copy static files */
 	copy($statics.'inc.paging.php', $dir.'inc.paging.php');
 	copy($statics.'inc.functions.php', $dir.'inc.functions.php');
 	copy($statics.'inc.layout.php', $dir.'inc.layout.php');

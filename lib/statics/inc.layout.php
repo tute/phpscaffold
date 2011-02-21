@@ -20,6 +20,7 @@ function print_header($title) {
 function print_footer() {
 	$index = preg_match('/index.php/', $_SERVER['PHP_SELF']);
 	$login = preg_match('/inc.auth.php/', $_SERVER['PHP_SELF']);
+	echo list_cruds();
 	if (!$index and !$login)
 		echo '<p><a href="index.php">Back to Listing</a></p>';
 	echo "</body>\n</html>";

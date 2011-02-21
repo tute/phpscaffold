@@ -171,6 +171,20 @@ function limit_chars($str, $lim = 150) {
 	return implode(' ', array_slice($words, 0, count($words)-$cut)) . ($cut ? '...' : '');
 }
 
+/* List crud directories */
+function list_cruds() {
+	$filter = array('.', '..', 'css');
+	echo '<ul>';
+	if ($handle = opendir('..')) {
+		while (false !== ($file = readdir($handle))) {
+			if (is_dir("../$file") && !in_array($file, $filter))
+				echo "  <li><a href=\"../$file/\">$file</a></li>\n";
+		}
+		closedir($handle);
+	}
+	echo '</ul>';
+}
+
 function humanize($date) {
 	$pattern = (strlen($date) == 10 ? 'd/m/Y' : 'd/m/Y @ h:i:s');
 	return date($pattern, strtotime($date));

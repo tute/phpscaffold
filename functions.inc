@@ -1,8 +1,15 @@
 <?php
-/* Common layout for showing files */
-function files_textarea_head($file) {
-	return "\n\n<h3><a href=\"#\" onclick=\"$('#{$file}').slideToggle()\">" . ucwords($file) . '</a></h3>
-<textarea rows="30" cols="80" class="textarea" style="display:none" id="'.$file.'">';
+/* List directory $dir */
+function list_dir($dir) {
+	echo '<ul>';
+	if ($handle = opendir($dir)) {
+		while (false !== ($file = readdir($handle))) {
+			if (substr($file, 0, 1) != '.')
+				echo "  <li><a href=\"tmp/$file/\">$file</a></li>\n";
+		}
+		closedir($handle);
+	}
+	echo '</ul>';
 }
 
 /* Get rid of comillas around text */
@@ -37,4 +44,3 @@ function pr($arr) {
 	print_r($arr);
 	echo '</pre>';
 }
-?>

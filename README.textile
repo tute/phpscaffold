@@ -34,7 +34,6 @@ parameter to @search_options@ (in search page).
 h2. To do list
 * Exract 'auth' as static page.
 * date and datetime fields shouldn't be surrounded by @<legend>@.
-* Link subfolders in layout.
 * Generate schema.sql (concatenate dumps per project).
 * Distinguish between @int@ and @char@ columns, to tie text/number search
   options automatically.
