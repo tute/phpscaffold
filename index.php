@@ -35,7 +35,7 @@ if (isset($_POST['scaffold_info'])) {
 	
 	// get first table name
 	if (preg_match('/CREATE TABLE .+/', $data, $matches)) {
-		$table['name'] = find_text($matches[0]);
+		$table['table_name'] = find_text($matches[0]);
 		$max = count($data_lines);
 		for ($i = 1; $i < $max; $i++) {
 			if (strpos(trim($data_lines[$i]), '`') === 0) { // this line has a column
@@ -44,7 +44,7 @@ if (isset($_POST['scaffold_info'])) {
 				$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ? 1 : 0);
 				$datetime = (stripos($data_lines[$i], 'DATETIME') ? 1 : 0);
 				$date = (!$datetime && stripos($data_lines[$i], 'DATE') ? 1 : 0);
-				$table[$col] = array(
+				$table['columns'][$col] = array(
 					'bool' => $bool,
 					'blob' => $blob,
 					'date' => $date,
@@ -122,7 +122,7 @@ if ($show_form) {
 
 	/* Directories */
 	$dir = "tmp/{$table['project_name']}/";
-	$abm = "{$table['name']}/";
+	$abm = "{$table['table_name']}/";
 	$css = 'css/';
 	$statics = 'lib/statics/';
 
@@ -136,7 +136,7 @@ if ($show_form) {
 	file_put_contents($dir.$abm.$table['search_page'], $s->search_page());
 	file_put_contents($dir.$abm.$table['crud_page'], $s->crud_page());
 	file_put_contents($dir.'inc.auth.php', $s->session_auth());
-	file_put_contents($dir.'index.php', "<?\nheader('Location: {$table['name']}/')\n?>");
+	file_put_contents($dir.'index.php', "<?\nheader('Location: {$table['table_name']}/')\n?>");
 
 	/* Copy static files */
 	copy($statics.'inc.paging.php', $dir.'inc.paging.php');

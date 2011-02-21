@@ -4,7 +4,7 @@ class Scaffold {
 
 	function Scaffold($table) {
 		$columns = array();
-		foreach($table as $key => $value)
+		foreach($table['columns'] as $key => $value)
 			if (is_array($value))
 				$columns[] = array('tipo' => $value, 'nombre' => $key);
 		$this->table = $table;
@@ -16,7 +16,7 @@ class Scaffold {
 		$return_string = "<?php
 include('../inc.functions.php');\n";
 
-		$return_string .= "\nprint_header('" . ucwords($this->table['name']) . "');
+		$return_string .= "\nprint_header('" . ucwords($this->table['table_name']) . "');
 
 if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
 
@@ -27,11 +27,11 @@ include('{$this->table['search_page']}');
 /* Default paging criteria (may be overriden by paging functions) */
 \$start     = 0;
 \$per_page  = 100;
-\$count_sql = 'SELECT COUNT({$this->table['id_key']}) AS tot FROM `{$this->table['name']}` WHERE ' . \$conds;
+\$count_sql = 'SELECT COUNT({$this->table['id_key']}) AS tot FROM `{$this->table['table_name']}` WHERE ' . \$conds;
 include('../{$this->table['paging_page']}');
 
 /* Get selected entries! */
-\$sql = \"SELECT * FROM `{$this->table['name']}` WHERE \$conds \" . get_order('{$this->table['name']}') . \" LIMIT \$start,\$per_page\";
+\$sql = \"SELECT * FROM `{$this->table['table_name']}` WHERE \$conds \" . get_order('{$this->table['table_name']}') . \" LIMIT \$start,\$per_page\";
 
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
@@ -77,7 +77,7 @@ print_footer();
 include('../inc.functions.php');\n\n";
 
 		$return_string .= "if (isset(\$_GET['delete'])) {
-	mysql_query(\"DELETE FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\$_GET[{$this->table['id_key']}]}'\");
+	mysql_query(\"DELETE FROM `{$this->table['table_name']}` WHERE `{$this->table['id_key']}` = '\$_GET[{$this->table['id_key']}]}'\");
 	\$msg = (mysql_affected_rows() ? 'Row deleted.' : 'Nothing deleted.');
 	header('Location: {$this->table['list_page']}?msg='.\$msg);
 }
@@ -89,7 +89,7 @@ include('../inc.functions.php');\n\n";
 
 		$return_string .= "if (isset(\$_POST['submitted'])) {
 	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
-		$insert = "REPLACE INTO `{$this->table['name']}` (";
+		$insert = "REPLACE INTO `{$this->table['table_name']}` (";
 		$counter = 0;
 		foreach($this->columns as $v) {
 			$insert .= "`$v[nombre]`" ;
@@ -118,9 +118,9 @@ include('../inc.functions.php');\n\n";
 	header('Location: {$this->table['list_page']}?msg='.\$msg);
 }
 
-print_header(\"\$action {$this->table['name']}\");
+print_header(\"\$action {$this->table['table_name']}\");
 
-\$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
+\$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['table_name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
 ?>\n";
 
 $return_string .= $this->_build_form($this->columns, 'Add / Edit') . '
@@ -148,7 +148,7 @@ if (isset(\$_POST['user']) && isset(\$_POST['pass'])) {
 	}
 }
 
-print_header('Login - ".ucwords($this->table['name'])."');
+print_header('Login - ".ucwords($this->table['table_name'])."');
 
 if (\$_GET['action'] == 'logout') {
 	unset(\$_SESSION['user_logged_in']);

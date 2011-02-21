@@ -38,7 +38,6 @@ h2. To do list
 * Distinguish between @int@ and @char@ columns, to tie text/number search
   options automatically.
 * Date/date-range search.
-* Table name and titles get broken if 'name' column exists.
 * Upload files capability?
 * index.php:42 make it case insensitive.
 * showEmpty option for @build_options()@.
