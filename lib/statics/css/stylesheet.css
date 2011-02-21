@@ -50,7 +50,7 @@ input .medium {
   background: #F7CBCA !important
 }
 
-#paging_links {
+.paging_links {
   text-align: center;
   font-size: .9em;
 }

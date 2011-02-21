@@ -24,7 +24,7 @@ foreach($pars as $n => $par) {
 }
 $pars = join("&amp;", $res);
 
-echo '<div id="paging_links"><p>Pages: ';
+echo '<div class="paging_links"><p>Pages: ';
 echo ($page-1 > 0 ? '<a href="?'.$pars.'&amp;page='.($page-1).'">Previous</a>' : 'Previous') . ' | ';
 if ($num_pages <= 25) {
 	options_range(1, $num_pages);

@@ -38,7 +38,8 @@ echo '<table>\n";
 		foreach($this->columns as $v) {
 			$return_string .= '    <th>'. $this->_title($v['nombre']) . ' \' . put_order(\''.$v['nombre']."') . '</th>\n";
 		}
-		$return_string .= "  </tr>';
+		$return_string .= '    <th colspan="2" style="text-align:center">Actions</th>';
+		$return_string .= "\n  </tr>\n';
 
 \$r = mysql_query(\$sql) or trigger_error(mysql_error());
 while(\$row = mysql_fetch_array(\$r)) {\n";
@@ -58,7 +59,7 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 		}
 		$return_string .= "    <td><a href=\"{$this->table['crud_page']}?{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\">Edit</a></td>
     <td><a href=\"{$this->table['crud_page']}?delete=1&amp;{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>
-  </tr>';\n";
+  </tr>' . \"\n\";\n";
 		$return_string .= "}\n\n";
 		$return_string .= 'echo "</table>\n\n";
 
@@ -208,7 +209,7 @@ foreach ($opts as $o) {
 		if ($is_search)
 			$legend = "<a href=\"#\" onclick=\"$('#search-form').slideToggle()\">$legend</a>";
 
-		$res = '<form action="" method="'.$method.'">
+		$res = '<form action="<?= $_SERVER[\'PHP_SELF\'] ?>" method="'.$method.'">
 <fieldset>
 <legend>' . $legend . '</legend>
 <div' . ($is_search ? ' id="search-form" style="display:none"' : '') . '>
@@ -231,20 +232,21 @@ foreach ($opts as $o) {
 
 		$text = '  <li><label><span>' . $this->_title($col['nombre']) . ":</span>\n";
 		if ($is_search)
-			$text .= "    <?= search_options('".$col['nombre']."', \$_GET['".$col['nombre']."_opts']) ?></label>\n";
+			$text .= "    <?= search_options('".$col['nombre']."', (isset(\$_GET['".$col['nombre']."_opts']) ? stripslashes(\$_GET['".$col['nombre']."_opts']) : '')) ?></label>\n";
 		$text .= '    ';
 
 		/* Takes value either from $_GET['id'] or from $row['id'] */
 		$val = '$'.$value.'[\''.$col['nombre'].'\']';
+		$isset_val = '(isset('.$val.') ? stripslashes('.$val.') : \'\')';
 
 		if ($col['tipo']['bool'])
-			$text .= '<input type="checkbox" name="'.$col['nombre'].'" value="1" <?= ('.$val.' == 1 ? \'checked="checked"\' : \'\') ?> />';
+			$text .= '<input type="checkbox" name="'.$col['nombre'].'" value="1" <?= (isset('.$val.') && '.$val.' == 1 ? \'checked="checked"\' : \'\') ?> />';
 		elseif ($col['tipo']['date'])
-			$text .= '<?= input_date(\''.$col['nombre'].'\', '.$val.') ?>';
+			$text .= '<?= input_date(\''.$col['nombre'].'\', ' . $isset_val . ') ?>';
 		elseif ($col['tipo']['datetime'])
-			$text .= '<?= input_datetime(\''.$col['nombre'].'\', '.$val.') ?>';
+			$text .= '<?= input_datetime(\''.$col['nombre'].'\', ' . $isset_val . ') ?>';
 		elseif ($col['tipo']['blob'])
-			$text .= '<textarea name="'.$col['nombre'].'" cols="40" rows="10"><?= (isset('.$val.') ? stripslashes('.$val.') : \'\') ?></textarea>';
+			$text .= '<textarea name="'.$col['nombre'].'" cols="40" rows="10"><?= ' . $isset_val . ' ?></textarea>';
 		else
 			$text .= '<input type="text" name="'.$col['nombre'].'" value="<?= (isset('.$val.') ? stripslashes('.$val.') : \'\') ?>" />';
 
