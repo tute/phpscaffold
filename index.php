@@ -58,9 +58,8 @@ if (isset($_POST['scaffold_info'])) {
 	}
 }
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es">
+<!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
@@ -80,13 +79,13 @@ if (isset($_POST['scaffold_info'])) {
 <? if ($message != '') echo "<div class=\"message\">$message</div>"; ?>
 
 <div <? if ($show_form) echo 'style="display:none"'; ?> id="create_crud">
-<form action="" method="post">
+<form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post">
 
 <p>Welcome to <span style="color:#9D608C;font-weight:bold">phpscaffold.com</span>, where you can
 quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
 
-<p>Enter an SQL table dump below to generate your pages. <a
-href="javascript:show_hint();">[Hint]</a></p>
+<p>Enter an SQL table dump to generate your pages. <a
+href="javascript:show_hint()">[Hint]</a></p>
 
 <p><textarea id="sql" name="sql" cols="55" rows="10"><?= (isset($_REQUEST['sql']) ? stripslashes($_REQUEST['sql']) : '') ?></textarea></p>
 
@@ -139,9 +138,9 @@ if ($show_form) {
 	file_put_contents($dir.'index.php', "<?\nheader('Location: {$table['table_name']}/')\n?>");
 
 	/* Copy static files */
-	copy($statics.'inc.paging.php', $dir.'inc.paging.php');
-	copy($statics.'inc.functions.php', $dir.'inc.functions.php');
-	copy($statics.'inc.layout.php', $dir.'inc.layout.php');
+	copy($statics.'inc.paging.php',     $dir.$s->table['paging_page']);
+	copy($statics.'inc.functions.php',  $dir.'inc.functions.php');
+	copy($statics.'inc.layout.php',     $dir.'inc.layout.php');
 	copy($statics.'css/stylesheet.css', $dir.$css.'stylesheet.css');
 
 	/* Log table schema definition */

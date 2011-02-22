@@ -63,7 +63,7 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 		$return_string .= "}\n\n";
 		$return_string .= 'echo "</table>\n\n";
 
-include(\'../inc.paging.php\');
+include(\'../' . $this->table['paging_page'] . '\');
 
 echo \'<p><a href="' . $this->table['crud_page'] . '">New entry</a></p>\';
 
