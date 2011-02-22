@@ -2,7 +2,7 @@ h1. About phpScaffold
 
 *phpScaffold* quickly generates simple CRUD scaffold modules for PHP/MySQL. It
 takes a table dump and some file names as input from a browser session, and
-cooks XHTML pages for editing the model.
+cooks HTML5 pages for editing the model.
 
 It features session based authentication; searching, sorting and
 paging facilities in listing page; and the generated forms responds to column
@@ -14,6 +14,22 @@ in any new simple model I need, without having to tweak by hand automatable
 tasks (_id est_, for no more reinventing wheels!).
 
 
+h2. Installation and usage
+
+# Go to @index.php@, and seed the form with your table schema.
+# You can go to @tmp/table_name/@ to grab/test the files
+  (make sure that @tmp/@ has write permissions for the web server).
+# Adjust MySQL configuration and login (by default it's 'admin', 'pass') from
+  first lines of @functions.php@.
+# Start using it!
+
+h3. Some comments
+
+p{font-size:80%}. The table must be up and running; *phpScaffold* doesn't change anything in the database.
+
+p{font-size:80%}. You may add text search criteria adding 'text' as third parameter to @search_options@ (in search page).
+
+
 h2. Screenshots
 
 h3. Schema loading.
@@ -23,23 +39,6 @@ h3. Schema loading.
 h3. Generated index page.
 
 !https://github.com/tute/phpscaffold/raw/master/assets/phpsc2.png(Generated index page)!
-
-
-h2. Installation and usage
-
-# Go to @index.php@, and seed the form with your table schema.
-# You can go to @tmp/table_name/@ to grab the files (make sure that @tmp/@ has
-  write permissions for the web server), or copy&paste the code from the shown
-  textareas to where you want.
-# Adjust MySQL configuration and login (by default it's 'admin', 'pass') from
-  first lines of @functions.php@.
-# Start using it!
-
-p{font-size:80%}. The table must be up and running; *phpScaffold* doesn't
-change anything in the database.
-
-p{font-size:80%}. You may add text search criteria adding 'text' as third
-parameter to @search_options@ (in search page).
 
 
 h2. To do list
