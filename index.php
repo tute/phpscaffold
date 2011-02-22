@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ALL);
-include('scaffold.php');
-include('functions.inc');
+include 'lib/scaffold.php';
+include 'lib/functions.inc';
 
 $show_form = 0;
 $message = '';
@@ -66,7 +66,7 @@ if (isset($_POST['scaffold_info'])) {
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript" src="js/functions.js"></script>
 <title>PHP MySQL CRUD Scaffold</title>
-<link href="style.css" rel="stylesheet" type="text/css" />
+<link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>

@@ -209,7 +209,7 @@ foreach ($opts as $o) {
 		if ($is_search)
 			$legend = "<a href=\"#\" onclick=\"$('#search-form').slideToggle()\">$legend</a>";
 
-		$res = '<form action="<?= $_SERVER[\'PHP_SELF\'] ?>" method="'.$method.'">
+		$res = '<form action="<?= $_SERVER[\'REQUEST_URI\'] ?>" method="'.$method.'">
 <fieldset>
 <legend>' . $legend . '</legend>
 <div' . ($is_search ? ' id="search-form" style="display:none"' : '') . '>
