@@ -16,11 +16,13 @@ tasks (_id est_, for no more reinventing wheels!).
 
 h2. Screenshots
 
+h3. Schema loading.
+
 !https://github.com/tute/phpscaffold/raw/master/assets/phpsc1.png(Schema loading)!
-Schema loading.
+
+h3. Generated index page.
 
 !https://github.com/tute/phpscaffold/raw/master/assets/phpsc2.png(Generated index page)!
-Generated index page.
 
 
 h2. Installation and usage
