@@ -14,6 +14,15 @@ in any new simple model I need, without having to tweak by hand automatable
 tasks (_id est_, for no more reinventing wheels!).
 
 
+h2. Screenshots:
+
+!http://github.com/tute/phpscaffold/raw/master/assets/phpsc1.png(Schema loading)!
+Schema loading.
+
+!http://github.com/tute/phpscaffold/raw/master/assets/phpsc2.png(Generated index page)!
+Generated index page.
+
+
 h2. Installation and usage
 
 # Go to @index.php@, and seed the form with your table schema.
@@ -32,6 +41,7 @@ parameter to @search_options@ (in search page).
 
 
 h2. To do list
+* Session based authentication not working right now (@inc.functions.php#19@).
 * Exract 'auth' as static page.
 * date and datetime fields shouldn't be surrounded by @<legend>@.
 * Distinguish between @int@ and @char@ columns, to tie text/number search
