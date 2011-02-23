@@ -25,6 +25,7 @@ function find_text($text, $delimit_start = '`', $delimit_end = '`') {
 
 /* Given a table SQL definition, search it's primary key */
 function get_primary_key($text) {
+	$key  = '';
 	$text = explode("\n", $text);
 	foreach ($text as $line) {
 		if (preg_match('/PRIMARY KEY/', $line)) {
@@ -36,7 +37,7 @@ function get_primary_key($text) {
 			if ($key[0] == '`') $key = substr($key,1);
 		}
 	}
-	return $key;
+	return ($key != '' ? $key : 'id');
 }
 
 function pr($arr) {

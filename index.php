@@ -7,54 +7,86 @@ $show_form = 0;
 $message = '';
 
 if (isset($_POST['scaffold_info'])) {
-	$data = trim($_POST['sql']);
-	$data_lines = explode("\n", $data);
-	
-	/* Strip SQL comments */
-	foreach ($data_lines as $key => $value) {
-		$value = trim($value);
-		if ($value[0] == '-' && $value[1] == '-') unset($data_lines[$key]);
-		elseif (stripos($value, 'insert into')) unset($data_lines[$key]);
-	}
+	$tables = explode('CREATE ', $_POST['sql']);
+	$project['project_name'] = stripslashes($_POST['project_name']);
+	$project['list_page']    = stripslashes($_POST['list_page']);
+	$project['crud_page']    = stripslashes($_POST['crud_page']);
+	$project['search_page']  = stripslashes($_POST['search_page']);
+	$project['paging_page']  = stripslashes($_POST['paging_page']);
+	$project['tables']       = array();
 
-	// store into cookie
-	foreach($_POST AS $key => $value) {
-		$date = time() + 999999;
-		if ($key == 'sql') $date = time() + 600;
-		setcookie($key, $value, $date, '/');
-	}
+	foreach($tables as $sql_data) {
+		$data_lines = explode("\n", $sql_data);
 
-	$table = array();
-	$table['project_name'] = stripslashes($_POST['project_name']);
-	$table['list_page']    = stripslashes($_POST['list_page']);
-	$table['crud_page']    = stripslashes($_POST['crud_page']);
-	$table['search_page']  = stripslashes($_POST['search_page']);
-	$table['paging_page']  = stripslashes($_POST['paging_page']);
-	$table['id_key'] = get_primary_key($_POST['sql']);
-	if ($table['id_key'] == '') $table['id_key'] = 'id';
-	
-	// get first table name
-	if (preg_match('/CREATE TABLE .+/', $data, $matches)) {
-		$table['table_name'] = find_text($matches[0]);
-		$max = count($data_lines);
-		for ($i = 1; $i < $max; $i++) {
-			if (strpos(trim($data_lines[$i]), '`') === 0) { // this line has a column
-				$col = find_text(trim($data_lines[$i]));
-				$bool = (stripos($data_lines[$i], 'INT(1)') ? 1 : 0);
-				$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ? 1 : 0);
-				$datetime = (stripos($data_lines[$i], 'DATETIME') ? 1 : 0);
-				$date = (!$datetime && stripos($data_lines[$i], 'DATE') ? 1 : 0);
-				$table['columns'][$col] = array(
-					'bool' => $bool,
-					'blob' => $blob,
-					'date' => $date,
-					'datetime' => $datetime,
-				);
-			}
+		/* Strip SQL comments, drops, inserts */
+		foreach ($data_lines as $key => $value) {
+			$value = trim($value);
+			if (substr($value, 0, 2) == '--') unset($data_lines[$key]);
+			elseif (stripos($value, 'DROP')) unset($data_lines[$key]);
+			elseif (stripos($value, 'INSERT INTO')) unset($data_lines[$key]);
 		}
-		$show_form = 1;
-	} else {
-		$message .= "Cannot find 'CREATE TABLE `table_name` ( '";
+
+		$table = array();
+		$table['id_key'] = get_primary_key($sql_data);
+
+		// build tables structure
+		if (preg_match('/TABLE .+/', $sql_data, $matches)) {
+			$table_name = find_text($matches[0]);
+			$max = count($data_lines);
+			for ($i = 1; $i < $max; $i++) {
+				if (strpos(trim($data_lines[$i]), '`') === 0) { // this line has a column
+					$col = find_text(trim($data_lines[$i]));
+					$bool = (stripos($data_lines[$i], 'INT(1)') ? 1 : 0);
+					$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ? 1 : 0);
+					$datetime = (stripos($data_lines[$i], 'DATETIME') ? 1 : 0);
+					$date = (!$datetime && stripos($data_lines[$i], 'DATE') ? 1 : 0);
+					$table['columns'][$col] = array(
+						'bool' => $bool,
+						'blob' => $blob,
+						'date' => $date,
+						'datetime' => $datetime,
+					);
+				}
+			}
+			$project['tables'][$table_name] = $table;
+			$show_form = 1;
+		} else {
+			$message .= "Cannot find 'CREATE TABLE `table_name` ( '";
+		}
+	} // foreach table
+
+	if ($show_form) {
+		/* Start CRUD generation */
+
+		/* Create directory layout if not exists */
+		$dir = "tmp/{$project['project_name']}/";
+		$css = 'css/';
+		$statics = 'lib/statics/';
+		if(!is_dir($dir)) mkdir($dir);
+		if(!is_dir($dir.$css)) mkdir($dir.$css);
+
+		/* Copy common files */
+		// file_put_contents($dir.'inc.auth.php', $s->session_auth());
+		file_put_contents($dir.'index.php', "<?\nheader('Location: $table_name/')\n?>");
+		copy($statics.'inc.functions.php',  $dir . 'inc.functions.php');
+		copy($statics.'inc.layout.php',     $dir . 'inc.layout.php');
+		copy($statics.'inc.paging.php',     $dir . $project['paging_page']);
+		copy($statics.'css/stylesheet.css', $dir . $css . 'stylesheet.css');
+
+		/* Create each CRUD folder and files */
+		foreach($project['tables'] as $table_name => $table_info) {
+			$s = new Scaffold($project, $table_name, $table_info);
+
+			$abm = "$table_name/";
+			if(!is_dir($dir.$abm)) mkdir($dir.$abm);
+
+			file_put_contents($dir.$abm.$project['list_page'], $s->list_page());
+			file_put_contents($dir.$abm.$project['search_page'], $s->search_page());
+			file_put_contents($dir.$abm.$project['crud_page'], $s->crud_page());
+		}
+
+		/* Log table schema definition */
+		file_put_contents($dir.'schema.sql', $_POST['sql']."\n\n", FILE_APPEND);
 	}
 }
 ?>
@@ -72,7 +104,7 @@ if (isset($_POST['scaffold_info'])) {
 <h1><a href="index.php" style="color:#fff;text-decoration:none">php<span class="color">Scaffold</span></a></h1>
 
 <div class="submenu">
-<? if ($show_form) echo 'Files saved in <strong>tmp/'.$table['project_name'].'</strong> directory.'; ?>
+<? if ($show_form) echo 'Files saved in <strong>tmp/'.$project['project_name'].'</strong> directory.'; ?>
 </div>
 
 <div class="container">
@@ -114,37 +146,8 @@ href="javascript:show_hint()">[Hint]</a></p>
 
 <?
 if ($show_form) {
-	$s = new Scaffold($table);
-
 	echo '<h2><a href="tmp/">Created projects</a>:</h2>';
 	echo list_dir('tmp');
-
-	/* Directories */
-	$dir = "tmp/{$table['project_name']}/";
-	$abm = "{$table['table_name']}/";
-	$css = 'css/';
-	$statics = 'lib/statics/';
-
-	/* Create directory layout if not exists */
-	if(!is_dir($dir)) mkdir($dir);
-	if(!is_dir($dir.$abm)) mkdir($dir.$abm);
-	if(!is_dir($dir.$css)) mkdir($dir.$css);
-
-	/* Create generated files */
-	file_put_contents($dir.$abm.$table['list_page'], $s->list_page());
-	file_put_contents($dir.$abm.$table['search_page'], $s->search_page());
-	file_put_contents($dir.$abm.$table['crud_page'], $s->crud_page());
-	file_put_contents($dir.'inc.auth.php', $s->session_auth());
-	file_put_contents($dir.'index.php', "<?\nheader('Location: {$table['table_name']}/')\n?>");
-
-	/* Copy static files */
-	copy($statics.'inc.paging.php',     $dir.$s->table['paging_page']);
-	copy($statics.'inc.functions.php',  $dir.'inc.functions.php');
-	copy($statics.'inc.layout.php',     $dir.'inc.layout.php');
-	copy($statics.'css/stylesheet.css', $dir.$css.'stylesheet.css');
-
-	/* Log table schema definition */
-	file_put_contents($dir.'schema.sql', $_POST['sql']."\n\n", FILE_APPEND);
 }
 ?>
 

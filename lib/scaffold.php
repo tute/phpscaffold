@@ -2,12 +2,14 @@
 class Scaffold {
 	public $table = array();
 
-	function Scaffold($table) {
+	function Scaffold($project, $table_name, $table_info) {
 		$columns = array();
-		foreach($table['columns'] as $key => $value)
+		foreach($table_info['columns'] as $key => $value)
 			if (is_array($value))
 				$columns[] = array('tipo' => $value, 'nombre' => $key);
-		$this->table = $table;
+		$this->project = $project;
+		$this->id_key  = $table_info['id_key'];
+		$this->table   = $table_name;
 		$this->columns = $columns;
 	}
 
@@ -16,22 +18,22 @@ class Scaffold {
 		$return_string = "<?php
 include('../inc.functions.php');\n";
 
-		$return_string .= "\nprint_header('" . ucwords($this->table['table_name']) . "');
+		$return_string .= "\nprint_header('" . ucwords($this->table) . "');
 
 if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
 
 /* Default search criteria (may be overriden by search form) */
 \$conds = 'TRUE';
-include('{$this->table['search_page']}');
+include('{$this->project['search_page']}');
 
 /* Default paging criteria (may be overriden by paging functions) */
 \$start     = 0;
 \$per_page  = 100;
-\$count_sql = 'SELECT COUNT({$this->table['id_key']}) AS tot FROM `{$this->table['table_name']}` WHERE ' . \$conds;
-include('../{$this->table['paging_page']}');
+\$count_sql = 'SELECT COUNT({$this->id_key}) AS tot FROM `{$this->table}` WHERE ' . \$conds;
+include('../{$this->project['paging_page']}');
 
 /* Get selected entries! */
-\$sql = \"SELECT * FROM `{$this->table['table_name']}` WHERE \$conds \" . get_order('{$this->table['table_name']}') . \" LIMIT \$start,\$per_page\";
+\$sql = \"SELECT * FROM `{$this->table}` WHERE \$conds \" . get_order('{$this->table}') . \" LIMIT \$start,\$per_page\";
 
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
@@ -55,17 +57,17 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 			else
 				$val = "\$row['".$v['nombre']."']";
 
-			$return_string .= "    <td>' . $val . '</td>\n";
+			$return_string .= "    <td>' . htmlentities($val) . '</td>\n";
 		}
-		$return_string .= "    <td><a href=\"{$this->table['crud_page']}?{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\">Edit</a></td>
-    <td><a href=\"{$this->table['crud_page']}?delete=1&amp;{$this->table['id_key']}=' . \$row['{$this->table['id_key']}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>
+		$return_string .= "    <td><a href=\"{$this->project['crud_page']}?{$this->id_key}=' . \$row['{$this->id_key}'] . '\">Edit</a></td>
+    <td><a href=\"{$this->project['crud_page']}?delete=1&amp;{$this->id_key}=' . \$row['{$this->id_key}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>
   </tr>' . \"\n\";\n";
 		$return_string .= "}\n\n";
 		$return_string .= 'echo "</table>\n\n";
 
-include(\'../' . $this->table['paging_page'] . '\');
+include(\'../' . $this->project['paging_page'] . '\');
 
-echo \'<p><a href="' . $this->table['crud_page'] . '">New entry</a></p>\';
+echo \'<p><a href="' . $this->project['crud_page'] . '">New entry</a></p>\';
 
 print_footer();
 ?>';
@@ -78,19 +80,19 @@ print_footer();
 include('../inc.functions.php');\n\n";
 
 		$return_string .= "if (isset(\$_GET['delete'])) {
-	mysql_query(\"DELETE FROM `{$this->table['table_name']}` WHERE `{$this->table['id_key']}` = '\$_GET[{$this->table['id_key']}]}'\");
+	mysql_query(\"DELETE FROM `{$this->table}` WHERE `{$this->id_key}` = '\$_GET[{$this->id_key}]}'\");
 	\$msg = (mysql_affected_rows() ? 'Row deleted.' : 'Nothing deleted.');
-	header('Location: {$this->table['list_page']}?msg='.\$msg);
+	header('Location: {$this->project['list_page']}?msg='.\$msg);
 }
 
-\${$this->table['id_key']} = (isset(\$_GET['{$this->table['id_key']}']) ? \$_GET['{$this->table['id_key']}'] : 0);
-\$action = (\${$this->table['id_key']} ? 'Edit' : 'Add new');\n\n";
+\${$this->id_key} = (isset(\$_GET['{$this->id_key}']) ? \$_GET['{$this->id_key}'] : 0);
+\$action = (\${$this->id_key} ? 'Edit' : 'Add new');\n\n";
 
 		$column_array = array();
 
 		$return_string .= "if (isset(\$_POST['submitted'])) {
 	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
-		$insert = "REPLACE INTO `{$this->table['table_name']}` (";
+		$insert = "REPLACE INTO `{$this->table}` (";
 		$counter = 0;
 		foreach($this->columns as $v) {
 			$insert .= "`$v[nombre]`" ;
@@ -98,11 +100,11 @@ include('../inc.functions.php');\n\n";
 				$insert .= ", ";
 			$counter++;
 		}
-		$insert .= ") VALUES (\${$this->table['id_key']}, ";
+		$insert .= ") VALUES ('\${$this->id_key}', ";
 
 		$counter = 0;
 		foreach ($this->columns as $v) {
-			if ($v['nombre'] != $this->table['id_key']) {
+			if ($v['nombre'] != $this->id_key) {
 				$field = $v['nombre'];
 				$val = $this->_parse($field, $v['tipo']);
 				$insert .= "'$val'";
@@ -116,12 +118,12 @@ include('../inc.functions.php');\n\n";
 		$return_string .= "	\$sql = \"$insert\";
 	mysql_query(\$sql) or die(mysql_error());
 	\$msg = (mysql_affected_rows()) ? 'Edited row.' : 'Nothing changed.';
-	header('Location: {$this->table['list_page']}?msg='.\$msg);
+	header('Location: {$this->project['list_page']}?msg='.\$msg);
 }
 
-print_header(\"\$action {$this->table['table_name']}\");
+print_header(\"\$action {$this->table}\");
 
-\$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table['table_name']}` WHERE `{$this->table['id_key']}` = '\${$this->table['id_key']}' \"));
+\$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table}` WHERE `{$this->id_key}` = '\${$this->id_key}' \"));
 ?>\n";
 
 $return_string .= $this->_build_form($this->columns, 'Add / Edit') . '
@@ -141,7 +143,7 @@ if (isset(\$_POST['user']) && isset(\$_POST['pass'])) {
 	if ((strlen(\$_POST['user']) > 0) and (strlen(\$_POST['pass']) > 0)
 	  and (\$login[\$_POST['user']] == \$_POST['pass'])) {
 		\$_SESSION['user_logged_in'] = true;
-		header('Location: {$this->table['list_page']}?msg=Logged in.');
+		header('Location: {$this->project['list_page']}?msg=Logged in.');
 		exit;
 	} else {
 		unset(\$_SESSION['user_logged_in']);
@@ -149,7 +151,7 @@ if (isset(\$_POST['user']) && isset(\$_POST['pass'])) {
 	}
 }
 
-print_header('Login - ".ucwords($this->table['table_name'])."');
+print_header('Login - ".ucwords($this->table)."');
 
 if (\$_GET['action'] == 'logout') {
 	unset(\$_SESSION['user_logged_in']);
@@ -169,7 +171,7 @@ $return_string .= '<form action="" method="post">
 </form>
 <?
 } else {
-	echo \'<p><a href="'.$this->table['list_page'].'">Go to Listing</a></p>\';
+	echo \'<p><a href="'.$this->project['list_page'].'">Go to Listing</a></p>\';
 }
 
 print_footer();
@@ -228,7 +230,7 @@ foreach ($opts as $o) {
 	}
 
 	function _form_input($col, $value, $is_search = false) {
-		if ($col['nombre'] != $this->table['id_key']) {
+		if ($col['nombre'] != $this->id_key) {
 
 		$text = '  <li><label><span>' . $this->_title($col['nombre']) . ":</span>\n";
 		if ($is_search)
