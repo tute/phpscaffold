@@ -18,8 +18,7 @@ h2. Installation and usage
 # Go to @index.php@, and seed the form with your schema dump.
 # You can go to @tmp/table_name/@ to grab/test the files
   (make sure that @tmp/@ has write permissions for the web server).
-# Adjust MySQL configuration and login (by default it's 'admin', 'pass') from
-  first lines of @functions.php@.
+# Adjust MySQL info and users (by default it's 'admin', 'pass') from @inc.config.inc@.
 # Start using it!
 
 h3. Some comments
@@ -42,12 +41,10 @@ h3. Generated index page.
 
 h2. To do list
 * Session based authentication not working right now (@inc.functions.php#19@).
-* Exract 'auth' as static page.
 * date and datetime fields shouldn't be surrounded by @<legend>@.
 * Distinguish between @int@ and @char@ columns, to tie text/number search options automatically.
 * Date/date-range search.
 * Upload files capability?
-* index.php:42 make it case insensitive.
 * showEmpty option for @build_options()@.
 
 

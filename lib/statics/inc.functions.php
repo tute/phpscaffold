@@ -1,19 +1,7 @@
 <?php
-/* General configuration */
-/* MySQL */
-$mysql_host = 'localhost';
-$mysql_user = 'root';
-$mysql_pass = '';
-$dbname = 'phpsc_db';
-
-/* Allowed users  */
-$login = array(
-	'admin' => 'pass'
-);
-
-
 /* phpscaffold code - you may leave this untouched */
-include('inc.layout.php');
+include 'inc.config.inc';
+include 'inc.layout.php';
 
 /* We're in admin (FIXME) */
 if (preg_match('/admin/', $_SERVER['PHP_SELF'])) {

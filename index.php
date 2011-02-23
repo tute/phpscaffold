@@ -3,10 +3,9 @@ error_reporting(E_ALL);
 include 'lib/scaffold.php';
 include 'lib/functions.inc';
 
-$show_form = 0;
+$did_scaffold = 0;
 
 if (isset($_POST['scaffold_info'])) {
-	$tables = explode('CREATE ', $_POST['sql']);
 	$project['project_name'] = stripslashes($_POST['project_name']);
 	$project['list_page']    = stripslashes($_POST['list_page']);
 	$project['crud_page']    = stripslashes($_POST['crud_page']);
@@ -14,31 +13,33 @@ if (isset($_POST['scaffold_info'])) {
 	$project['paging_page']  = stripslashes($_POST['paging_page']);
 	$project['tables']       = array();
 
+	$tables = explode('CREATE ', $_POST['sql']);
 	foreach($tables as $sql_data) {
 		$data_lines = explode("\n", $sql_data);
 
-		/* Strip SQL comments, drops, inserts */
+		/* Strip non table info (comments, inserts, etc) */
 		foreach ($data_lines as $key => $value) {
 			$value = trim($value);
-			if (substr($value, 0, 2) == '--') unset($data_lines[$key]);
-			elseif (stripos($value, 'DROP')) unset($data_lines[$key]);
-			elseif (stripos($value, 'INSERT INTO')) unset($data_lines[$key]);
+			if ((substr($value, 0, 2) == '--')
+			  || stripos($value, 'DROP')
+			  || stripos($value, 'INSERT INTO'))
+				unset($data_lines[$key]);
 		}
 
 		$table = array();
 		$table['id_key'] = get_primary_key($sql_data);
 
-		// build tables structure
+		// Add table structure
 		if (preg_match('/TABLE .+/', $sql_data, $matches)) {
 			$table_name = find_text($matches[0]);
 			$max = count($data_lines);
 			for ($i = 1; $i < $max; $i++) {
 				if (strpos(trim($data_lines[$i]), '`') === 0) { // this line has a column
 					$col = find_text(trim($data_lines[$i]));
-					$bool = (stripos($data_lines[$i], 'INT(1)') ? 1 : 0);
-					$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB') ? 1 : 0);
-					$datetime = (stripos($data_lines[$i], 'DATETIME') ? 1 : 0);
-					$date = (!$datetime && stripos($data_lines[$i], 'DATE') ? 1 : 0);
+					$bool = stripos($data_lines[$i], 'INT(1)');
+					$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB'));
+					$datetime = stripos($data_lines[$i], 'DATETIME');
+					$date = (!$datetime && stripos($data_lines[$i], 'DATE'));
 					$table['columns'][$col] = array(
 						'bool' => $bool,
 						'blob' => $blob,
@@ -48,11 +49,11 @@ if (isset($_POST['scaffold_info'])) {
 				}
 			}
 			$project['tables'][$table_name] = $table;
-			$show_form = 1;
+			$did_scaffold = 1;
 		}
 	} // foreach table
 
-	if ($show_form) {
+	if ($did_scaffold) {
 		/* Start CRUD generation */
 
 		/* Create directory layout if not exists */
@@ -65,6 +66,7 @@ if (isset($_POST['scaffold_info'])) {
 		/* Copy common files */
 		// file_put_contents($dir.'inc.auth.php', $s->session_auth());
 		file_put_contents($dir.'index.php', "<?\nheader('Location: $table_name/')\n?>");
+		copy($statics.'inc.config.inc',     $dir . 'inc.config.inc');
 		copy($statics.'inc.functions.php',  $dir . 'inc.functions.php');
 		copy($statics.'inc.layout.php',     $dir . 'inc.layout.php');
 		copy($statics.'inc.paging.php',     $dir . $project['paging_page']);
@@ -101,12 +103,12 @@ if (isset($_POST['scaffold_info'])) {
 <h1><a href="index.php" style="color:#fff;text-decoration:none">php<span class="color">Scaffold</span></a></h1>
 
 <div class="submenu">
-<? if ($show_form) echo 'Files saved in <strong>tmp/'.$project['project_name'].'</strong> directory.'; ?>
+<? if ($did_scaffold) echo 'Files saved in <strong>tmp/'.$project['project_name'].'</strong> directory.'; ?>
 </div>
 
 <div class="container">
 
-<div <? if ($show_form) echo 'style="display:none"'; ?> id="create_crud">
+<div <? if ($did_scaffold) echo 'style="display:none"'; ?> id="create_crud">
 <form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post">
 
 <p>Welcome to <span style="color:#9D608C;font-weight:bold">phpscaffold.com</span>, where you can
@@ -141,7 +143,7 @@ href="javascript:show_hint()">[Hint]</a></p>
 </div>
 
 <?
-if ($show_form) {
+if ($did_scaffold) {
 	echo '<h2><a href="tmp/">Created projects</a>:</h2>';
 	echo list_dir('tmp');
 }

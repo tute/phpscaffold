@@ -243,7 +243,7 @@ foreach ($opts as $o) {
 		$isset_val = '(isset('.$val.') ? stripslashes('.$val.') : \'\')';
 
 		if ($col['tipo']['bool'])
-			$text .= '<input type="checkbox" name="'.$col['nombre'].'" value="1" <?= (isset('.$val.') && '.$val.' == 1 ? \'checked="checked"\' : \'\') ?> />';
+			$text .= '<input type="checkbox" name="'.$col['nombre'].'" value="1" <?= (isset('.$val.') && '.$val.' ? \'checked="checked"\' : \'\') ?> />';
 		elseif ($col['tipo']['date'])
 			$text .= '<?= input_date(\''.$col['nombre'].'\', ' . $isset_val . ') ?>';
 		elseif ($col['tipo']['datetime'])

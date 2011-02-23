@@ -28,7 +28,7 @@ function get_primary_key($text) {
 	$key  = '';
 	$text = explode("\n", $text);
 	foreach ($text as $line) {
-		if (preg_match('/PRIMARY KEY/', $line)) {
+		if (preg_match('/PRIMARY KEY/i', $line)) {
 			/* Remove parenthesis */
 			$key = explode('(', $line);
 			$key = explode(')', $key[1]);
