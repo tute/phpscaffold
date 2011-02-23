@@ -1,13 +1,12 @@
 h1. About phpScaffold
 
 *phpScaffold* quickly generates simple CRUD scaffold modules for PHP/MySQL. It
-takes a table dump and some file names as input from a browser session, and
-cooks HTML5 pages for editing the model.
+takes a project name and a schema dump from a browser session, and cooks HTML5
+pages for editing it's tables.
 
-It features session based authentication; searching, sorting and
-paging facilities in listing page; and the generated forms responds to column
-types @text@, @date@, @datetime@, @(var)char@ and @bool (int(1))@. It makes it
-easy to add many CRUD modules to a single project.
+It features session based authentication; searching, sorting and paging
+facilities in listing page; and the generated forms responds to column types
+@text@, @date@, @datetime@, @(var)char@ and @bool (int(1))@.
 
 I've started it from the public copy at phpscaffold.com, to be able to use it
 in any new simple model I need, without having to tweak by hand automatable
@@ -16,7 +15,7 @@ tasks (_id est_, for no more reinventing wheels!).
 
 h2. Installation and usage
 
-# Go to @index.php@, and seed the form with your table schema.
+# Go to @index.php@, and seed the form with your schema dump.
 # You can go to @tmp/table_name/@ to grab/test the files
   (make sure that @tmp/@ has write permissions for the web server).
 # Adjust MySQL configuration and login (by default it's 'admin', 'pass') from
