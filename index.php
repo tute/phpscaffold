@@ -4,7 +4,6 @@ include 'lib/scaffold.php';
 include 'lib/functions.inc';
 
 $show_form = 0;
-$message = '';
 
 if (isset($_POST['scaffold_info'])) {
 	$tables = explode('CREATE ', $_POST['sql']);
@@ -50,8 +49,6 @@ if (isset($_POST['scaffold_info'])) {
 			}
 			$project['tables'][$table_name] = $table;
 			$show_form = 1;
-		} else {
-			$message .= "Cannot find 'CREATE TABLE `table_name` ( '";
 		}
 	} // foreach table
 
@@ -108,7 +105,6 @@ if (isset($_POST['scaffold_info'])) {
 </div>
 
 <div class="container">
-<? if ($message != '') echo "<div class=\"message\">$message</div>"; ?>
 
 <div <? if ($show_form) echo 'style="display:none"'; ?> id="create_crud">
 <form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post">

@@ -18,7 +18,7 @@ class Scaffold {
 		$return_string = "<?php
 include('../inc.functions.php');\n";
 
-		$return_string .= "\nprint_header('" . ucwords($this->table) . "');
+		$return_string .= "\nprint_header('{$this->project['project_name']} » " . ucwords($this->table) . "');
 
 if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
 
@@ -86,7 +86,7 @@ include('../inc.functions.php');\n\n";
 }
 
 \${$this->id_key} = (isset(\$_GET['{$this->id_key}']) ? \$_GET['{$this->id_key}'] : 0);
-\$action = (\${$this->id_key} ? 'Edit' : 'Add new');\n\n";
+\$action = (\${$this->id_key} ? 'Editing' : 'Add new') . ' entry';\n\n";
 
 		$column_array = array();
 
@@ -121,7 +121,8 @@ include('../inc.functions.php');\n\n";
 	header('Location: {$this->project['list_page']}?msg='.\$msg);
 }
 
-print_header(\"\$action {$this->table}\");
+
+print_header(\"{$this->project['project_name']} » " . ucwords($this->table) . " » \$action\");
 
 \$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table}` WHERE `{$this->id_key}` = '\${$this->id_key}' \"));
 ?>\n";
