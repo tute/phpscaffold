@@ -64,10 +64,10 @@ if (isset($_POST['scaffold_info'])) {
 		if(!is_dir($dir.$css)) mkdir($dir.$css);
 
 		/* Copy common files */
-		// file_put_contents($dir.'inc.auth.php', $s->session_auth());
 		file_put_contents($dir.'index.php', "<?\nheader('Location: $table_name/')\n?>");
 		copy($statics.'inc.functions.php',  $dir . 'inc.functions.php');
 		copy($statics.'inc.layout.php',     $dir . 'inc.layout.php');
+		copy($statics.'inc.auth.php',       $dir . 'inc.auth.php');
 		copy($statics.'inc.paging.php',     $dir . $project['paging_page']);
 		copy($statics.'css/stylesheet.css', $dir . $css . 'stylesheet.css');
 		/* Don't override configuration file */

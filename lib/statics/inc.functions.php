@@ -3,20 +3,11 @@
 include 'inc.config.inc';
 include 'inc.layout.php';
 
-/* We're in admin (FIXME) */
-if (preg_match('/admin/', $_SERVER['PHP_SELF'])) {
-	session_start();
-	if ((!preg_match('/inc.auth.php/', $_SERVER['PHP_SELF']))
-	  and (!isset($_SESSION['user_logged_in'])
-	  or $_SESSION['user_logged_in'] !== true)) {
-		header('Location: ../inc.auth.php');
-		exit;
-	}
-}
+session_start();
+unauthorize_if_not_logged_in();
 
 // DB connect
-$link = @mysql_connect($mysql_host, $mysql_user, $mysql_pass);
-if (!$link)
+if (!mysql_connect($mysql_host, $mysql_user, $mysql_pass))
 	die('Not connected: ' . mysql_error());
 if (!mysql_select_db($dbname))
 	die ("Can't use $dbname: " . mysql_error());
@@ -85,8 +76,8 @@ function select_range($name, $selected, $start, $finish, $range = 1) {
 }
 
 /*
-*	Given a table and an id, return it's name.
-*/
+ *  Given a table and an id, return it's name.
+ */
 function get_data($table_name, $name_col, $id) {
 	$sql = "SELECT $name_col FROM $table_name WHERE id = $id";
 	$r = mysql_query($sql) or trigger_error(mysql_error());
@@ -95,8 +86,8 @@ function get_data($table_name, $name_col, $id) {
 }
 
 /*
-*	Build select menu with data from a model.
-*/
+ *  Build select menu with data from a model.
+ */
 function build_options($table_name, $name_col, $fk_col_name, $selected = null, $id_col = 'id') {
 	$sql = "SELECT $id_col, $name_col FROM $table_name";
 	$r = mysql_query($sql) or trigger_error(mysql_error());
@@ -109,9 +100,9 @@ function build_options($table_name, $name_col, $fk_col_name, $selected = null, $
 }
 
 /*
-*	From separate _GET variables (YYYY, (M)M, (D)D)
-*	 to MySQL string (YYYY-MM-DD)
-*/
+ *  From separate _GET variables (YYYY, (M)M, (D)D)
+ *   to MySQL string (YYYY-MM-DD)
+ */
 function parse_date_vars($date_field) {
 	$year = $_GET[$date_field.'_year'];
 	$mth  = $_GET[$date_field.'_mth'];
@@ -124,8 +115,8 @@ function parse_date_vars($date_field) {
 }
 
 /*
-*	_GET variable set with non-trivial value?
-*/
+ *  _GET variable set with non-trivial value?
+ */
 function search_by($var) {
 	return (isset($_GET[$var]) and strlen($_GET[$var]) > 0);
 }
@@ -160,7 +151,9 @@ function limit_chars($str, $lim = 150) {
 	return implode(' ', array_slice($words, 0, count($words)-$cut)) . ($cut ? '...' : '');
 }
 
-/* List crud directories */
+/*
+ *  List and link all crud directories
+ */
 function list_cruds() {
 	$filter = array('.', '..', 'css');
 	echo '<ul>';
@@ -174,6 +167,18 @@ function list_cruds() {
 	echo '</ul>';
 }
 
+/*
+ *  If not logged in (and not in login page) redirect there (and exit).
+ */
+function unauthorize_if_not_logged_in() {
+	if ((!preg_match('/inc.auth.php/', $_SERVER['PHP_SELF']))
+	  && (!isset($_SESSION['user_logged_in'])
+	  || $_SESSION['user_logged_in'] !== true)) {
+		header('Location: ../inc.auth.php');
+		exit;
+	}
+}
+
 function humanize($date) {
 	$pattern = (strlen($date) == 10 ? 'd/m/Y' : 'd/m/Y @ h:i:s');
 	return date($pattern, strtotime($date));
@@ -184,4 +189,3 @@ function pr($arr) {
 	print_r($arr);
 	echo '</pre>';
 }
-?>

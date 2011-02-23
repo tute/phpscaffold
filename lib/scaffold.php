@@ -135,51 +135,6 @@ print_footer();
 		return $return_string;
 	}
 
-	function session_auth() {
-		$return_string = "<?php
-include('inc.functions.php');
-\$msg = \$_GET['msg'];
-
-if (isset(\$_POST['user']) && isset(\$_POST['pass'])) {
-	if ((strlen(\$_POST['user']) > 0) and (strlen(\$_POST['pass']) > 0)
-	  and (\$login[\$_POST['user']] == \$_POST['pass'])) {
-		\$_SESSION['user_logged_in'] = true;
-		header('Location: {$this->project['list_page']}?msg=Logged in.');
-		exit;
-	} else {
-		unset(\$_SESSION['user_logged_in']);
-		\$msg = 'Sorry, wrong user id or password.';
-	}
-}
-
-print_header('Login - ".ucwords($this->table)."');
-
-if (\$_GET['action'] == 'logout') {
-	unset(\$_SESSION['user_logged_in']);
-	session_destroy();
-}
-
-if (strlen(\$msg) > 0) echo '<p id=\"msg\">'.\$msg.'</p>';
-if (\$_SESSION['user_logged_in'] != true) {
-?>\n";
-$return_string .= '<form action="" method="post">
-<p>You need to log in to edit this database.</p>
-<ul>
-  <li><label>User: <input type="text" name="user" value="<?= stripslashes($_POST[user]) ?>" /></label></li>
-  <li><label>Pass: <input type="password" name="pass" /></label></li>
-</ul>
-<p><input type="submit" value="Login" /></p>
-</form>
-<?
-} else {
-	echo \'<p><a href="'.$this->project['list_page'].'">Go to Listing</a></p>\';
-}
-
-print_footer();
-?>';
-		return $return_string;
-	}
-
 	function search_page() {
 		$return_string = $this->_build_form($this->columns, 'Search', 'get', '_GET');
 		$return_string .= "\n\n<?php\n";

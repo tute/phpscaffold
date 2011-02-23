@@ -40,7 +40,6 @@ h3. Generated index page.
 
 
 h2. To do list
-* Session based authentication not working right now (@inc.functions.php#19@).
 * date and datetime fields shouldn't be surrounded by @<legend>@.
 * Distinguish between @int@ and @char@ columns, to tie text/number search options automatically.
 * Date/date-range search.
