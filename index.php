@@ -10,7 +10,6 @@ if (isset($_POST['scaffold_info'])) {
 	$project['list_page']    = stripslashes($_POST['list_page']);
 	$project['crud_page']    = stripslashes($_POST['crud_page']);
 	$project['search_page']  = stripslashes($_POST['search_page']);
-	$project['paging_page']  = stripslashes($_POST['paging_page']);
 	$project['tables']       = array();
 
 	$tables = explode('CREATE ', $_POST['sql']);
@@ -55,21 +54,21 @@ if (isset($_POST['scaffold_info'])) {
 	if ($did_scaffold) {
 		/* Create directory layout if not exists */
 		$dir = "tmp/{$project['project_name']}/";
-		$css = 'css/';
 		$statics = 'lib/statics/';
 		if(!is_dir($dir)) mkdir($dir);
-		if(!is_dir($dir.$css)) mkdir($dir.$css);
+		if(!is_dir("{$dir}css/")) mkdir("{$dir}css/");
+		if(!is_dir("{$dir}lib/")) mkdir("{$dir}lib/");
 
 		/* Copy common files */
 		file_put_contents($dir.'index.php', "<?\nheader('Location: $table_name/')\n?>");
-		copy($statics.'inc.functions.php',  $dir . 'inc.functions.php');
-		copy($statics.'inc.layout.php',     $dir . 'inc.layout.php');
+		copy($statics.'lib/inc.functions.php', $dir.'lib/inc.functions.php');
+		copy($statics.'lib/inc.layout.php', $dir.'lib/inc.layout.php');
+		copy($statics.'lib/inc.paging.php', $dir.'lib/inc.paging.php');
 		copy($statics.'inc.auth.php',       $dir . 'inc.auth.php');
-		copy($statics.'inc.paging.php',     $dir . $project['paging_page']);
-		copy($statics.'css/stylesheet.css', $dir . $css . 'stylesheet.css');
+		copy($statics.'css/stylesheet.css', $dir . 'css/stylesheet.css');
 		/* Don't override configuration file */
-		if (!file_exists($dir . 'inc.config.inc'))
-			copy($statics.'inc.config.inc',     $dir . 'inc.config.inc');
+		if (!file_exists($dir . 'inc.config.php'))
+			copy($statics.'inc.config.php',     $dir . 'inc.config.php');
 
 		/* Create each CRUD folder and files */
 		foreach($project['tables'] as $table_name => $table_info) {
@@ -125,10 +124,6 @@ href="javascript:show_hint()">[Hint]</a></p>
 <? $val = (isset($_REQUEST['search_page']) ? stripslashes($_REQUEST['search_page']) : 'inc.search.php'); ?>
 <p><label>Search file name</label>
   <input type="text" name="search_page" value="<?= $val ?>" id="search_page" /></p>
-
-<? $val = (isset($_REQUEST['paging_page']) ? stripslashes($_REQUEST['paging_page']) : 'inc.paging.php'); ?>
-<p><label>Paging file name</label>
-  <input type="text" name="paging_page" value="<?= $val ?>" id="paging_page" /></p>
 
 <p><input type="hidden" name="id_key" id="id_key" value="id" />
   <input type="hidden" name="list_page" id="list_page" value="index.php" />

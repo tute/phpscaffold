@@ -1,6 +1,6 @@
 <?php
 /* phpscaffold code - you may leave this untouched */
-include 'inc.config.inc';
+include '../inc.config.php';
 include 'inc.layout.php';
 
 session_start();
@@ -155,7 +155,7 @@ function limit_chars($str, $lim = 150) {
  *  List and link all crud directories
  */
 function list_cruds() {
-	$filter = array('.', '..', 'css');
+	$filter = array('.', '..', 'css', 'lib');
 	echo '<ul>';
 	if ($handle = opendir('..')) {
 		while (false !== ($file = readdir($handle))) {
