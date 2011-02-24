@@ -23,7 +23,7 @@ function find_text($text, $delimit_start = '`', $delimit_end = '`') {
 	return substr($text, $start + 1, $end);
 }
 
-/* Given a table SQL definition, search it's primary key */
+/* Given an SQL table definition, search it's primary key */
 function get_primary_key($text) {
 	$key  = '';
 	$text = explode("\n", $text);

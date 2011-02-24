@@ -26,12 +26,11 @@ if (isset($_POST['scaffold_info'])) {
 				unset($data_lines[$key]);
 		}
 
-		$table = array();
-		$table['id_key'] = get_primary_key($sql_data);
-
 		// Add table structure
 		if (preg_match('/TABLE .+/', $sql_data, $matches)) {
 			$table_name = find_text($matches[0]);
+			$table = array();
+			$table['id_key'] = get_primary_key($sql_data);
 			$max = count($data_lines);
 			for ($i = 1; $i < $max; $i++) {
 				if (strpos(trim($data_lines[$i]), '`') === 0) { // this line has a column
@@ -54,8 +53,6 @@ if (isset($_POST['scaffold_info'])) {
 	} // foreach table
 
 	if ($did_scaffold) {
-		/* Start CRUD generation */
-
 		/* Create directory layout if not exists */
 		$dir = "tmp/{$project['project_name']}/";
 		$css = 'css/';
@@ -104,10 +101,6 @@ if (isset($_POST['scaffold_info'])) {
 <body>
 <h1><a href="index.php" style="color:#fff;text-decoration:none">php<span class="color">Scaffold</span></a></h1>
 
-<div class="submenu">
-<? if ($did_scaffold) echo 'Files saved in <strong>tmp/'.$project['project_name'].'</strong> directory.'; ?>
-</div>
-
 <div class="container">
 
 <div <? if ($did_scaffold) echo 'style="display:none"'; ?> id="create_crud">
@@ -143,14 +136,12 @@ href="javascript:show_hint()">[Hint]</a></p>
   <input type="submit" value="Make pages" /></p>
 </form>
 </div>
-
 <?
 if ($did_scaffold) {
-	echo '<h2><a href="tmp/">Created projects</a>:</h2>';
+	echo '<h2>Created projects:</h2>';
 	echo list_dir('tmp');
 }
 ?>
-
 </div>
 
 </body>

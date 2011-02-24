@@ -8,8 +8,8 @@ class Scaffold {
 			if (is_array($value))
 				$columns[] = array('tipo' => $value, 'nombre' => $key);
 		$this->project = $project;
-		$this->id_key  = $table_info['id_key'];
 		$this->table   = $table_name;
+		$this->id_key  = $table_info['id_key'];
 		$this->columns = $columns;
 	}
 
@@ -18,7 +18,7 @@ class Scaffold {
 		$return_string = "<?php
 include('../inc.functions.php');\n";
 
-		$return_string .= "\nprint_header('{$this->project['project_name']} » " . ucwords($this->table) . "');
+		$return_string .= "\nprint_header('{$this->project['project_name']} » " . $this->_titleize($this->table) . "');
 
 if (isset(\$_GET['msg'])) echo '<p id=\"msg\">'.\$_GET['msg'].'</p>';
 
@@ -38,7 +38,7 @@ include('../{$this->project['paging_page']}');
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
 		foreach($this->columns as $v) {
-			$return_string .= '    <th>'. $this->_title($v['nombre']) . ' \' . put_order(\''.$v['nombre']."') . '</th>\n";
+			$return_string .= '    <th>'. $this->_titleize($v['nombre']) . ' \' . put_order(\''.$v['nombre']."') . '</th>\n";
 		}
 		$return_string .= '    <th colspan="2" style="text-align:center">Actions</th>';
 		$return_string .= "\n  </tr>\n';
@@ -122,7 +122,7 @@ include('../inc.functions.php');\n\n";
 }
 
 
-print_header(\"{$this->project['project_name']} » " . ucwords($this->table) . " » \$action\");
+print_header(\"{$this->project['project_name']} » " . $this->_titleize($this->table) . " » \$action\");
 
 \$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table}` WHERE `{$this->id_key}` = '\${$this->id_key}' \"));
 ?>\n";
@@ -188,7 +188,7 @@ foreach ($opts as $o) {
 	function _form_input($col, $value, $is_search = false) {
 		if ($col['nombre'] != $this->id_key) {
 
-		$text = '  <li><label><span>' . $this->_title($col['nombre']) . ":</span>\n";
+		$text = '  <li><label><span>' . $this->_titleize($col['nombre']) . ":</span>\n";
 		if ($is_search)
 			$text .= "    <?= search_options('".$col['nombre']."', (isset(\$_GET['".$col['nombre']."_opts']) ? stripslashes(\$_GET['".$col['nombre']."_opts']) : '')) ?></label>\n";
 		$text .= '    ';
@@ -234,7 +234,7 @@ foreach ($opts as $o) {
 		return $val;
 	}
 
-	function _title($name) {
+	function _titleize($name) {
 		return ucwords(str_replace('_', ' ', trim($name)));
 	}
 }

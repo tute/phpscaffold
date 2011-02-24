@@ -160,7 +160,7 @@ function list_cruds() {
 	if ($handle = opendir('..')) {
 		while (false !== ($file = readdir($handle))) {
 			if (is_dir("../$file") && !in_array($file, $filter))
-				echo "  <li><a href=\"../$file/\">$file</a></li>\n";
+				echo "  <li><a href=\"../$file/\">" . titleize($file) . "</a></li>\n";
 		}
 		closedir($handle);
 	}
@@ -177,6 +177,10 @@ function unauthorize_if_not_logged_in() {
 		header('Location: ../inc.auth.php');
 		exit;
 	}
+}
+
+function titleize($name) {
+	return ucwords(str_replace('_', ' ', trim($name)));
 }
 
 function humanize($date) {
