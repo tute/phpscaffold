@@ -12,6 +12,17 @@ function list_dir($dir) {
 	echo '</ul>';
 }
 
+/* Strip non table info (comments, inserts, etc) */
+function non_table_info($line) {
+	return ((substr($line, 0, 2) == '--')
+	  || stripos($line, 'DROP') !== false
+	  || stripos($line, 'INSERT') !== false
+	  || stripos($line, 'SET') !== false
+	  || stripos($line, 'UNIQUE') !== false
+	  || stripos($line, '(') == 0
+	  || strlen($line) == 0);
+}
+
 /* Get rid of comillas around text */
 function find_text($text, $delimit_start = '`', $delimit_end = '`') {
 	$start = strpos($text, $delimit_start);

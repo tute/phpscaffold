@@ -57,7 +57,7 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 			else
 				$val = "\$row['".$v['nombre']."']";
 
-			$return_string .= "    <td>' . htmlentities($val) . '</td>\n";
+			$return_string .= "    <td>' . " . ($v['tipo']['bool'] ? "$val" : "htmlentities($val)") . " . '</td>\n";
 		}
 		$return_string .= "    <td><a href=\"{$this->project['crud_page']}?{$this->id_key}=' . \$row['{$this->id_key}'] . '\">Edit</a></td>
     <td><a href=\"{$this->project['crud_page']}?delete=1&amp;{$this->id_key}=' . \$row['{$this->id_key}'] . '\" onclick=\"return confirm(\'Are you sure?\')\">Delete</a></td>

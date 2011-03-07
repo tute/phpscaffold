@@ -16,12 +16,9 @@ if (isset($_POST['scaffold_info'])) {
 	foreach($tables as $sql_data) {
 		$data_lines = explode("\n", $sql_data);
 
-		/* Strip non table info (comments, inserts, etc) */
 		foreach ($data_lines as $key => $value) {
 			$value = trim($value);
-			if ((substr($value, 0, 2) == '--')
-			  || stripos($value, 'DROP')
-			  || stripos($value, 'INSERT INTO'))
+			if (non_table_info($value))
 				unset($data_lines[$key]);
 		}
 
@@ -30,17 +27,14 @@ if (isset($_POST['scaffold_info'])) {
 			$table_name = find_text($matches[0]);
 			$table = array();
 			$table['id_key'] = get_primary_key($sql_data);
-			$max = count($data_lines);
-			for ($i = 1; $i < $max; $i++) {
-				if (strpos(trim($data_lines[$i]), '`') === 0) { // this line has a column
-					$col = find_text(trim($data_lines[$i]));
-					$bool = stripos($data_lines[$i], 'INT(1)');
-					$blob = (stripos($data_lines[$i], 'TEXT') || stripos($data_lines[$i], 'BLOB'));
-					$datetime = stripos($data_lines[$i], 'DATETIME');
-					$date = (!$datetime && stripos($data_lines[$i], 'DATE'));
+			foreach ($data_lines as $line) {
+				if (strpos(trim($line), '`') === 0) { // this line has a column
+					$col = find_text(trim($line));
+					$datetime = stripos($line, 'DATETIME');
+					$date = (!$datetime && stripos($line, 'DATE'));
 					$table['columns'][$col] = array(
-						'bool' => $bool,
-						'blob' => $blob,
+						'bool' => stripos($line, 'INT(1)'),
+						'blob' => (stripos($line, 'TEXT') || stripos($line, 'BLOB')),
 						'date' => $date,
 						'datetime' => $datetime,
 					);
