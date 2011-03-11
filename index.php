@@ -51,13 +51,12 @@ if (isset($_POST['scaffold_info'])) {
 		$statics = 'lib/statics/';
 		if(!is_dir($dir)) mkdir($dir);
 		if(!is_dir("{$dir}css/")) mkdir("{$dir}css/");
-		if(!is_dir("{$dir}lib/")) mkdir("{$dir}lib/");
 
 		/* Copy common files */
 		file_put_contents($dir.'index.php', "<?\nheader('Location: $table_name/')\n?>");
-		copy($statics.'lib/inc.functions.php', $dir.'lib/inc.functions.php');
-		copy($statics.'lib/inc.layout.php', $dir.'lib/inc.layout.php');
-		copy($statics.'lib/inc.paging.php', $dir.'lib/inc.paging.php');
+		copy($statics.'inc.functions.php', $dir.'inc.functions.php');
+		copy($statics.'inc.layout.php', $dir.'inc.layout.php');
+		copy($statics.'inc.paging.php', $dir.'inc.paging.php');
 		copy($statics.'inc.auth.php',       $dir . 'inc.auth.php');
 		copy($statics.'css/stylesheet.css', $dir . 'css/stylesheet.css');
 		/* Don't override configuration file */

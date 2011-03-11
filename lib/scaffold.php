@@ -16,7 +16,7 @@ class Scaffold {
 	function list_page() {
 		$column_array = array();
 		$return_string = "<?php
-include('../lib/inc.functions.php');\n";
+include('../inc.functions.php');\n";
 
 		$return_string .= "\nprint_header('{$this->project['project_name']} » " . $this->_titleize($this->table) . "');
 
@@ -28,9 +28,9 @@ include('{$this->project['search_page']}');
 
 /* Default paging criteria (may be overriden by paging functions) */
 \$start     = 0;
-\$per_page  = 100;
+\$per_page  = 50;
 \$count_sql = 'SELECT COUNT({$this->id_key}) AS tot FROM `{$this->table}` WHERE ' . \$conds;
-include('../lib/inc.paging.php');
+include('../inc.paging.php');
 
 /* Get selected entries! */
 \$sql = \"SELECT * FROM `{$this->table}` WHERE \$conds \" . get_order('{$this->table}') . \" LIMIT \$start,\$per_page\";
@@ -65,7 +65,7 @@ while(\$row = mysql_fetch_array(\$r)) {\n";
 		$return_string .= "}\n\n";
 		$return_string .= 'echo "</table>\n\n";
 
-include(\'../lib/inc.paging.php\');
+include(\'../inc.paging.php\');
 
 echo \'<p><a href="' . $this->project['crud_page'] . '">New entry</a></p>\';
 
@@ -77,7 +77,7 @@ print_footer();
 
 	function crud_page() {
 		$return_string = "<?php
-include('../lib/inc.functions.php');\n\n";
+include('../inc.functions.php');\n\n";
 
 		$return_string .= "if (isset(\$_GET['delete'])) {
 	mysql_query(\"DELETE FROM `{$this->table}` WHERE `{$this->id_key}` = '\$_GET[{$this->id_key}]}'\");

@@ -1,6 +1,6 @@
 <?php
 /* phpscaffold code - you may leave this untouched */
-include '../inc.config.php';
+include 'inc.config.php';
 include 'inc.layout.php';
 
 session_start();
