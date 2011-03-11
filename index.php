@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 include 'lib/scaffold.php';
 include 'lib/functions.inc';
 
-$did_scaffold = 0;
+$did_scaffold = false;
 
 if (isset($_POST['scaffold_info'])) {
 	$project['project_name'] = stripslashes($_POST['project_name']);
@@ -40,7 +40,7 @@ if (isset($_POST['scaffold_info'])) {
 				}
 			}
 			$project['tables'][$table_name] = $table;
-			$did_scaffold = 1;
+			$did_scaffold = true;
 		}
 	} // foreach table
 
@@ -99,6 +99,11 @@ if (isset($_POST['scaffold_info'])) {
 
 <p>Welcome to <span style="color:#9D608C;font-weight:bold">phpscaffold.com</span>, where you can
 quickly generate your CRUD scaffold pages for PHP and MySQL.</p>
+
+<?php
+if (isset($_POST['scaffold_info']) && !$did_scaffold)
+	echo '<p style="color:red">Couldn\'t find CREATE TABLE syntax!</p>';
+?>
 
 <p>Enter an SQL table dump to generate your pages. <a
 href="javascript:show_hint()">[Hint]</a></p>

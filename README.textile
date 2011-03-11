@@ -48,6 +48,13 @@ h2. To do list
 * showEmpty option for @build_options()@.
 
 
+h2. For developers
+
+You may run tests running on the console @cucumber features@. You'll have to
+setup cucumber as described on @https://github.com/aslakhellesoy/cucumber/wiki/PHP@,
+and to tweak the URL on @features/step_definitions/authentication_steps.rb@.
+
+
 h2. MIT License
 
 Copyright (c) 2009 [phpscaffold.com creator]
