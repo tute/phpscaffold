@@ -14,13 +14,16 @@ function list_dir($dir) {
 
 /* Strip non table info (comments, inserts, etc) */
 function non_table_info($line) {
-	return ((substr($line, 0, 2) == '--')
-	  || stripos($line, 'DROP') !== false
-	  || stripos($line, 'INSERT') !== false
-	  || stripos($line, 'SET') !== false
-	  || stripos($line, 'UNIQUE') !== false
-	  || stripos($line, '(') == 0
-	  || strlen($line) == 0);
+	$is_comment = (substr($line, 0, 2) == '--');
+	$empty_line = (strlen($line) == 0);
+	$starts_with_parenthesis = (stripos($line, '(') !== false && stripos($line, '(') == 0);
+	return (
+		$is_comment || $starts_with_parenthesis || $empty_line
+		|| stripos($line, 'DROP') !== false
+		|| stripos($line, 'INSERT') !== false
+		|| stripos($line, 'SET NAMES') !== false
+		|| stripos($line, 'UNIQUE') !== false
+	);
 }
 
 /* Get rid of comillas around text */

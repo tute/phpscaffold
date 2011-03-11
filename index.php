@@ -15,7 +15,6 @@ if (isset($_POST['scaffold_info'])) {
 	$tables = explode('CREATE ', $_POST['sql']);
 	foreach($tables as $sql_data) {
 		$data_lines = explode("\n", $sql_data);
-
 		foreach ($data_lines as $key => $value) {
 			$value = trim($value);
 			if (non_table_info($value))
