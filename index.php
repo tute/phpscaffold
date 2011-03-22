@@ -32,7 +32,7 @@ if (isset($_POST['scaffold_info'])) {
 					$datetime = stripos($line, 'DATETIME');
 					$date = (!$datetime && stripos($line, 'DATE'));
 					$table['columns'][$col] = array(
-						'bool' => stripos($line, 'INT(1)'),
+						'bool' => stripos($line, 'INT(1)') || stripos($line, 'TINYINT(1)'),
 						'blob' => (stripos($line, 'TEXT') || stripos($line, 'BLOB')),
 						'date' => $date,
 						'datetime' => $datetime,
