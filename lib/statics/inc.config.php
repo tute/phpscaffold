@@ -4,8 +4,8 @@
 /* MySQL */
 $mysql_host = 'localhost';
 $mysql_user = 'root';
-$mysql_pass = 'joko1922';
-$dbname = 'kontrak';
+$mysql_pass = '';
+$dbname = 'phpsc_db';
 
 /* Allowed users  */
 $login = array(
