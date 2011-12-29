@@ -15,7 +15,7 @@ class Scaffold {
 
 	function list_page() {
 		$column_array = array();
-		$return_string = "<?php
+		$return_string = "<?php\n
 include('../inc.functions.php');\n";
 
 		$return_string .= "\nprint_header('{$this->project['project_name']} » " . $this->_titleize($this->table) . "');
@@ -76,7 +76,7 @@ print_footer();
 	}
 
 	function crud_page() {
-		$return_string = "<?php
+		$return_string = "<?php\n
 include('../inc.functions.php');\n\n";
 
 		$return_string .= "if (isset(\$_GET['delete'])) {
